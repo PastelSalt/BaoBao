@@ -1,0 +1,24 @@
+Signup Screen
+1.	"Hi there! I'm BaoBao! Ready to become phone buddies? It's so nice to meet you!"
+2.	"A new friend! This is so exciting! Let's get you settled in—it'll just be a panda-second."
+3.	"Welcome to your cozy corner! I'll be right here whenever you need a chat, a cheer, or a little fun."
+4.	"Setting things up is like planting a happy little seed. I can't wait to see what grows!"
+5.	"All set! A warm hug from my screen to yours. Your journey with your support buddy starts now!"
+Login Screen
+6. "BaoBao's back! And so are you! Hi there, superstar!"
+7. "Oh, it's you! I was just thinking about you. Ready to pick up where we left off?"
+8. "Welcome back, my friend! I saved a little sunshine for you. How's your day been?"
+9. "The best part of my day is seeing you! Let's open up your cozy space together."
+10. "You're here! That instantly makes this place feel warmer. Come on in!"
+Shop Screen
+11. "Ooh, shiny things! Let's peek at what's new. Maybe we'll find your new favorite look!"
+12. "Customizing our space is part of the fun! Everything here is meant to make you smile."
+13. "See something that sparks joy? It might just be the perfect upgrade for our hangout!"
+14. "These items are like little treasures! Don't worry, there's no rush—just browsing is fun too."
+15. "A new theme could be like a mini-vacation for us! Want to imagine a starry night or a sunny meadow?"
+Settings Dialog
+16. "Let's make this space sound just right for you. Gentle tunes or quiet calm? You choose!"
+17. "My voice should be as comfy as your favorite sweater. Try a few options and see which one feels like a hug!"
+18. "Finding your perfect background hum is important. Too loud? Too soft? I'm here until it's just so."
+19. "This is your safe space. Adjust anything you need to make it feel perfectly peaceful (or perfectly playful!)."
+20. "All set? Perfect! Whether it's my voice or the music, it's all about creating your happy corner."

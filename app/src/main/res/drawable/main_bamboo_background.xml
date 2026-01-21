@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="400dp"
+    android:height="800dp"
+    android:viewportWidth="400"
+    android:viewportHeight="800">
+
+    <!-- Background Color -->
+    <path
+        android:fillColor="@color/off_white"
+        android:pathData="M0,0h400v800h-400z" />
+
+    <!-- Stalk 1 -->
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/pale_green"
+        android:pathData="M30,0 Q35,200 25,400 T30,800 L45,800 Q40,400 50,200 T45,0 Z" />
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/green"
+        android:pathData="M45,150 Q65,140 75,160 Q60,170 45,155 Z" />
+
+    <!-- Stalk 2 -->
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/pale_green"
+        android:pathData="M110,0 Q105,250 115,500 T105,800 L125,800 Q135,500 120,250 T130,0 Z" />
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/green"
+        android:pathData="M125,420 Q150,410 165,440 Q140,450 125,425 Z" />
+
+    <!-- Stalk 3 (Dense) -->
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/pale_green"
+        android:pathData="M180,0 Q190,300 170,600 T185,800 L200,800 Q185,600 205,300 T195,0 Z" />
+
+    <!-- Stalk 4 (Dense) -->
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/pale_green"
+        android:pathData="M240,0 Q235,400 245,800 L260,800 Q250,400 255,0 Z" />
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/green"
+        android:pathData="M260,200 Q285,190 295,215 Q270,225 260,205 Z" />
+
+    <!-- Stalk 5 -->
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/pale_green"
+        android:pathData="M310,0 Q320,250 305,500 T315,800 L330,800 Q340,500 325,250 T335,0 Z" />
+
+    <!-- Stalk 6 -->
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/pale_green"
+        android:pathData="M370,0 Q365,400 375,800 L390,800 Q380,400 385,0 Z" />
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/green"
+        android:pathData="M370,550 Q345,540 335,565 Q360,575 370,555 Z" />
+
+</vector>
