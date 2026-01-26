@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 1. Soft Green Shadow/Depth -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <solid android:color="@color/green" />
+        </shape>
+    </item>
+
+    <!-- 2. Main Stalk Body (Green Bamboo Color) -->
+    <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="22dp" />
+            <gradient
+                android:angle="0"
+                android:startColor="@color/light_green"
+                android:centerColor="@color/pale_green"
+                android:endColor="@color/light_green"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- 3. Inner Fill (Readable off_white for text) -->
+    <item android:left="10dp" android:top="10dp" android:right="10dp" android:bottom="14dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <solid android:color="@color/off_white" />
+            <stroke android:width="1dp" android:color="#40A7D489" />
+        </shape>
+    </item>
+
+    <!-- 4. Soft Bamboo Joints (Knots) -->
+    <item android:width="30dp" android:height="4dp" android:gravity="top|center_horizontal" android:top="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#33A7D489" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+    <item android:width="30dp" android:height="4dp" android:gravity="bottom|center_horizontal" android:bottom="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#33A7D489" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+    <item android:width="4dp" android:height="20dp" android:gravity="left|center_vertical" android:left="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#33A7D489" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+    <item android:width="4dp" android:height="20dp" android:gravity="right|center_vertical" android:right="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#33A7D489" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+</layer-list>

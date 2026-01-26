@@ -133,8 +133,32 @@ object ConversationManager {
     }
 
     fun getRandomClawMachine(): String {
-        val (text, index) = getUniqueRandom(clawMachineScripts, lastClawMachineIndex)
-        lastClawMachineIndex = index
+        val (text, index) = getUniqueRandom(clawMachineScripts, 0)
+        lastClawMachineIndex = 0
+        return text
+    }
+
+    fun getClawMachineMove(): String {
+        val (text, index) = getUniqueRandom(clawMachineScripts, 1)
+        lastClawMachineIndex = 1
+        return text
+    }
+
+    fun getClawMachineWin(): String {
+        val (text, index) = getUniqueRandom(clawMachineScripts, 2)
+        lastClawMachineIndex = 2
+        return text
+    }
+
+    fun getClawMachineLoss(): String {
+        val (text, index) = getUniqueRandom(clawMachineScripts, 3)
+        lastClawMachineIndex = 3
+        return text
+    }
+
+    fun getClawMachineRepeat(): String {
+        val (text, index) = getUniqueRandom(clawMachineScripts, 4)
+        lastClawMachineIndex = 4
         return text
     }
 

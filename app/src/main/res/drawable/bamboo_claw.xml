@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="60dp"
+    android:viewportWidth="60"
+    android:viewportHeight="60">
+
+    <!-- Main connector -->
+    <path
+        android:fillColor="#8B5E3C"
+        android:pathData="M25,0 h10 v15 h-10z" />
+
+    <!-- Left arm of the claw -->
+    <path
+        android:fillColor="#A1887F"
+        android:pathData="M25,15 Q10,15 10,40 Q10,55 25,55 L25,50 Q15,50 15,40 Q15,20 25,20 Z" />
+
+    <!-- Right arm of the claw -->
+    <path
+        android:fillColor="#A1887F"
+        android:pathData="M35,15 Q50,15 50,40 Q50,55 35,55 L35,50 Q45,50 45,40 Q45,20 35,20 Z" />
+
+    <!-- Joints/Bands -->
+    <path
+        android:fillColor="#5D4037"
+        android:pathData="M25,12 h10 v2 h-10z M10,35 h5 v2 h-5z M45,35 h5 v2 h-5z" />
+</vector>
