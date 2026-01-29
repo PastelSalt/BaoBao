@@ -22,8 +22,8 @@ class AuthActivity : AppCompatActivity() {
         }
 
         binding.loginButton.setOnClickListener {
-            // Keep Auth to Main transition at 1.5s (1500L)
-            LoadingActivity.startWithTarget(this, MainActivity::class.java, 1500L)
+            // Navigate to Mood Selection to check in with user's feelings
+            LoadingActivity.startWithTarget(this, MoodSelectionActivity::class.java, 1500L)
             finish()
         }
     }

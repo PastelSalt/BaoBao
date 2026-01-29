@@ -22,6 +22,8 @@
         </activity>
 
         <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".MoodSelectionActivity" android:exported="false" />
+        <activity android:name=".ResourcesActivity" android:exported="false" />
         <activity android:name=".SettingsActivity" android:exported="false" />
         <activity android:name=".ShopActivity" android:exported="false" />
         <activity

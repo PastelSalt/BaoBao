@@ -5,136 +5,290 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bamboo_dialog_bg">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="32dp">
+        android:scrollbars="none">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Settings"
-            android:textColor="@color/green"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <!-- BGM Setting -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Background Music"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/bgmSlider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:value="70.0"
-            android:valueFrom="0.0"
-            android:valueTo="100.0"
-            app:haloColor="@color/light_green"
-            app:thumbColor="@color/green"
-            app:trackColorActive="@color/green"
-            app:trackColorInactive="@color/pale_green" />
-
-        <!-- Voice Setting -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Voice"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/voiceSlider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:value="80.0"
-            android:valueFrom="0.0"
-            android:valueTo="100.0"
-            app:haloColor="@color/light_green"
-            app:thumbColor="@color/green"
-            app:trackColorActive="@color/green"
-            app:trackColorInactive="@color/pale_green" />
-
-        <!-- Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/signOutButton"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            <!-- Header -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Sign Out"
-                android:textColor="@color/white"
-                android:textAllCaps="false"
-                android:background="@drawable/bamboo_button_tan"
-                app:backgroundTint="@null"
-                app:cornerRadius="16dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/closeButton"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="8dp"
-                android:text="Close"
-                android:textColor="@color/green" />
-        </LinearLayout>
-
-        <!-- Character & Speech Bubble Area -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/characterArea"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/speechBubble"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/characterIcon"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/gray"
-                app:strokeWidth="2dp">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
 
                 <TextView
-                    android:id="@+id/bubbleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Settings"
+                    android:textColor="@color/green"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05" />
+
+                <View
+                    android:layout_width="60dp"
+                    android:layout_height="3dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/green"
+                    android:alpha="0.6" />
+            </LinearLayout>
+
+            <!-- Audio Settings Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/off_white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeColor="@color/green"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:text="Need to adjust something? I'm here to help!"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎵 Audio Controls"
+                        android:textColor="@color/green"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- BGM Setting -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Background Music"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/bgmValueText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="70%"
+                            android:textColor="@color/green"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:minWidth="45dp"
+                            android:gravity="end" />
+                    </LinearLayout>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/bgmSlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:value="70.0"
+                        android:valueFrom="0.0"
+                        android:valueTo="100.0"
+                        app:haloColor="@color/light_green"
+                        app:thumbColor="@color/green"
+                        app:trackColorActive="@color/green"
+                        app:trackColorInactive="@color/pale_green"
+                        app:trackHeight="6dp" />
+
+                    <!-- SFX Setting -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Sound Effects"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/sfxValueText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="80%"
+                            android:textColor="@color/green"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:minWidth="45dp"
+                            android:gravity="end" />
+                    </LinearLayout>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/sfxSlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:value="80.0"
+                        android:valueFrom="0.0"
+                        android:valueTo="100.0"
+                        app:haloColor="@color/light_green"
+                        app:thumbColor="@color/green"
+                        app:trackColorActive="@color/green"
+                        app:trackColorInactive="@color/pale_green"
+                        app:trackHeight="6dp" />
+
+                    <!-- Voice Setting -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Voice"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/voiceValueText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="80%"
+                            android:textColor="@color/green"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:minWidth="45dp"
+                            android:gravity="end" />
+                    </LinearLayout>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/voiceSlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:value="80.0"
+                        android:valueFrom="0.0"
+                        android:valueTo="100.0"
+                        app:haloColor="@color/light_green"
+                        app:thumbColor="@color/green"
+                        app:trackColorActive="@color/green"
+                        app:trackColorInactive="@color/pale_green"
+                        app:trackHeight="6dp" />
+
+                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <ImageView
-                android:id="@+id/characterIcon"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/baobao_main_default"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/green" />
+            <!-- Character & Speech Bubble Area -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/characterArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="16dp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/speechBubble"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    app:cardBackgroundColor="@color/light_cream"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="6dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/characterCard"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/green"
+                    app:strokeWidth="2dp">
 
-    </LinearLayout>
+                    <TextView
+                        android:id="@+id/bubbleText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="14dp"
+                        android:text="Need to adjust something? I'm here to help!"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="2dp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/characterCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="4dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/characterIcon"
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:contentDescription="BaoBao character"
+                        android:src="@drawable/baobao_main_default" />
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/signOutButton"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Sign Out"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bamboo_button_tan"
+                    app:backgroundTint="@null"
+                    app:cornerRadius="16dp"
+                    app:icon="@android:drawable/ic_menu_revert"
+                    app:iconTint="@color/white"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/closeButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Close"
+                    android:textColor="@color/green"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 </FrameLayout>

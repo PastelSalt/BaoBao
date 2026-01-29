@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 
 object SoundManager {
     private var mediaPlayer: MediaPlayer? = null
+    private var sfxPlayer: MediaPlayer? = null
     private var currentResId: Int = 0
 
     fun playBGM(context: Context, resId: Int) {
@@ -30,8 +31,8 @@ object SoundManager {
 
     fun applyVolume(context: Context) {
         val prefs = context.getSharedPreferences("BaoBaoPrefs", Context.MODE_PRIVATE)
-        val volume = prefs.getFloat("bgm_volume", 0.7f)
-        mediaPlayer?.setVolume(volume, volume)
+        val bgmVolume = prefs.getFloat("bgm_volume", 0.7f)
+        mediaPlayer?.setVolume(bgmVolume, bgmVolume)
     }
 
     fun setVolume(volume: Float) {
@@ -49,5 +50,23 @@ object SoundManager {
         mediaPlayer?.release()
         mediaPlayer = null
         currentResId = 0
+    }
+
+    // SFX Support
+    fun playClickSound(context: Context) {
+        val prefs = context.getSharedPreferences("BaoBaoPrefs", Context.MODE_PRIVATE)
+        val sfxVolume = prefs.getFloat("sfx_volume", 0.8f)
+
+        try {
+            sfxPlayer?.release()
+            sfxPlayer = MediaPlayer.create(context.applicationContext, R.raw.click_sfx)
+            sfxPlayer?.setVolume(sfxVolume, sfxVolume)
+            sfxPlayer?.setOnCompletionListener { mp ->
+                mp.release()
+            }
+            sfxPlayer?.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
