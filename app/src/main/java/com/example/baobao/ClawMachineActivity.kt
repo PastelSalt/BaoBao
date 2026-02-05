@@ -96,6 +96,9 @@ class ClawMachineActivity : BaseActivity() {
         val database = AppDatabase.getDatabase(this)
         userRepository = UserRepository(database.userDao())
 
+        // Apply voice settings
+        VoiceManager.applySettings(this)
+
         initializeGame()
     }
 
@@ -109,7 +112,9 @@ class ClawMachineActivity : BaseActivity() {
             SoundManager.playClickSound(this)
             goBackWithLoading()
         }
-        binding.bubbleText.text = ConversationManager.getRandomClawMachine()
+        val (text, index) = ConversationManager.getRandomClawMachineWithIndex()
+        binding.bubbleText.text = text
+        VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, index))
         binding.clawString.pivotY = 0f
         
         // Setup game logic
@@ -224,6 +229,7 @@ class ClawMachineActivity : BaseActivity() {
 
         currentState = GameState.MOVING
         binding.bubbleText.text = ConversationManager.getClawMachineMove()
+        VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, ConversationManager.getClawMachineMoveIndex()))
         handler.post(moveRunnable)
     }
 
@@ -307,9 +313,11 @@ class ClawMachineActivity : BaseActivity() {
         if (success) {
             caughtPrizeValue = prizeValues[caughtPrize] ?: 50
             binding.bubbleText.text = "Nice! You got $caughtPrizeValue ✷!"
+            VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, ConversationManager.getClawMachineWinIndex()))
         } else {
             caughtPrizeValue = 0
             binding.bubbleText.text = ConversationManager.getClawMachineLoss()
+            VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, ConversationManager.getClawMachineLossIndex()))
         }
 
         animateLift(dropDistance, success)
@@ -409,6 +417,7 @@ class ClawMachineActivity : BaseActivity() {
     private fun completeRound() {
         currentState = GameState.COMPLETED
         binding.bubbleText.text = ConversationManager.getClawMachineRepeat()
+        VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, ConversationManager.getClawMachineRepeatIndex()))
 
         handler.postDelayed({
             resetClaw()
@@ -428,12 +437,37 @@ class ClawMachineActivity : BaseActivity() {
     private fun randomizePrizes() {
         val prizes = listOf(binding.prize1, binding.prize2, binding.prize3, binding.prize4)
         val containerWidth = binding.gameContainer.width.toFloat()
+        val containerHeight = binding.gameContainer.height.toFloat()
         val dropZoneWidth = binding.dropZone.width.toFloat()
-        val startRange = dropZoneWidth + 20
-        val endRange = containerWidth - 80
-        
-        prizes.forEach { prize ->
-            prize.x = startRange + Random.nextFloat() * (endRange - startRange - prize.width)
+        val prizeSize = 60 * resources.displayMetrics.density // 60dp prize size
+        val spacing = 16 * resources.displayMetrics.density // 16dp spacing between prizes
+
+        // Calculate available area for prizes (excluding drop zone)
+        val startX = dropZoneWidth + spacing
+        val availableWidth = containerWidth - startX - spacing
+
+        // Calculate how much space each prize slot needs
+        val totalPrizesWidth = prizes.size * prizeSize + (prizes.size - 1) * spacing
+
+        // If there's enough space, spread evenly; otherwise, use available space
+        val actualSpacing = if (totalPrizesWidth <= availableWidth) {
+            // Spread evenly across available space
+            (availableWidth - (prizes.size * prizeSize)) / (prizes.size + 1)
+        } else {
+            // Compress to fit
+            spacing * 0.5f
+        }
+
+        prizes.forEachIndexed { index, prize ->
+            // Position each prize with even spacing, starting after the drop zone
+            val posX = startX + actualSpacing + index * (prizeSize + actualSpacing)
+
+            // Add slight random offset for natural look (-10 to +10 dp)
+            val randomOffsetX = (Random.nextFloat() - 0.5f) * 20 * resources.displayMetrics.density
+            val randomOffsetY = Random.nextFloat() * 10 * resources.displayMetrics.density
+
+            prize.x = (posX + randomOffsetX).coerceIn(startX, containerWidth - prizeSize - spacing)
+            prize.y = containerHeight - prizeSize - spacing - randomOffsetY
             prize.translationX = 0f
             prize.translationY = 0f
             prize.visibility = View.VISIBLE
@@ -452,7 +486,9 @@ class ClawMachineActivity : BaseActivity() {
         binding.clawString.scaleY = 0.01f
         caughtPrize = null
         caughtPrizeValue = 0
-        binding.bubbleText.text = ConversationManager.getRandomClawMachine()
+        val (text, index) = ConversationManager.getRandomClawMachineWithIndex()
+        binding.bubbleText.text = text
+        VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, index))
     }
 
     private fun awardCurrency(amount: Int) {
@@ -475,6 +511,7 @@ class ClawMachineActivity : BaseActivity() {
         saveTriesData()
         // Stop timer updates when activity is paused to save resources
         handler.removeCallbacks(timerUpdateRunnable)
+        VoiceManager.pauseVoice()
     }
 
     override fun onResume() {
@@ -486,6 +523,7 @@ class ClawMachineActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         cleanupAnimations()
+        VoiceManager.stopVoice()
     }
 
     private fun goBackWithLoading() {

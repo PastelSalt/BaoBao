@@ -13,10 +13,13 @@ import com.example.baobao.database.AppDatabase
 import com.example.baobao.database.UserRepository
 import com.example.baobao.databinding.ActivityMainBinding
 import com.example.baobao.databinding.DialogCustomizeBinding
+import com.example.baobao.databinding.DialogMoodSelectionBinding
 import com.example.baobao.databinding.DialogSettingsBinding
 import com.example.baobao.intervention.InterventionManager
 import com.example.baobao.models.ConversationNode
+import com.example.baobao.models.PrimaryMood
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -63,6 +66,12 @@ class MainActivity : BaseActivity() {
         val database = AppDatabase.getDatabase(this)
         userRepository = UserRepository(database.userDao())
 
+        // Initialize voice settings
+        VoiceManager.applySettings(this)
+
+        // Set initial character image to hello/greeting
+        binding.characterImage.setImageResource(CharacterImageManager.getHelloImage())
+
         // Get selected mood from intent
         val selectedMood = intent.getStringExtra("selected_mood")
         val shouldStartConversation = intent.getBooleanExtra("start_conversation", false)
@@ -88,6 +97,9 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showMoodGreeting(mood: String) {
+        // Update character image to match mood
+        binding.characterImage.setImageResource(CharacterImageManager.getCharacterImageForMood(mood))
+
         binding.conversationText.text = when (mood.lowercase()) {
             "happy" -> "I'm so happy you're feeling good! What would you like to do today? Maybe hear a joke or just hang out? 😊"
             "okay" -> "Thanks for sharing how you're feeling. I'm here with you! Want to chat, play a game, or just take it easy? 🐼"
@@ -123,12 +135,11 @@ class MainActivity : BaseActivity() {
     private fun setupCharacterInteraction() {
         binding.characterImage.setOnClickListener {
             SoundManager.playClickSound(this)
-            // Exit conversation mode if active, then navigate to mood selection
+            // Exit conversation mode if active, then show mood selection dialog
             if (isConversationMode) {
                 exitConversationMode()
             }
-            val intent = Intent(this, MoodSelectionActivity::class.java)
-            startActivity(intent)
+            showMoodSelectionDialog()
         }
     }
 
@@ -136,25 +147,37 @@ class MainActivity : BaseActivity() {
         binding.jokeButton.setOnClickListener {
             if (isConversationMode) return@setOnClickListener // Guard against accidental clicks
             SoundManager.playClickSound(this)
-            binding.conversationText.text = ConversationManager.getRandomJoke()
+            val (text, index) = ConversationManager.getRandomJokeWithIndex()
+            binding.conversationText.text = text
+            // Play joke voice
+            ConversationManager.playSimpleAudio(this, "joke", index)
         }
 
         binding.affirmationButton.setOnClickListener {
             if (isConversationMode) return@setOnClickListener // Guard against accidental clicks
             SoundManager.playClickSound(this)
-            binding.conversationText.text = ConversationManager.getRandomAffirmation()
+            val (text, index) = ConversationManager.getRandomAffirmationWithIndex()
+            binding.conversationText.text = text
+            // Play affirmation voice
+            ConversationManager.playSimpleAudio(this, "affirmation", index)
         }
 
         binding.selfCareButton.setOnClickListener {
             if (isConversationMode) return@setOnClickListener // Guard against accidental clicks
             SoundManager.playClickSound(this)
-            binding.conversationText.text = ConversationManager.getRandomSelfCare()
+            val (text, index) = ConversationManager.getRandomSelfCareWithIndex()
+            binding.conversationText.text = text
+            // Play self-care voice
+            ConversationManager.playSimpleAudio(this, "selfcare", index)
         }
 
         binding.goodbyeButton.setOnClickListener {
             if (isConversationMode) return@setOnClickListener // Guard against accidental clicks
             SoundManager.playClickSound(this)
-            binding.conversationText.text = ConversationManager.getRandomGoodbye()
+            val (text, index) = ConversationManager.getRandomGoodbyeWithIndex()
+            binding.conversationText.text = text
+            // Play goodbye voice
+            ConversationManager.playSimpleAudio(this, "goodbye", index)
             handler.postDelayed({
                 finishAffinity()
             }, 3000)
@@ -256,17 +279,22 @@ class MainActivity : BaseActivity() {
     private fun handleMockChoice(action: String) {
         when (action) {
             "show_affirmation" -> {
-                binding.conversationText.text = ConversationManager.getRandomAffirmation()
+                val (text, index) = ConversationManager.getRandomAffirmationWithIndex()
+                binding.conversationText.text = text
+                ConversationManager.playSimpleAudio(this, "affirmation", index)
             }
             "show_joke" -> {
-                binding.conversationText.text = ConversationManager.getRandomJoke()
+                val (text, index) = ConversationManager.getRandomJokeWithIndex()
+                binding.conversationText.text = text
+                ConversationManager.playSimpleAudio(this, "joke", index)
             }
             "show_selfcare" -> {
-                binding.conversationText.text = ConversationManager.getRandomSelfCare()
+                val (text, index) = ConversationManager.getRandomSelfCareWithIndex()
+                binding.conversationText.text = text
+                ConversationManager.playSimpleAudio(this, "selfcare", index)
             }
             "happy_start" -> {
-                val intent = Intent(this, MoodSelectionActivity::class.java)
-                startActivity(intent)
+                showMoodSelectionDialog()
             }
         }
     }
@@ -289,17 +317,22 @@ class MainActivity : BaseActivity() {
             var selectedBgm = userRepository.getSelectedBgm()
 
             // Update currency display
-            dialogBinding.currencyText.text = String.format("%,d", currency)
+            // TODO: Add currencyText view to dialog_customize.xml
+            // dialogBinding.currencyText.text = String.format("%,d", currency)
 
             // Update button states based on ownership
+            // TODO: Add BGM buttons to dialog_customize.xml or create them dynamically
+            /*
             updateCustomizeBGMButton(dialogBinding.bgmKakushigotoButton, "kakushigoto",
                 0, ownedBGMs.toSet(), selectedBgm, true)
             updateCustomizeBGMButton(dialogBinding.bgmLittleButton, "little",
                 500, ownedBGMs.toSet(), selectedBgm, false)
             updateCustomizeBGMButton(dialogBinding.bgmOrdinaryButton, "ordinary",
                 1000, ownedBGMs.toSet(), selectedBgm, false)
+            */
 
             // Kakushigoto button (always unlocked)
+            /*
             dialogBinding.bgmKakushigotoButton.setOnClickListener {
                 SoundManager.playClickSound(this@MainActivity)
                 lifecycleScope.launch {
@@ -308,8 +341,10 @@ class MainActivity : BaseActivity() {
                     updateDialogBGMSelection(dialogBinding, selectedBgm, ownedBGMs.toSet(), currency)
                 }
             }
+            */
 
             // Little button (500 currency)
+            /*
             dialogBinding.bgmLittleButton.setOnClickListener {
                 SoundManager.playClickSound(this@MainActivity)
                 lifecycleScope.launch {
@@ -336,8 +371,10 @@ class MainActivity : BaseActivity() {
                     }
                 }
             }
+            */
 
             // Ordinary Days button (1000 currency)
+            /*
             dialogBinding.bgmOrdinaryButton.setOnClickListener {
                 SoundManager.playClickSound(this@MainActivity)
                 lifecycleScope.launch {
@@ -364,6 +401,10 @@ class MainActivity : BaseActivity() {
                     }
                 }
             }
+            */
+
+            // Temporary message until dialog is fixed
+            dialogBinding.bubbleText.text = "Customization is being updated! Visit the Shop for BGM options! 🎨"
 
             dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
@@ -372,10 +413,17 @@ class MainActivity : BaseActivity() {
                 dialog.dismiss()
             }
 
+            dialogBinding.shopButton.setOnClickListener {
+                SoundManager.playClickSound(this@MainActivity)
+                dialog.dismiss()
+                LoadingActivity.startWithTarget(this@MainActivity, ShopActivity::class.java)
+            }
+
             dialog.show()
         }
     }
 
+    /* TODO: Re-implement when dialog UI is fixed
     private fun updateCustomizeBGMButton(
         button: com.google.android.material.button.MaterialButton,
         bgmKey: String,
@@ -412,13 +460,17 @@ class MainActivity : BaseActivity() {
             button.strokeWidth = 2
         }
     }
+    */
 
+    /* TODO: Re-implement when dialog UI is fixed
     private suspend fun selectBGMInDialogDB(bgmKey: String, resId: Int) {
         userRepository.setSelectedBgm(bgmKey)
         SoundManager.stopBGM()
         SoundManager.playBGM(this, resId)
     }
+    */
 
+    /* TODO: Re-implement when dialog UI is fixed
     private fun updateDialogBGMSelection(
         dialogBinding: DialogCustomizeBinding,
         selectedBgm: String,
@@ -432,6 +484,7 @@ class MainActivity : BaseActivity() {
         updateCustomizeBGMButton(dialogBinding.bgmOrdinaryButton, "ordinary",
             1000, ownedBGMs, selectedBgm, false)
     }
+    */
 
     private fun showSettingsDialog() {
         val dialogBinding = DialogSettingsBinding.inflate(LayoutInflater.from(this))
@@ -498,11 +551,62 @@ class MainActivity : BaseActivity() {
         dialog.show()
     }
 
+    private fun showMoodSelectionDialog() {
+        val dialogBinding = DialogMoodSelectionBinding.inflate(LayoutInflater.from(this))
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogBinding.root)
+            .setCancelable(true)
+            .create()
+
+        // Setup mood card click listeners
+        dialogBinding.moodHappyCard.setOnClickListener {
+            SoundManager.playClickSound(this)
+            dialog.dismiss()
+            handleMoodSelection(PrimaryMood.HAPPY)
+        }
+
+        dialogBinding.moodOkayCard.setOnClickListener {
+            SoundManager.playClickSound(this)
+            dialog.dismiss()
+            handleMoodSelection(PrimaryMood.OKAY)
+        }
+
+        dialogBinding.moodSadCard.setOnClickListener {
+            SoundManager.playClickSound(this)
+            dialog.dismiss()
+            handleMoodSelection(PrimaryMood.SAD)
+        }
+
+        dialogBinding.moodAnxiousCard.setOnClickListener {
+            SoundManager.playClickSound(this)
+            dialog.dismiss()
+            handleMoodSelection(PrimaryMood.ANXIOUS)
+        }
+
+        dialogBinding.moodTiredCard.setOnClickListener {
+            SoundManager.playClickSound(this)
+            dialog.dismiss()
+            handleMoodSelection(PrimaryMood.TIRED)
+        }
+
+        dialog.show()
+    }
+
+    private fun handleMoodSelection(mood: PrimaryMood) {
+        // Update character image to match the mood
+        binding.characterImage.setImageResource(CharacterImageManager.getCharacterImageForMood(mood.name.lowercase()))
+
+        // Show mood-specific greeting and start conversation
+        showMoodGreeting(mood.name.lowercase())
+        startConversation(mood.name.lowercase())
+    }
+
     override fun onResume() {
         super.onResume()
         handler.post(timeUpdater)
 
-        // Load BGM from database
+        // Resume or play BGM (playBGM already handles resuming same track)
         lifecycleScope.launch {
             val selectedBgm = userRepository.getSelectedBgm()
             val resId = getBgmResourceForKey(selectedBgm)
@@ -513,6 +617,16 @@ class MainActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         handler.removeCallbacks(timeUpdater)
+        // Pause BGM when activity is not visible
+        SoundManager.pauseBGM()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Remove all callbacks to prevent memory leaks
+        handler.removeCallbacksAndMessages(null)
+        // Stop voice playback
+        VoiceManager.stopVoice()
     }
 
     // ========== CONVERSATION SYSTEM ==========
@@ -522,6 +636,9 @@ class MainActivity : BaseActivity() {
         isConversationMode = true
         isShowingStaticButtons = false // Start with conversation choices visible
         conversationPath.clear()
+
+        // Update character image to match mood
+        binding.characterImage.setImageResource(CharacterImageManager.getCharacterImageForMood(mood))
 
         // Show toggle button when entering conversation mode
         binding.buttonToggleButton.visibility = View.VISIBLE
@@ -549,6 +666,11 @@ class MainActivity : BaseActivity() {
 
         // Update conversation text
         binding.conversationText.text = node.baobaoLine
+
+        // Play voice for this conversation node
+        if (currentMood != null) {
+            ConversationManager.playNodeAudio(this, node.id, currentMood!!)
+        }
 
         // Animate character
         binding.characterImage.animate()
@@ -601,21 +723,27 @@ class MainActivity : BaseActivity() {
         when (feature) {
             "joke" -> {
                 exitConversationMode()
-                binding.conversationText.text = ConversationManager.getRandomJoke()
+                val (text, index) = ConversationManager.getRandomJokeWithIndex()
+                binding.conversationText.text = text
+                ConversationManager.playSimpleAudio(this, "joke", index)
             }
             "claw-machine" -> {
                 LoadingActivity.startWithTarget(this, ClawMachineActivity::class.java)
             }
             "self-care" -> {
                 exitConversationMode()
-                binding.conversationText.text = ConversationManager.getRandomSelfCare()
+                val (text, index) = ConversationManager.getRandomSelfCareWithIndex()
+                binding.conversationText.text = text
+                ConversationManager.playSimpleAudio(this, "selfcare", index)
             }
             "shop" -> {
                 LoadingActivity.startWithTarget(this, ShopActivity::class.java)
             }
             "affirmation" -> {
                 exitConversationMode()
-                binding.conversationText.text = ConversationManager.getRandomAffirmation()
+                val (text, index) = ConversationManager.getRandomAffirmationWithIndex()
+                binding.conversationText.text = text
+                ConversationManager.playSimpleAudio(this, "affirmation", index)
             }
         }
     }
@@ -742,8 +870,7 @@ class MainActivity : BaseActivity() {
 
     private fun returnToMoodSelector() {
         exitConversationMode()
-        val intent = Intent(this, MoodSelectionActivity::class.java)
-        startActivity(intent)
+        showMoodSelectionDialog()
     }
 
     private fun exitConversationMode() {

@@ -6,28 +6,52 @@
     android:background="@drawable/main_bamboo_background"
     android:fitsSystemWindows="true">
 
-    <!-- Close Button -->
-    <ImageButton
-        android:id="@+id/closeButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:contentDescription="Close"
-        app:tint="@color/green"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- Top Bar / Header Area -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/closeButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Back"
+            android:textColor="@color/green"
+            android:textAllCaps="false"
+            app:icon="@android:drawable/ic_menu_revert"
+            app:iconTint="@color/green"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/resourcesTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resources"
+            android:textColor="@color/green"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- ScrollView for content -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/closeButton">
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,55 +59,50 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- BaoBao Character -->
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/baobao_main_default"
-                android:contentDescription="BaoBao character" />
-
-            <!-- Title -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:text="Mental Health Resources"
-                android:textColor="@color/green"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium" />
-
-            <!-- Subtitle -->
+            <!-- Subtitle Info Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="@color/pale_green"
-                app:cardCornerRadius="12dp"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/light_green"
-                app:strokeWidth="2dp">
+                app:strokeColor="@color/green"
+                app:strokeWidth="1dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="You're not alone. These resources are available 24/7 to provide support, guidance, and care. Reaching out is a sign of strength. 💚"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:lineSpacingExtra="2dp" />
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginBottom="12dp"
+                        android:src="@drawable/baobao_main_default"
+                        android:contentDescription="BaoBao character" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="You're not alone. These resources are available 24/7 to provide support, guidance, and care. Reaching out is a sign of strength. 💚"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textAlignment="center"
+                        android:lineSpacingExtra="4dp" />
+                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Crisis Resources Section -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"
                 android:text="🆘 Immediate Support"
                 android:textColor="@color/green"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <!-- Crisis Text Line -->
@@ -91,15 +110,14 @@
                 android:id="@+id/crisisTextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/off_white"
-                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="4dp"
                 app:strokeColor="@color/green"
-                app:strokeWidth="2dp">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -112,7 +130,7 @@
                         android:layout_height="wrap_content"
                         android:text="💬 Crisis Text Line"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -129,7 +147,7 @@
                         android:layout_marginTop="4dp"
                         android:text="Free, 24/7 support via text message"
                         android:textColor="@color/gray"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -138,15 +156,14 @@
                 android:id="@+id/suicidePreventionButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginBottom="24dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/off_white"
-                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="4dp"
                 app:strokeColor="@color/green"
-                app:strokeWidth="2dp">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -159,7 +176,7 @@
                         android:layout_height="wrap_content"
                         android:text="☎️ 988 Suicide &amp; Crisis Lifeline"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -176,7 +193,7 @@
                         android:layout_marginTop="4dp"
                         android:text="Confidential support for people in distress"
                         android:textColor="@color/gray"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -184,10 +201,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"
                 android:text="🌿 Additional Support"
                 android:textColor="@color/green"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <!-- SAMHSA -->
@@ -195,15 +212,14 @@
                 android:id="@+id/samhsaButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/off_white"
-                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="4dp"
                 app:strokeColor="@color/green"
-                app:strokeWidth="2dp">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -216,7 +232,7 @@
                         android:layout_height="wrap_content"
                         android:text="📞 SAMHSA National Helpline"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -233,7 +249,7 @@
                         android:layout_marginTop="4dp"
                         android:text="Treatment referral and information service"
                         android:textColor="@color/gray"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -242,15 +258,14 @@
                 android:id="@+id/namiButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/off_white"
-                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="4dp"
                 app:strokeColor="@color/green"
-                app:strokeWidth="2dp">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -261,16 +276,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🤝 NAMI HelpLine"
+                        android:text="📞 NAMI Helpline"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="1-800-950-NAMI (6264)"
+                        android:text="1-800-950-6264"
                         android:textColor="@color/green"
                         android:textSize="14sp" />
 
@@ -278,9 +293,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Information, support, and resources"
+                        android:text="Mental health support and information"
                         android:textColor="@color/gray"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -289,29 +304,29 @@
                 android:id="@+id/learnMoreButton"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:padding="16dp"
+                android:layout_height="56dp"
+                android:layout_marginBottom="12dp"
                 android:text="🌐 Learn More Online"
                 android:textColor="@color/green"
+                android:textAllCaps="false"
                 android:textSize="16sp"
-                app:cornerRadius="12dp"
+                app:cornerRadius="16dp"
                 app:strokeColor="@color/green"
-                app:strokeWidth="2dp" />
+                app:strokeWidth="1dp" />
 
             <!-- Return to Mood Check-in Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/returnToMoodButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="24dp"
-                android:padding="16dp"
+                android:layout_height="56dp"
+                android:layout_marginBottom="32dp"
                 android:text="Return to BaoBao"
                 android:textColor="@color/white"
+                android:textAllCaps="false"
                 android:textSize="16sp"
+                android:textStyle="bold"
                 app:backgroundTint="@color/green"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="16dp" />
 
         </LinearLayout>
     </ScrollView>

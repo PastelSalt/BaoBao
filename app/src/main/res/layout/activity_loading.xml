@@ -4,47 +4,127 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/off_white"
+    android:background="@drawable/main_bamboo_background"
     android:fitsSystemWindows="true">
 
-    <ImageView
-        android:id="@+id/loadingImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@drawable/bao_bao_loadingscreen"
-        app:layout_constraintBottom_toTopOf="@+id/loadingText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <TextView
-        android:id="@+id/loadingText"
-        android:layout_width="wrap_content"
+    <!-- Loading Card Container - bamboo frame style consistent with auth screen -->
+    <FrameLayout
+        android:id="@+id/loadingCard"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Loading..."
-        android:textColor="@color/green"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/progressBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loadingImage" />
-
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progressBar"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:indeterminate="true"
-        app:indicatorColor="@color/green"
+        android:layout_marginHorizontal="32dp"
+        android:background="@drawable/bamboo_loading_card_bg"
+        android:elevation="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loadingText"
-        app:trackColor="@color/pale_green"
-        app:trackThickness="8dp"
-        app:trackCornerRadius="4dp" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="38dp"
+            android:paddingTop="48dp"
+            android:paddingBottom="44dp">
+
+            <!-- Animated Loading Image with pulse effect -->
+            <ImageView
+                android:id="@+id/loadingImage"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:contentDescription="Loading"
+                android:elevation="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/bao_bao_loadingscreen" />
+
+            <!-- Loading Text with enhanced typography -->
+            <TextView
+                android:id="@+id/loadingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.08"
+                android:text="Loading..."
+                android:textColor="@color/green"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <!-- Subtitle hint text -->
+            <TextView
+                android:id="@+id/loadingHintText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:alpha="0.7"
+                android:fontFamily="sans-serif-light"
+                android:letterSpacing="0.02"
+                android:text="Preparing your experience"
+                android:textColor="@color/green"
+                android:textSize="14sp" />
+
+            <!-- Enhanced Progress Indicator -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:indeterminate="true"
+                app:indicatorColor="@color/green"
+                app:trackColor="@color/pale_green"
+                app:trackCornerRadius="6dp"
+                app:trackThickness="10dp" />
+
+            <!-- Animated dots indicator -->
+            <LinearLayout
+                android:id="@+id/dotsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <View
+                    android:id="@+id/dot1"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:background="@drawable/loading_dot" />
+
+                <View
+                    android:id="@+id/dot2"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:background="@drawable/loading_dot" />
+
+                <View
+                    android:id="@+id/dot3"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:background="@drawable/loading_dot" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Footer - consistent with auth screen -->
+    <TextView
+        android:id="@+id/footerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:fontFamily="sans-serif-light"
+        android:letterSpacing="0.05"
+        android:text="© 2026 BaoBao"
+        android:textColor="@color/gray"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

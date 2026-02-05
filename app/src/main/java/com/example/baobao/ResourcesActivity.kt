@@ -64,7 +64,7 @@ class ResourcesActivity : AppCompatActivity() {
         // Return to mood check-in
         binding.returnToMoodButton.setOnClickListener {
             SoundManager.playClickSound(this)
-            val intent = Intent(this, MoodSelectionActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
             finish()

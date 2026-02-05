@@ -14,67 +14,53 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="20dp">
 
-            <!-- Header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingBottom="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Customize"
-                    android:textColor="@color/green"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.05" />
-
-                <View
-                    android:layout_width="60dp"
-                    android:layout_height="3dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/green"
-                    android:alpha="0.6" />
-
-                <!-- Currency Display -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✷"
-                        android:textColor="@color/tan"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/currencyText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="1,250"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- BGM Selection Card -->
+            <!-- Header with bamboo decorative frame -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="@color/off_white"
-                app:cardCornerRadius="16dp"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:strokeColor="@color/green"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎨 Customize BaoBao"
+                        android:textColor="@color/green"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <!-- Decorative bamboo divider -->
+                    <View
+                        android:layout_width="60dp"
+                        android:layout_height="3dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/bamboo_button_frame"
+                        android:backgroundTint="@color/green"
+                        android:alpha="0.6" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- BGM Selection Card - Only Owned BGM -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
                 app:strokeColor="@color/green"
                 app:strokeWidth="2dp">
@@ -85,140 +71,184 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Section Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="🎵 Background Music"
-                        android:textColor="@color/green"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="16dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
-                    <!-- BGM Option 1 -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/bgmKakushigotoButton"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginBottom="12dp"
-                        android:text="Kakushigoto"
-                        android:textColor="@color/green"
-                        android:textSize="15sp"
-                        android:textAllCaps="false"
-                        android:textStyle="bold"
-                        app:cornerRadius="16dp"
-                        app:strokeColor="@color/green"
-                        app:strokeWidth="2dp"
-                        app:icon="@android:drawable/ic_media_play"
-                        app:iconTint="@color/green"
-                        app:iconGravity="textStart" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="🎵 Your Music Collection"
+                            android:textColor="@color/green"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
-                    <!-- BGM Option 2 -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/bgmLittleButton"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginBottom="12dp"
-                        android:text="Little"
-                        android:textColor="@color/green"
-                        android:textSize="15sp"
-                        android:textAllCaps="false"
-                        android:textStyle="bold"
-                        app:cornerRadius="16dp"
-                        app:strokeColor="@color/green"
-                        app:strokeWidth="2dp"
-                        app:icon="@android:drawable/ic_media_play"
-                        app:iconTint="@color/green"
-                        app:iconGravity="textStart" />
+                        <!-- Bamboo decorative element -->
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="20dp"
+                            android:background="@color/green"
+                            android:alpha="0.3" />
+                    </LinearLayout>
 
-                    <!-- BGM Option 3 -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/bgmOrdinaryButton"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    <!-- Dynamic BGM Container - populated by code -->
+                    <LinearLayout
+                        android:id="@+id/ownedBgmContainer"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:text="Ordinary Days"
-                        android:textColor="@color/green"
-                        android:textSize="15sp"
-                        android:textAllCaps="false"
-                        android:textStyle="bold"
-                        app:cornerRadius="16dp"
-                        app:strokeColor="@color/green"
-                        app:strokeWidth="2dp"
-                        app:icon="@android:drawable/ic_media_play"
-                        app:iconTint="@color/green"
-                        app:iconGravity="textStart" />
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <!-- No BGM message when user has no purchased music -->
+                    <LinearLayout
+                        android:id="@+id/noBgmContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🏪"
+                            android:textSize="32sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Visit the Shop to get more BGM!"
+                            android:textColor="@color/gray"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:gravity="center" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Character & Speech Bubble Area -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/characterArea"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/pale_green"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/green"
+                app:strokeWidth="1dp">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/speechBubble"
-                    android:layout_width="0dp"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/characterArea"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    app:cardBackgroundColor="@color/light_cream"
-                    app:cardCornerRadius="18dp"
-                    app:cardElevation="6dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/characterCard"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:strokeColor="@color/green"
-                    app:strokeWidth="2dp">
+                    android:padding="12dp">
 
-                    <TextView
-                        android:id="@+id/bubbleText"
-                        android:layout_width="match_parent"
+                    <!-- Speech Bubble -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/speechBubble"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:padding="14dp"
-                        android:text="Pick your favorite tune! Each one has its own vibe."
-                        android:textColor="@color/black"
-                        android:textSize="13sp"
-                        android:lineSpacingExtra="2dp" />
-                </com.google.android.material.card.MaterialCardView>
+                        android:layout_marginEnd="8dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/characterIconCard"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.65"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="2dp">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/characterCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@android:color/transparent"
-                    app:cardCornerRadius="50dp"
-                    app:cardElevation="4dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                        <TextView
+                            android:id="@+id/bubbleText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:text="Customization is being updated! Visit the Shop for BGM options! 🎨"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            android:lineSpacingExtra="1dp"
+                            android:maxLines="4"
+                            android:ellipsize="end" />
+                    </com.google.android.material.card.MaterialCardView>
 
-                    <ImageView
-                        android:id="@+id/characterIcon"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
-                        android:contentDescription="BaoBao character"
-                        android:src="@drawable/baobao_main_default" />
-                </com.google.android.material.card.MaterialCardView>
+                    <!-- BaoBao Character with frame -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/characterIconCard"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="3dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="2dp">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        <ImageView
+                            android:id="@+id/characterIcon"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="BaoBao character"
+                            android:src="@drawable/baobao_main_default"
+                            android:scaleType="centerCrop" />
+                    </com.google.android.material.card.MaterialCardView>
 
-            <!-- Close Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/closeButton"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Action Buttons -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="8dp"
-                android:text="Close"
-                android:textColor="@color/green"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <!-- Shop Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/shopButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="🏪 Shop"
+                    android:textColor="@color/green"
+                    android:textAllCaps="false"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="16dp"
+                    app:strokeColor="@color/green"
+                    app:strokeWidth="2dp" />
+
+                <!-- Close Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/closeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Close"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bamboo_button_green"
+                    app:backgroundTint="@null"
+                    app:cornerRadius="16dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

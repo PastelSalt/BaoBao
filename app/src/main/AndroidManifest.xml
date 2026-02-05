@@ -12,17 +12,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BaoBao">
 
+        <!-- Splash Screen Activity -->
         <activity
-            android:name=".AuthActivity"
-            android:exported="true">
+            android:name=".SecondSplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BaoBao.NoActionBar"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+
+        <activity
+            android:name=".AuthActivity"
+            android:exported="false">
+        </activity>
+
         <activity android:name=".MainActivity" android:exported="false" />
-        <activity android:name=".MoodSelectionActivity" android:exported="false" />
         <activity android:name=".ResourcesActivity" android:exported="false" />
         <activity android:name=".SettingsActivity" android:exported="false" />
         <activity android:name=".ShopActivity" android:exported="false" />

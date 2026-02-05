@@ -4,55 +4,110 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bamboo_background"
+    android:background="@drawable/main_bamboo_background"
     android:fitsSystemWindows="true">
 
-    <!-- Peeking Mascot -->
+    <!-- Speech Bubble with bamboo frame styling and floating animation -->
+    <FrameLayout
+        android:id="@+id/speechBubble"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bamboo_speech_bubble"
+        android:elevation="6dp"
+        android:translationY="-8dp"
+        app:layout_constraintBottom_toTopOf="@+id/logoImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/bubbleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:letterSpacing="0.02"
+            android:paddingHorizontal="28dp"
+            android:paddingVertical="18dp"
+            android:text="Welcome to BaoBao!"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+    <!-- App Logo with entrance animation setup -->
     <ImageView
-        android:id="@+id/mascotImage"
-        android:layout_width="260dp"
-        android:layout_height="260dp"
-        android:src="@drawable/auth_mascot"
-        android:elevation="2dp"
+        android:id="@+id/logoImage"
+        android:layout_width="300dp"
+        android:layout_height="140dp"
+        android:layout_marginBottom="24dp"
+        android:alpha="0"
+        android:elevation="4dp"
+        android:scaleType="fitCenter"
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:src="@drawable/baobaotextlogo"
         app:layout_constraintBottom_toTopOf="@+id/authCard"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="-40dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Auth Card -->
-    <com.google.android.material.card.MaterialCardView
+    <!-- Auth Card with bamboo frame styling and slide-in animation setup -->
+    <FrameLayout
         android:id="@+id/authCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        app:cardBackgroundColor="#E6FFFFFF"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="8dp"
-        app:strokeColor="#B3C4DEA4"
-        app:strokeWidth="2dp"
+        android:alpha="0"
+        android:background="@drawable/bamboo_auth_card_bg"
+        android:elevation="12dp"
+        android:translationY="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6">
+        app:layout_constraintVertical_bias="0.55">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingHorizontal="32dp"
+            android:paddingTop="42dp"
+            android:paddingBottom="38dp">
+
+            <!-- Card Title -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:letterSpacing="0.05"
+                android:text="Sign In"
+                android:textColor="@color/green"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/usernameInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
                 android:hint="Username"
-                app:boxCornerRadiusBottomEnd="16dp"
-                app:boxCornerRadiusBottomStart="16dp"
-                app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusTopStart="14dp"
                 app:boxStrokeColor="@color/green"
+                app:boxStrokeWidth="2dp"
+                app:boxStrokeWidthFocused="3dp"
                 app:hintTextColor="@color/green"
                 app:startIconDrawable="@android:drawable/ic_menu_myplaces"
                 app:startIconTint="@color/green">
@@ -60,9 +115,12 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/usernameEditText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
                     android:inputType="textPersonName"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -70,14 +128,18 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="16dp"
                 android:hint="Name (Nickname)"
                 android:visibility="gone"
-                app:boxCornerRadiusBottomEnd="16dp"
-                app:boxCornerRadiusBottomStart="16dp"
-                app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusTopStart="14dp"
                 app:boxStrokeColor="@color/green"
+                app:boxStrokeWidth="2dp"
+                app:boxStrokeWidthFocused="3dp"
                 app:hintTextColor="@color/green"
                 app:startIconDrawable="@android:drawable/ic_menu_edit"
                 app:startIconTint="@color/green">
@@ -85,76 +147,65 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/nicknameEditText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
                     android:inputType="textPersonName"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/loginButton"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="24dp"
+                android:layout_height="62dp"
+                android:layout_marginTop="28dp"
+                android:background="@drawable/bamboo_auth_button"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.08"
+                android:stateListAnimator="@null"
                 android:text="Enter"
                 android:textColor="@color/white"
-                android:textSize="18sp"
+                android:textSize="17sp"
                 android:textStyle="bold"
-                android:backgroundTint="@color/green"
-                app:cornerRadius="20dp"
-                app:elevation="4dp" />
+                android:clickable="true"
+                android:focusable="true" />
 
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
 
-    <!-- Sign up toggle -->
+    <!-- Sign up toggle with improved styling -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signupButton"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.02"
+        android:minHeight="48dp"
+        android:paddingHorizontal="24dp"
         android:text="Don't have an account? Sign Up"
+        android:textAllCaps="false"
         android:textColor="@color/tan"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/authCard" />
+        app:layout_constraintTop_toBottomOf="@id/authCard"
+        app:rippleColor="@color/tan" />
 
-    <!-- Speech Bubble -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/speechBubble"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/mascotImage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/gray"
-        app:strokeWidth="1dp">
-
-        <TextView
-            android:id="@+id/bubbleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp"
-            android:text="Welcome to BaoBao!"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-    </com.google.android.material.card.MaterialCardView>
-
+    <!-- Footer with updated year -->
     <TextView
         android:id="@+id/footerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="© 2023 BaoBao"
+        android:layout_marginBottom="28dp"
+        android:fontFamily="sans-serif-light"
+        android:letterSpacing="0.05"
+        android:text="© 2026 BaoBao"
         android:textColor="@color/gray"
-        android:textSize="12sp"
+        android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

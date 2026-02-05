@@ -176,7 +176,7 @@ i_05.wav - "Time for a little panda nap! You go be awesome, and I'll be right he
 
 ---
 
-## 🎙️ HAPPY MOOD CONVERSATIONS (15 files)
+## 🎙️ HAPPY MOOD CONVERSATIONS (11 files)
 
 ### Node ID → File Name Mapping
 
@@ -271,7 +271,7 @@ s_sad_16.wav - sad_loop
 
 ---
 
-## 🎙️ ANXIOUS MOOD CONVERSATIONS (18 files)
+## 🎙️ ANXIOUS MOOD CONVERSATIONS (15 files)
 
 ```
 x_anxious_01.wav - anxious_start
@@ -322,7 +322,7 @@ x_anxious_15.wav - anxious_loop
 
 ---
 
-## 🎙️ TIRED MOOD CONVERSATIONS (17 files)
+## 🎙️ TIRED MOOD CONVERSATIONS (16 files)
 
 ```
 t_tired_01.wav - tired_start
@@ -376,7 +376,7 @@ t_tired_16.wav - tired_loop
 
 ---
 
-## 🎙️ OKAY MOOD CONVERSATIONS (14 files)
+## 🎙️ OKAY MOOD CONVERSATIONS (13 files)
 
 ```
 o_okay_01.wav - okay_start

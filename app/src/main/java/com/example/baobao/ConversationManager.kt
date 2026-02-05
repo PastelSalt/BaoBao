@@ -118,79 +118,125 @@ object ConversationManager {
         return list[newIndex] to newIndex
     }
 
-    fun getRandomSignup(): String {
+    /**
+     * Get random signup script with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     */
+    fun getRandomSignupWithIndex(): Pair<String, Int> {
         val (text, index) = getUniqueRandom(signupScripts, lastSignupIndex)
         lastSignupIndex = index
-        return text
+        return text to (index + 1)
     }
 
-    fun getRandomLogin(): String {
+    fun getRandomSignup(): String = getRandomSignupWithIndex().first
+
+    /**
+     * Get random login script with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     */
+    fun getRandomLoginWithIndex(): Pair<String, Int> {
         val (text, index) = getUniqueRandom(loginScripts, lastLoginIndex)
         lastLoginIndex = index
-        return text
+        return text to (index + 1)
     }
 
-    fun getRandomShop(): String {
+    fun getRandomLogin(): String = getRandomLoginWithIndex().first
+
+    /**
+     * Get random shop script with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     */
+    fun getRandomShopWithIndex(): Pair<String, Int> {
         val (text, index) = getUniqueRandom(shopScripts, lastShopIndex)
         lastShopIndex = index
-        return text
+        return text to (index + 1)
     }
 
-    fun getRandomSettings(): String {
+    fun getRandomShop(): String = getRandomShopWithIndex().first
+
+    /**
+     * Get random settings script with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     */
+    fun getRandomSettingsWithIndex(): Pair<String, Int> {
         val (text, index) = getUniqueRandom(settingsScripts, lastSettingsIndex)
         lastSettingsIndex = index
-        return text
+        return text to (index + 1)
     }
 
-    fun getRandomClawMachine(): String {
+    fun getRandomSettings(): String = getRandomSettingsWithIndex().first
+
+    /**
+     * Get random claw machine script with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     */
+    fun getRandomClawMachineWithIndex(): Pair<String, Int> {
         val (text, index) = getUniqueRandom(clawMachineScripts, lastClawMachineIndex)
         lastClawMachineIndex = index
-        return text
+        return text to (index + 1)
     }
 
-    fun getClawMachineMove(): String {
-        // Return specific script for moving state (index 1)
-        return clawMachineScripts[1]
-    }
+    fun getRandomClawMachine(): String = getRandomClawMachineWithIndex().first
 
-    fun getClawMachineWin(): String {
-        // Return specific script for winning (index 2)
-        return clawMachineScripts[2]
-    }
+    fun getClawMachineMove(): String = clawMachineScripts[1]
+    fun getClawMachineMoveIndex(): Int = 2
 
-    fun getClawMachineLoss(): String {
-        // Return specific script for losing (index 3)
-        return clawMachineScripts[3]
-    }
+    fun getClawMachineWin(): String = clawMachineScripts[2]
+    fun getClawMachineWinIndex(): Int = 3
 
-    fun getClawMachineRepeat(): String {
-        // Return specific script for repeat prompt (index 4)
-        return clawMachineScripts[4]
-    }
+    fun getClawMachineLoss(): String = clawMachineScripts[3]
+    fun getClawMachineLossIndex(): Int = 4
 
-    fun getRandomSelfCare(): String {
+    fun getClawMachineRepeat(): String = clawMachineScripts[4]
+    fun getClawMachineRepeatIndex(): Int = 5
+
+    /**
+     * Get random self-care script with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     */
+    fun getRandomSelfCareWithIndex(): Pair<String, Int> {
         val (text, index) = getUniqueRandom(selfCareScripts, lastSelfCareIndex)
         lastSelfCareIndex = index
-        return text
+        return text to (index + 1)
     }
 
-    fun getRandomAffirmation(): String {
+    fun getRandomSelfCare(): String = getRandomSelfCareWithIndex().first
+
+    /**
+     * Get random affirmation script with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     */
+    fun getRandomAffirmationWithIndex(): Pair<String, Int> {
         val (text, index) = getUniqueRandom(dailyAffirmationScripts, lastAffirmationIndex)
         lastAffirmationIndex = index
-        return text
+        return text to (index + 1)
     }
 
-    fun getRandomJoke(): String {
+    fun getRandomAffirmation(): String = getRandomAffirmationWithIndex().first
+
+    /**
+     * Get random joke script with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     */
+    fun getRandomJokeWithIndex(): Pair<String, Int> {
         val (text, index) = getUniqueRandom(jokeScripts, lastJokeIndex)
         lastJokeIndex = index
-        return text
+        return text to (index + 1)
     }
 
-    fun getRandomGoodbye(): String {
+    fun getRandomJoke(): String = getRandomJokeWithIndex().first
+
+    /**
+     * Get random goodbye script with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     */
+    fun getRandomGoodbyeWithIndex(): Pair<String, Int> {
         val (text, index) = getUniqueRandom(goodbyeScripts, lastGoodbyeIndex)
         lastGoodbyeIndex = index
-        return text
+        return text to (index + 1)
     }
+
+    fun getRandomGoodbye(): String = getRandomGoodbyeWithIndex().first
 
     // ========== CONVERSATION NODE SYSTEM ==========
     // This system manages all mood-based conversations with branching dialogue
@@ -1058,19 +1104,39 @@ object ConversationManager {
     }
 
     /**
-     * Play audio for a conversation node (Future feature)
-     * When implementing audio:
-     * 1. Add audioResourceId: Int? to ConversationNode data class
-     * 2. Store audio files in res/raw/ folder
-     * 3. Use MediaPlayer to play the audio
-     * 4. Example: playNodeAudio(context, node.audioResourceId)
+     * Play audio for a conversation node
+     * Uses VoiceManager to play the corresponding audio file
+     *
+     * @param context Android context for resource access
+     * @param nodeId The conversation node ID (e.g., "happy_start")
+     * @param mood The mood of the conversation (e.g., "happy")
      */
-    fun playNodeAudio(nodeId: String) {
-        // TODO: Implement audio playback
-        // val audioResId = getAudioResourceForNode(nodeId)
-        // if (audioResId != null) {
-        //     val mediaPlayer = MediaPlayer.create(context, audioResId)
-        //     mediaPlayer.start()
-        // }
+    fun playNodeAudio(context: android.content.Context, nodeId: String, mood: String) {
+        VoiceManager.playNodeVoice(context, nodeId, mood)
+    }
+
+    /**
+     * Play audio for simple scripts (signup, login, etc.)
+     *
+     * @param context Android context
+     * @param section The section code ("signup", "login", "shop", "settings", "selfcare", "affirmation", "joke", "clawmachine", "goodbye")
+     * @param index The 1-based index of the script
+     */
+    fun playSimpleAudio(context: android.content.Context, section: String, index: Int) {
+        val resId = when (section.lowercase()) {
+            "signup" -> VoiceManager.getSignupAudioId(context, index)
+            "login" -> VoiceManager.getLoginAudioId(context, index)
+            "shop" -> VoiceManager.getShopAudioId(context, index)
+            "settings" -> VoiceManager.getSettingsAudioId(context, index)
+            "selfcare" -> VoiceManager.getSelfCareAudioId(context, index)
+            "affirmation" -> VoiceManager.getAffirmationAudioId(context, index)
+            "joke" -> VoiceManager.getJokeAudioId(context, index)
+            "clawmachine" -> VoiceManager.getClawMachineAudioId(context, index)
+            "goodbye" -> VoiceManager.getGoodbyeAudioId(context, index)
+            else -> 0
+        }
+        if (resId != 0) {
+            VoiceManager.playVoice(context, resId)
+        }
     }
 }
