@@ -1,7 +1,8 @@
-package com.example.baobao
+package com.example.baobao.audio
 
 import android.content.Context
 import android.media.MediaPlayer
+import com.example.baobao.R
 
 object SoundManager {
     private var mediaPlayer: MediaPlayer? = null

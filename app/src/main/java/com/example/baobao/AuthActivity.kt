@@ -13,6 +13,9 @@ import android.view.animation.BounceInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AppCompatActivity
+import com.example.baobao.additionals.LoadingActivity
+import com.example.baobao.audio.VoiceManager
+import com.example.baobao.conversation.ConversationManager
 import com.example.baobao.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
@@ -36,6 +39,10 @@ class AuthActivity : AppCompatActivity() {
             binding = ActivityAuthBinding.inflate(layoutInflater)
             binding?.let {
                 setContentView(it.root)
+
+                // Apply voice settings
+                VoiceManager.applySettings(this)
+
                 updateUI()
                 setupClickListeners()
                 startEntranceAnimations()

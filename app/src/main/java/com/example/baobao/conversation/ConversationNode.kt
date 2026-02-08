@@ -1,4 +1,4 @@
-package com.example.baobao.models
+package com.example.baobao.conversation
 
 /**
  * Represents a single node in the conversation tree

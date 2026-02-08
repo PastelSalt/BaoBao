@@ -3,6 +3,12 @@ package com.example.baobao
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
+import com.example.baobao.additionals.LoadingActivity
+import com.example.baobao.audio.SoundManager
+import com.example.baobao.audio.VoiceManager
+import com.example.baobao.conversation.ConversationManager
+import com.example.baobao.coreoperations.BaseActivity
+import com.example.baobao.coreoperations.CharacterImageManager
 import com.example.baobao.database.AppDatabase
 import com.example.baobao.database.UserRepository
 import com.example.baobao.databinding.ActivityShopBinding
@@ -23,6 +29,9 @@ class ShopActivity : BaseActivity() {
         val database = AppDatabase.getDatabase(this)
         userRepository = UserRepository(database.userDao())
 
+        // Apply voice settings
+        VoiceManager.applySettings(this)
+
         binding.backButton.setOnClickListener {
             SoundManager.playClickSound(this)
             goBackWithLoading()
@@ -35,14 +44,33 @@ class ShopActivity : BaseActivity() {
         // Load and display currency
         updateCurrencyDisplay()
 
+        // Load and apply selected outfit to character icon
+        loadSelectedOutfit()
+
         // Setup BGM purchase functionality
         setupBgmPurchases()
+
+        // Setup outfit purchase functionality
+        setupOutfitPurchases()
     }
 
     override fun onResume() {
         super.onResume()
         updateCurrencyDisplay()
         updateBgmPurchaseStates()
+        updateOutfitPurchaseStates()
+        loadSelectedOutfit()
+    }
+
+    private fun loadSelectedOutfit() {
+        lifecycleScope.launch {
+            val selectedOutfit = userRepository.getSelectedOutfit()
+            CharacterImageManager.setOutfit(selectedOutfit)
+            // Update character icon with current outfit
+            binding.characterIcon.setImageResource(
+                CharacterImageManager.getCharacterImage(CharacterImageManager.Emotion.HELLO)
+            )
+        }
     }
 
     private fun updateCurrencyDisplay() {
@@ -151,6 +179,99 @@ class ShopActivity : BaseActivity() {
 
                     // Update bubble text
                     binding.bubbleText.text = "Great choice! You can change your BGM anytime in the customize menu."
+                } else {
+                    android.widget.Toast.makeText(this@ShopActivity, "Purchase failed!", android.widget.Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                android.widget.Toast.makeText(this@ShopActivity, "Not enough currency! You need $cost ✷", android.widget.Toast.LENGTH_SHORT).show()
+                binding.bubbleText.text = "You need more coins for that! Try playing the claw machine or daily check-ins."
+            }
+        }
+    }
+
+    private fun setupOutfitPurchases() {
+        // Setup Blue Bao outfit purchase (outfit2)
+        binding.outfitBlueBaoCard.setOnClickListener {
+            SoundManager.playClickSound(this)
+            purchaseOutfit("outfit2", 1000, "Blue Bao")
+        }
+
+        // Update initial states
+        updateOutfitPurchaseStates()
+    }
+
+    private fun updateOutfitPurchaseStates() {
+        lifecycleScope.launch {
+            val purchasedOutfits = userRepository.getPurchasedOutfitsList()
+            val currency = userRepository.getCurrency()
+
+            // Update Blue Bao outfit state
+            updateOutfitCardState(
+                binding.outfitBlueBaoCard,
+                binding.outfitBlueBaoPrice,
+                "outfit2",
+                1000,
+                purchasedOutfits,
+                currency
+            )
+        }
+    }
+
+    private fun updateOutfitCardState(
+        card: android.view.View,
+        priceText: android.widget.TextView,
+        outfitKey: String,
+        price: Int,
+        purchasedOutfits: List<String>,
+        currency: Int
+    ) {
+        val isPurchased = purchasedOutfits.contains(outfitKey)
+        val canAfford = currency >= price
+
+        if (isPurchased) {
+            priceText.text = "✓ Owned"
+            priceText.setTextColor(getColor(R.color.green))
+            card.alpha = 0.7f
+            card.isClickable = false
+        } else if (canAfford) {
+            priceText.text = "$price ✷"
+            priceText.setTextColor(getColor(R.color.green))
+            card.alpha = 1.0f
+            card.isClickable = true
+        } else {
+            priceText.text = "$price ✷"
+            priceText.setTextColor(getColor(R.color.gray))
+            card.alpha = 0.6f
+            card.isClickable = false
+        }
+    }
+
+    private fun purchaseOutfit(outfitKey: String, cost: Int, outfitName: String) {
+        lifecycleScope.launch {
+            val currentCurrency = userRepository.getCurrency()
+
+            if (currentCurrency >= cost) {
+                // Check if already purchased
+                val purchasedOutfits = userRepository.getPurchasedOutfitsList()
+                if (purchasedOutfits.contains(outfitKey)) {
+                    android.widget.Toast.makeText(this@ShopActivity, "Already owned!", android.widget.Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                // Spend currency
+                if (userRepository.spendCurrency(cost)) {
+                    // Purchase outfit
+                    userRepository.purchaseOutfit(outfitKey)
+
+                    // Update displays
+                    updateCurrencyDisplay()
+                    updateOutfitPurchaseStates()
+
+                    // Show success message
+                    android.widget.Toast.makeText(this@ShopActivity, "$outfitName outfit purchased! Check customize dialog to use it.", android.widget.Toast.LENGTH_LONG).show()
+
+                    // Update bubble text
+                    binding.bubbleText.text = "Yay! I look great in my new outfit! Change it in the customize menu!"
                 } else {
                     android.widget.Toast.makeText(this@ShopActivity, "Purchase failed!", android.widget.Toast.LENGTH_SHORT).show()
                 }

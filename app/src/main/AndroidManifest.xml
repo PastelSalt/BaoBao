@@ -14,7 +14,7 @@
 
         <!-- Splash Screen Activity -->
         <activity
-            android:name=".SecondSplashActivity"
+            android:name=".additionals.SecondSplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BaoBao.NoActionBar"
@@ -32,15 +32,14 @@
         </activity>
 
         <activity android:name=".MainActivity" android:exported="false" />
-        <activity android:name=".ResourcesActivity" android:exported="false" />
-        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".intervention.ResourcesActivity" android:exported="false" />
         <activity android:name=".ShopActivity" android:exported="false" />
         <activity
-            android:name=".ClawMachineActivity"
+            android:name=".games.ClawMachineActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".LoadingActivity" android:exported="false" />
+        <activity android:name=".additionals.LoadingActivity" android:exported="false" />
 
     </application>
 

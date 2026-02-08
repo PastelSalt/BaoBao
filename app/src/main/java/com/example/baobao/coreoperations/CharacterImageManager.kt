@@ -1,7 +1,7 @@
-package com.example.baobao
+package com.example.baobao.coreoperations
 
-import android.content.Context
 import androidx.annotation.DrawableRes
+import com.example.baobao.R
 
 /**
  * Manages BaoBao character images based on outfit and emotion
@@ -105,20 +105,17 @@ object CharacterImageManager {
         }
     }
 
-    // ==================== OUTFIT 2 IMAGES (PLACEHOLDER) ====================
+    // ==================== OUTFIT 2 IMAGES (BLUE BAO) ====================
 
     private fun getOutfit2Image(emotion: Emotion): Int {
-        // When outfit2 images are added, update this method
-        // For now, fallback to outfit1
-        // Expected naming: mainscreen_outfit2_fullbody_happy, etc.
         return when (emotion) {
-            Emotion.HAPPY -> R.drawable.mainscreen_outfit1_fullbody_happy // TODO: Replace with outfit2
-            Emotion.HELLO -> R.drawable.mainscreen_outfit1_fullbody_hello
-            Emotion.SAD -> R.drawable.mainscreen_outfit1_fullbody_sad
-            Emotion.TIRED -> R.drawable.mainscreen_outfit1_fullbody_tired
-            Emotion.ANXIOUS -> R.drawable.mainscreen_outfit1_fullbody_sad
-            Emotion.OKAY -> R.drawable.mainscreen_outfit1_fullbody_hello
-            Emotion.DEFAULT -> R.drawable.mainscreen_outfit1_fullbody_hello
+            Emotion.HAPPY -> R.drawable.mainscreen_outfit2_fullbody_happy
+            Emotion.HELLO -> R.drawable.mainscreen_outfit2_fullbody_hello
+            Emotion.SAD -> R.drawable.mainscreen_outfit2_fullbody_sad
+            Emotion.TIRED -> R.drawable.mainscreen_outfit2_fullbody_tired
+            Emotion.ANXIOUS -> R.drawable.mainscreen_outfit2_fullbody_sad // Use sad as fallback
+            Emotion.OKAY -> R.drawable.mainscreen_outfit2_fullbody_hello // Use hello as fallback
+            Emotion.DEFAULT -> R.drawable.mainscreen_outfit2_fullbody_hello
         }
     }
 
@@ -137,17 +134,19 @@ object CharacterImageManager {
      * Get list of all available outfits
      */
     fun getAvailableOutfits(): List<String> {
-        return listOf("outfit1") // "outfit2", etc. will be added later
+        return listOf("outfit1", "outfit2") // Blue Bao outfit added
     }
 
     /**
      * Get a list of available emotions for current outfit
      */
     fun getAvailableEmotions(): List<Emotion> {
-        // For outfit1, we have: happy, hello, sad, tired
+        // For both outfits, we have: happy, hello, sad, tired
         return when (currentOutfit) {
             "outfit1" -> listOf(Emotion.HAPPY, Emotion.HELLO, Emotion.SAD, Emotion.TIRED)
+            "outfit2" -> listOf(Emotion.HAPPY, Emotion.HELLO, Emotion.SAD, Emotion.TIRED)
             else -> listOf(Emotion.DEFAULT)
         }
     }
 }
+

@@ -1,9 +1,11 @@
-package com.example.baobao
+package com.example.baobao.intervention
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.baobao.MainActivity
+import com.example.baobao.audio.SoundManager
 import com.example.baobao.databinding.ActivityResourcesBinding
 
 class ResourcesActivity : AppCompatActivity() {
@@ -71,3 +73,4 @@ class ResourcesActivity : AppCompatActivity() {
         }
     }
 }
+

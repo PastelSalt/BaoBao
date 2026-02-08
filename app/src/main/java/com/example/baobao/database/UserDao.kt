@@ -33,6 +33,12 @@ interface UserDao {
     @Query("UPDATE user_data SET selectedTheme = :selectedTheme WHERE userId = 1")
     suspend fun updateSelectedTheme(selectedTheme: String)
 
+    @Query("UPDATE user_data SET purchasedOutfits = :purchasedOutfits WHERE userId = 1")
+    suspend fun updatePurchasedOutfits(purchasedOutfits: String)
+
+    @Query("UPDATE user_data SET selectedOutfit = :selectedOutfit WHERE userId = 1")
+    suspend fun updateSelectedOutfit(selectedOutfit: String)
+
     // Purchase queries
     @Query("SELECT * FROM purchases WHERE itemType = :itemType")
     fun getPurchasesByType(itemType: String): Flow<List<Purchase>>

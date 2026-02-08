@@ -1,4 +1,4 @@
-package com.example.baobao
+package com.example.baobao.additionals
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -133,8 +133,8 @@ class LoadingActivity : AppCompatActivity() {
 
     companion object {
         fun startWithTarget(
-            activity: AppCompatActivity, 
-            targetClass: Class<*>, 
+            activity: AppCompatActivity,
+            targetClass: Class<*>,
             delay: Long = 750L,
             flags: Int = 0
         ) {
@@ -147,3 +147,4 @@ class LoadingActivity : AppCompatActivity() {
         }
     }
 }
+

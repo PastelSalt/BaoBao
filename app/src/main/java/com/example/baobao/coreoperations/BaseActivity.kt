@@ -1,7 +1,9 @@
-package com.example.baobao
+package com.example.baobao.coreoperations
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.baobao.R
+import com.example.baobao.audio.SoundManager
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -24,3 +26,4 @@ abstract class BaseActivity : AppCompatActivity() {
         SoundManager.pauseBGM()
     }
 }
+

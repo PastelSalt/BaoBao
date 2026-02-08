@@ -120,6 +120,29 @@ class UserRepository(private val userDao: UserDao) {
         userDao.updateSelectedTheme(themeId)
     }
 
+    // Outfit operations
+    suspend fun getPurchasedOutfitsList(): List<String> {
+        val userData = userDao.getUserDataOnce()
+        return userData?.purchasedOutfits?.split(",")?.filter { it.isNotEmpty() } ?: listOf("outfit1")
+    }
+
+    suspend fun getSelectedOutfit(): String {
+        return userDao.getUserDataOnce()?.selectedOutfit ?: "outfit1"
+    }
+
+    suspend fun setSelectedOutfit(outfitId: String) {
+        userDao.updateSelectedOutfit(outfitId)
+    }
+
+    suspend fun purchaseOutfit(outfitId: String) {
+        val userData = userDao.getUserDataOnce() ?: return
+        val purchased = userData.purchasedOutfits.split(",").filter { it.isNotEmpty() }.toMutableList()
+        if (!purchased.contains(outfitId)) {
+            purchased.add(outfitId)
+            userDao.updatePurchasedOutfits(purchased.joinToString(","))
+        }
+    }
+
     // User data operations
     suspend fun getUserData(): UserData {
         return userDao.getUserDataOnce() ?: UserData()

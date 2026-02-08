@@ -1,11 +1,11 @@
-package com.example.baobao
+package com.example.baobao.audio
 
 import android.content.Context
 import android.media.MediaPlayer
 
 /**
  * Manages voice line playback for BaoBao's dialogue
- * 
+ *
  * Voice line sections:
  * - A (a_01-a_05): Sign-up
  * - B (b_01-b_05): Login
@@ -27,15 +27,15 @@ object VoiceManager {
     private var voicePlayer: MediaPlayer? = null
     private var isVoiceEnabled = true
     private var voiceVolume = 1.0f
-    
+
     /**
      * Play a voice line by resource ID
      */
     fun playVoice(context: Context, resId: Int) {
         if (!isVoiceEnabled || resId == 0) return
-        
+
         stopVoice()
-        
+
         try {
             voicePlayer = MediaPlayer.create(context.applicationContext, resId)
             voicePlayer?.apply {
@@ -50,7 +50,7 @@ object VoiceManager {
             e.printStackTrace()
         }
     }
-    
+
     /**
      * Play a voice line by resource name (e.g., "a_01", "h_happy_01")
      */
@@ -60,7 +60,7 @@ object VoiceManager {
             playVoice(context, resId)
         }
     }
-    
+
     /**
      * Stop currently playing voice line
      */
@@ -73,7 +73,7 @@ object VoiceManager {
         }
         voicePlayer = null
     }
-    
+
     /**
      * Pause voice playback
      */
@@ -84,7 +84,7 @@ object VoiceManager {
             }
         }
     }
-    
+
     /**
      * Resume voice playback
      */
@@ -95,7 +95,7 @@ object VoiceManager {
             }
         }
     }
-    
+
     /**
      * Set voice volume (0.0 to 1.0)
      */
@@ -103,7 +103,7 @@ object VoiceManager {
         voiceVolume = volume.coerceIn(0f, 1f)
         voicePlayer?.setVolume(voiceVolume, voiceVolume)
     }
-    
+
     /**
      * Enable or disable voice playback
      */
@@ -113,26 +113,26 @@ object VoiceManager {
             stopVoice()
         }
     }
-    
+
     /**
      * Check if voice is currently playing
      */
     fun isPlaying(): Boolean {
         return voicePlayer?.isPlaying == true
     }
-    
+
     /**
      * Apply voice settings from SharedPreferences
      */
     fun applySettings(context: Context) {
         val prefs = context.getSharedPreferences("BaoBaoPrefs", Context.MODE_PRIVATE)
-        voiceVolume = prefs.getFloat("voice_volume", 1.0f)
+        voiceVolume = prefs.getFloat("voice_volume", 0.8f)
         isVoiceEnabled = prefs.getBoolean("voice_enabled", true)
         voicePlayer?.setVolume(voiceVolume, voiceVolume)
     }
-    
+
     // ========== SIMPLE FEATURE VOICE LINES ==========
-    
+
     /**
      * Get audio resource ID for sign-up scripts (1-5)
      */
@@ -140,7 +140,7 @@ object VoiceManager {
         val name = "a_%02d".format(index.coerceIn(1, 5))
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     /**
      * Get audio resource ID for login scripts (1-5)
      */
@@ -148,7 +148,7 @@ object VoiceManager {
         val name = "b_%02d".format(index.coerceIn(1, 5))
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     /**
      * Get audio resource ID for shop scripts (1-5)
      */
@@ -156,7 +156,7 @@ object VoiceManager {
         val name = "c_%02d".format(index.coerceIn(1, 5))
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     /**
      * Get audio resource ID for settings scripts (1-5)
      */
@@ -164,7 +164,7 @@ object VoiceManager {
         val name = "d_%02d".format(index.coerceIn(1, 5))
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     /**
      * Get audio resource ID for self-care scripts (1-10)
      */
@@ -172,7 +172,7 @@ object VoiceManager {
         val name = "e_%02d".format(index.coerceIn(1, 10))
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     /**
      * Get audio resource ID for affirmation scripts (1-10)
      */
@@ -180,7 +180,7 @@ object VoiceManager {
         val name = "f_%02d".format(index.coerceIn(1, 10))
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     /**
      * Get audio resource ID for joke scripts (1-10)
      */
@@ -188,7 +188,7 @@ object VoiceManager {
         val name = "g_%02d".format(index.coerceIn(1, 10))
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     /**
      * Get audio resource ID for claw machine scripts (1-5)
      */
@@ -196,7 +196,7 @@ object VoiceManager {
         val name = "h_%02d".format(index.coerceIn(1, 5))
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     /**
      * Get audio resource ID for goodbye scripts (1-5)
      */
@@ -204,9 +204,9 @@ object VoiceManager {
         val name = "i_%02d".format(index.coerceIn(1, 5))
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     // ========== MOOD CONVERSATION VOICE LINES ==========
-    
+
     /**
      * Mapping of conversation node IDs to audio file numbers
      */
@@ -223,7 +223,7 @@ object VoiceManager {
         "happy_whats_next" to 10,
         "happy_loop" to 11
     )
-    
+
     private val sadNodeToAudioIndex = mapOf(
         "sad_start" to 1,
         "sad_talk" to 2,
@@ -242,7 +242,7 @@ object VoiceManager {
         "sad_still_struggling" to 15,
         "sad_loop" to 16
     )
-    
+
     private val anxiousNodeToAudioIndex = mapOf(
         "anxious_start" to 1,
         "anxious_talk" to 2,
@@ -260,7 +260,7 @@ object VoiceManager {
         "anxious_keep_talking" to 14,
         "anxious_loop" to 15
     )
-    
+
     private val tiredNodeToAudioIndex = mapOf(
         "tired_start" to 1,
         "tired_physical" to 2,
@@ -279,7 +279,7 @@ object VoiceManager {
         "tired_just_talk" to 15,
         "tired_loop" to 16
     )
-    
+
     private val okayNodeToAudioIndex = mapOf(
         "okay_start" to 1,
         "okay_chill" to 2,
@@ -295,7 +295,7 @@ object VoiceManager {
         "okay_more_affirmations" to 12,
         "okay_loop" to 13
     )
-    
+
     private val interventionNodeToAudioIndex = mapOf(
         "intervention_start" to 1,
         "intervention_managing" to 2,
@@ -306,7 +306,7 @@ object VoiceManager {
         "intervention_not_ready" to 7,
         "intervention_complete" to 8
     )
-    
+
     /**
      * Get audio resource ID for a mood conversation node
      */
@@ -320,7 +320,7 @@ object VoiceManager {
             "intervention" -> interventionNodeToAudioIndex[nodeId]
             else -> null
         } ?: return 0
-        
+
         val prefix = when (mood.lowercase()) {
             "happy" -> "h_happy"
             "sad" -> "s_sad"
@@ -330,11 +330,11 @@ object VoiceManager {
             "intervention" -> "int"
             else -> return 0
         }
-        
+
         val name = "${prefix}_%02d".format(index)
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
-    
+
     /**
      * Play voice for a conversation node
      */
@@ -345,3 +345,4 @@ object VoiceManager {
         }
     }
 }
+

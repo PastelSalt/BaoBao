@@ -1,7 +1,6 @@
-package com.example.baobao
+package com.example.baobao.conversation
 
-import com.example.baobao.models.ConversationNode
-import com.example.baobao.models.UserOption
+import com.example.baobao.audio.VoiceManager
 import kotlin.random.Random
 
 /**
@@ -1140,3 +1139,5 @@ object ConversationManager {
         }
     }
 }
+
+

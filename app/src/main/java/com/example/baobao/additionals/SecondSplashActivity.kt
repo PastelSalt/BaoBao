@@ -1,4 +1,4 @@
-package com.example.baobao
+package com.example.baobao.additionals
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,8 @@ import android.os.Looper
 import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.baobao.AuthActivity
+import com.example.baobao.R
 
 class SecondSplashActivity : AppCompatActivity() {
 
@@ -124,3 +126,4 @@ class SecondSplashActivity : AppCompatActivity() {
         splashImage = null
     }
 }
+

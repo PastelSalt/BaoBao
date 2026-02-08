@@ -9,8 +9,10 @@ data class UserData(
     val currency: Int = 1000,
     val purchasedBgm: String = "", // Comma-separated list of purchased BGM IDs
     val purchasedThemes: String = "", // Comma-separated list of purchased theme IDs
+    val purchasedOutfits: String = "outfit1", // Comma-separated list of purchased outfit IDs (outfit1 is default)
     val selectedBgm: String = "kakushigoto", // Currently selected BGM
     val selectedTheme: String = "default", // Currently selected theme
+    val selectedOutfit: String = "outfit1", // Currently selected outfit
 
     // Mood tracking
     val currentMood: String = "okay", // Current mood selection

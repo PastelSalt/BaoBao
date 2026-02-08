@@ -1,4 +1,4 @@
-package com.example.baobao
+package com.example.baobao.games
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -14,6 +14,13 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import androidx.lifecycle.lifecycleScope
+import com.example.baobao.MainActivity
+import com.example.baobao.R
+import com.example.baobao.additionals.LoadingActivity
+import com.example.baobao.audio.SoundManager
+import com.example.baobao.audio.VoiceManager
+import com.example.baobao.conversation.ConversationManager
+import com.example.baobao.coreoperations.BaseActivity
 import com.example.baobao.database.AppDatabase
 import com.example.baobao.database.UserRepository
 import com.example.baobao.databinding.ActivityClawMachineBinding
@@ -26,7 +33,7 @@ class ClawMachineActivity : BaseActivity() {
 
     // View Binding
     private lateinit var binding: ActivityClawMachineBinding
-    
+
     // Database
     private lateinit var userRepository: UserRepository
 
@@ -116,7 +123,7 @@ class ClawMachineActivity : BaseActivity() {
         binding.bubbleText.text = text
         VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, index))
         binding.clawString.pivotY = 0f
-        
+
         // Setup game logic
         setupClawControls()
 
@@ -249,7 +256,7 @@ class ClawMachineActivity : BaseActivity() {
 
         val maxX = containerWidth.toFloat() - binding.clawGroup.width
         clawX += moveSpeed * moveDirection
-        
+
         // Bounce at edges
         when {
             clawX >= maxX -> {
@@ -273,7 +280,7 @@ class ClawMachineActivity : BaseActivity() {
         val containerHeight = binding.gameContainer.height.toFloat()
         val clawHeight = binding.claw.height.toFloat()
         val dropDistance = containerHeight - clawHeight - (40 * resources.displayMetrics.density)
-        
+
         animateDrop(dropDistance)
     }
 
@@ -301,7 +308,7 @@ class ClawMachineActivity : BaseActivity() {
     private fun checkPrizeCatch(dropDistance: Float) {
         val prizes = listOf(binding.prize1, binding.prize2, binding.prize3, binding.prize4)
         val clawCenterX = binding.clawGroup.translationX + (binding.clawGroup.width / 2)
-        
+
         caughtPrize = prizes.firstOrNull { prize ->
             if (prize.visibility != View.VISIBLE) return@firstOrNull false
 
@@ -536,3 +543,4 @@ class ClawMachineActivity : BaseActivity() {
         finish()
     }
 }
+
