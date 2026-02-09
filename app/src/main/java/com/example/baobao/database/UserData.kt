@@ -5,14 +5,20 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "user_data")
 data class UserData(
-    @PrimaryKey val userId: Int = 1, // Single user app
-    val currency: Int = 1000,
+    @PrimaryKey(autoGenerate = true) val userId: Int = 0,
+    val username: String = "",
+    val passwordHash: String = "", // Hashed password for security
+    val createdAt: Long = System.currentTimeMillis(),
+    val lastLoginAt: Long = System.currentTimeMillis(),
+    val currency: Int = 3000,
     val purchasedBgm: String = "", // Comma-separated list of purchased BGM IDs
     val purchasedThemes: String = "", // Comma-separated list of purchased theme IDs
     val purchasedOutfits: String = "outfit1", // Comma-separated list of purchased outfit IDs (outfit1 is default)
+    val purchasedBackgrounds: String = "default", // Comma-separated list of purchased background IDs (default is always owned)
     val selectedBgm: String = "kakushigoto", // Currently selected BGM
     val selectedTheme: String = "default", // Currently selected theme
     val selectedOutfit: String = "outfit1", // Currently selected outfit
+    val selectedBackground: String = "default", // Currently selected background
 
     // Mood tracking
     val currentMood: String = "okay", // Current mood selection

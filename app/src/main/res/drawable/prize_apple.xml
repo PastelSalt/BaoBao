@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Pastel blue gradient -->
+    <gradient
+        android:type="radial"
+        android:gradientRadius="50%"
+        android:centerX="0.3"
+        android:centerY="0.3"
+        android:startColor="#E3F2FD"
+        android:centerColor="#BBDEFB"
+        android:endColor="#90CAF9" />
+
+    <stroke
+        android:width="3dp"
+        android:color="#64B5F6" />
+
+    <size
+        android:width="60dp"
+        android:height="60dp" />
+
+</shape>
+
+

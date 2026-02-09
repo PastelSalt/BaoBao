@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.baobao.audio.SoundManager
 import com.example.baobao.audio.VoiceManager
 import com.example.baobao.conversation.ConversationManager
+import com.example.baobao.coreoperations.BackgroundManager
 import com.example.baobao.coreoperations.BaseActivity
 import com.example.baobao.coreoperations.CharacterImageManager
 import com.example.baobao.coreoperations.ConversationController
@@ -15,11 +16,13 @@ import com.example.baobao.coreoperations.DialogManager
 import com.example.baobao.coreoperations.NavigationHandler
 import com.example.baobao.coreoperations.UIStateManager
 import com.example.baobao.database.AppDatabase
+import com.example.baobao.database.SessionManager
 import com.example.baobao.database.UserRepository
 import com.example.baobao.databinding.ActivityMainBinding
 import com.example.baobao.games.ClawMachineActivity
 import com.example.baobao.intervention.ResourcesActivity
 import com.example.baobao.models.PrimaryMood
+import com.example.baobao.optimization.MemoryOptimizer
 import kotlinx.coroutines.launch
 
 /**
@@ -55,6 +58,10 @@ class MainActivity : BaseActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize Session Manager
+        SessionManager.init(this)
+
+
         // Initialize database
         val database = AppDatabase.getDatabase(this)
         userRepository = UserRepository(database.userDao())
@@ -64,17 +71,35 @@ class MainActivity : BaseActivity() {
             this,
             lifecycleScope,
             userRepository,
-            onCharacterImageUpdate = { updateCharacterImage() }
+            onCharacterImageUpdate = { updateCharacterImage() },
+            onBackgroundUpdate = { updateBackground() }
         )
         conversationController = ConversationController(this, binding, lifecycleScope, userRepository)
         navigationHandler = NavigationHandler(this, binding)
         uiStateManager = UIStateManager(this, binding, lifecycleScope, userRepository)
 
+        // Set up conversation end callback
+        conversationController.onConversationEnd = {
+            // Hide conversation UI and return to normal screen
+            navigationHandler.hideConversationModeUI()
+            // Reset character to default greeting pose
+            binding.characterImage.setImageResource(CharacterImageManager.getHelloImage())
+            // Show default greeting text
+            binding.conversationText.text = "I'm here whenever you need me! 🐼"
+            // Note: User will trigger next conversation by tapping BaoBao again
+        }
+
         // Initialize voice settings
         VoiceManager.applySettings(this)
 
-        // Load and apply selected outfit
+        // Load and apply selected background and outfit
         lifecycleScope.launch {
+            // Apply background
+            val selectedBackground = userRepository.getSelectedBackground()
+            BackgroundManager.setBackground(selectedBackground)
+            BackgroundManager.applyBackgroundToView(binding.root, selectedBackground)
+
+            // Apply outfit
             val selectedOutfit = userRepository.getSelectedOutfit()
             CharacterImageManager.setOutfit(selectedOutfit)
             // Set initial character image to hello/greeting with selected outfit
@@ -145,8 +170,7 @@ class MainActivity : BaseActivity() {
             CharacterImageManager.getCharacterImageForMood(mood.name.lowercase())
         )
 
-        // Show mood-specific greeting and start conversation
-        conversationController.showMoodGreeting(mood.name.lowercase())
+        // Start conversation (this will load the proper starting node)
         startConversation(mood.name.lowercase())
     }
 
@@ -201,12 +225,29 @@ class MainActivity : BaseActivity() {
         )
     }
 
+    /**
+     * Updates the background on the main screen
+     * Called when background is changed in customize dialog
+     */
+    private fun updateBackground() {
+        lifecycleScope.launch {
+            val selectedBackground = userRepository.getSelectedBackground()
+            BackgroundManager.setBackground(selectedBackground)
+            BackgroundManager.applyBackgroundToView(binding.root, selectedBackground)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         handler.post(timeUpdater)
 
-        // Resume or play BGM and apply outfit
+        // Resume or play BGM, apply outfit, and apply background
         lifecycleScope.launch {
+            // Load and apply selected background
+            val selectedBackground = userRepository.getSelectedBackground()
+            BackgroundManager.setBackground(selectedBackground)
+            BackgroundManager.applyBackgroundToView(binding.root, selectedBackground)
+
             // Load and apply selected outfit
             val selectedOutfit = userRepository.getSelectedOutfit()
             CharacterImageManager.setOutfit(selectedOutfit)
@@ -225,13 +266,13 @@ class MainActivity : BaseActivity() {
 
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacks(timeUpdater)
+        MemoryOptimizer.removeCallback(handler, timeUpdater)
         SoundManager.pauseBGM()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacksAndMessages(null)
+        MemoryOptimizer.cleanupHandler(handler)
         VoiceManager.stopVoice()
     }
 }

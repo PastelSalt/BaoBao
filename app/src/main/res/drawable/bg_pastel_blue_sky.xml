@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Base Sky Gradient - Pastel Blue -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:startColor="#E3F2FD"
+                android:centerColor="#BBDEFB"
+                android:endColor="#90CAF9"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- White fluffy clouds scattered across the sky -->
+    <item android:top="40dp" android:left="20dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <size android:width="80dp" android:height="40dp" />
+        </shape>
+    </item>
+
+    <item android:top="35dp" android:left="60dp">
+        <shape android:shape="oval">
+            <solid android:color="#FAFAFA" />
+            <size android:width="60dp" android:height="30dp" />
+        </shape>
+    </item>
+
+    <item android:top="100dp" android:right="30dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <size android:width="90dp" android:height="45dp" />
+        </shape>
+    </item>
+
+    <item android:top="120dp" android:right="80dp">
+        <shape android:shape="oval">
+            <solid android:color="#F5F5F5" />
+            <size android:width="70dp" android:height="35dp" />
+        </shape>
+    </item>
+
+    <item android:top="180dp" android:left="15dp">
+        <shape android:shape="oval">
+            <solid android:color="#FAFAFA" />
+            <size android:width="75dp" android:height="38dp" />
+        </shape>
+    </item>
+
+    <item android:top="200dp" android:left="50dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+            <size android:width="55dp" android:height="28dp" />
+        </shape>
+    </item>
+
+    <item android:top="220dp" android:right="40dp">
+        <shape android:shape="oval">
+            <solid android:color="#F8F8F8" />
+            <size android:width="85dp" android:height="42dp" />
+        </shape>
+    </item>
+
+    <!-- Subtle light overlay for atmospheric depth -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:startColor="#15FFFFFF"
+                android:centerColor="#00FFFFFF"
+                android:endColor="#00FFFFFF"
+                android:type="linear" />
+        </shape>
+    </item>
+
+</layer-list>
+

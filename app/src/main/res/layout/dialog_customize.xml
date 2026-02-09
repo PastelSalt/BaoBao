@@ -22,7 +22,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="BaoBao character"
-                android:src="@drawable/baobao_main_default"
+                android:src="@drawable/baobaotextlogo"
                 android:scaleType="fitCenter" />
 
             <!-- Title -->
@@ -220,79 +220,87 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Character & Speech Bubble Area -->
+            <!-- Background Selection Card - Only Owned Backgrounds -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/pale_green"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
                 app:strokeColor="@color/green"
                 app:strokeWidth="1dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/characterArea"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="12dp">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                    <!-- Speech Bubble -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/speechBubble"
-                        android:layout_width="0dp"
+                    <!-- Section Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="2dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/characterIconCard"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_percent="0.65"
-                        app:strokeColor="@color/green"
-                        app:strokeWidth="2dp">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
                         <TextView
-                            android:id="@+id/bubbleText"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:padding="10dp"
-                            android:text="Customization is being updated! Visit the Shop for BGM options! 🎨"
-                            android:textColor="@color/black"
-                            android:textSize="12sp"
-                            android:lineSpacingExtra="1dp"
-                            android:maxLines="4"
-                            android:ellipsize="end" />
-                    </com.google.android.material.card.MaterialCardView>
+                            android:layout_weight="1"
+                            android:text="🖼️ Your Background Collection"
+                            android:textColor="@color/green"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium" />
 
-                    <!-- BaoBao Character with frame -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/characterIconCard"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="20dp"
-                        app:cardElevation="3dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:strokeColor="@color/green"
-                        app:strokeWidth="2dp">
+                        <!-- Bamboo decorative element -->
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="20dp"
+                            android:background="@color/green"
+                            android:alpha="0.3" />
+                    </LinearLayout>
 
-                        <ImageView
-                            android:id="@+id/characterIcon"
-                            android:layout_width="72dp"
-                            android:layout_height="72dp"
-                            android:layout_gravity="center"
-                            android:contentDescription="BaoBao character"
-                            android:src="@drawable/baobao_main_default"
-                            android:scaleType="centerCrop" />
-                    </com.google.android.material.card.MaterialCardView>
+                    <!-- Dynamic Background Container - populated by code -->
+                    <LinearLayout
+                        android:id="@+id/ownedBackgroundContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    <!-- No Background message -->
+                    <LinearLayout
+                        android:id="@+id/noBackgroundContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🏪"
+                            android:textSize="32sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Visit the Shop to get more backgrounds!"
+                            android:textColor="@color/gray"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:gravity="center" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
 
             <!-- Action Buttons -->
             <LinearLayout

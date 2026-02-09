@@ -52,6 +52,9 @@ class ShopActivity : BaseActivity() {
 
         // Setup outfit purchase functionality
         setupOutfitPurchases()
+
+        // Setup background purchase functionality
+        setupBackgroundPurchases()
     }
 
     override fun onResume() {
@@ -59,6 +62,7 @@ class ShopActivity : BaseActivity() {
         updateCurrencyDisplay()
         updateBgmPurchaseStates()
         updateOutfitPurchaseStates()
+        updateBackgroundPurchaseStates()
         loadSelectedOutfit()
     }
 
@@ -243,6 +247,99 @@ class ShopActivity : BaseActivity() {
             priceText.setTextColor(getColor(R.color.gray))
             card.alpha = 0.6f
             card.isClickable = false
+        }
+    }
+
+    private fun setupBackgroundPurchases() {
+        // Setup Pastel Blue Sky background purchase
+        binding.bgPastelBlueSkyCard.setOnClickListener {
+            SoundManager.playClickSound(this)
+            purchaseBackground("pastel_blue_sky", 800, "Blue Sky")
+        }
+
+        // Update initial states
+        updateBackgroundPurchaseStates()
+    }
+
+    private fun updateBackgroundPurchaseStates() {
+        lifecycleScope.launch {
+            val purchasedBackgrounds = userRepository.getPurchasedBackgroundsList()
+            val currency = userRepository.getCurrency()
+
+            // Update Pastel Blue Sky background state
+            updateBackgroundCardState(
+                binding.bgPastelBlueSkyCard,
+                binding.bgPastelBlueSkyPrice,
+                "pastel_blue_sky",
+                800,
+                purchasedBackgrounds,
+                currency
+            )
+        }
+    }
+
+    private fun updateBackgroundCardState(
+        card: android.view.View,
+        priceText: android.widget.TextView,
+        backgroundKey: String,
+        price: Int,
+        purchasedBackgrounds: List<String>,
+        currency: Int
+    ) {
+        val isPurchased = purchasedBackgrounds.contains(backgroundKey)
+        val canAfford = currency >= price
+
+        if (isPurchased) {
+            priceText.text = "✓ Owned"
+            priceText.setTextColor(getColor(R.color.green))
+            card.alpha = 0.7f
+            card.isClickable = false
+        } else if (canAfford) {
+            priceText.text = "$price ✷"
+            priceText.setTextColor(getColor(R.color.green))
+            card.alpha = 1.0f
+            card.isClickable = true
+        } else {
+            priceText.text = "$price ✷"
+            priceText.setTextColor(getColor(R.color.gray))
+            card.alpha = 0.6f
+            card.isClickable = false
+        }
+    }
+
+    private fun purchaseBackground(backgroundKey: String, cost: Int, backgroundName: String) {
+        lifecycleScope.launch {
+            val currentCurrency = userRepository.getCurrency()
+
+            if (currentCurrency >= cost) {
+                // Check if already purchased
+                val purchasedBackgrounds = userRepository.getPurchasedBackgroundsList()
+                if (purchasedBackgrounds.contains(backgroundKey)) {
+                    android.widget.Toast.makeText(this@ShopActivity, "Already owned!", android.widget.Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                // Spend currency
+                if (userRepository.spendCurrency(cost)) {
+                    // Purchase background
+                    userRepository.purchaseBackground(backgroundKey)
+
+                    // Update displays
+                    updateCurrencyDisplay()
+                    updateBackgroundPurchaseStates()
+
+                    // Show success message
+                    android.widget.Toast.makeText(this@ShopActivity, "$backgroundName background purchased! Check customize dialog to use it.", android.widget.Toast.LENGTH_LONG).show()
+
+                    // Update bubble text
+                    binding.bubbleText.text = "Beautiful choice! You can change backgrounds in the customize menu!"
+                } else {
+                    android.widget.Toast.makeText(this@ShopActivity, "Purchase failed!", android.widget.Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                android.widget.Toast.makeText(this@ShopActivity, "Not enough currency! You need $cost ✷", android.widget.Toast.LENGTH_SHORT).show()
+                binding.bubbleText.text = "You need more coins for that! Try playing the claw machine or daily check-ins."
+            }
         }
     }
 

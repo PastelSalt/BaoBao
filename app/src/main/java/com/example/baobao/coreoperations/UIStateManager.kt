@@ -6,13 +6,14 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import com.example.baobao.R
 import com.example.baobao.databinding.ActivityMainBinding
 import com.example.baobao.database.UserRepository
+import com.example.baobao.optimization.CacheManager
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
  * Manages UI state and status updates for MainActivity
- * Handles time, date, and mood status display
+ * Handles time, date, currency, and claw machine status display
  */
 class UIStateManager(
     private val activity: AppCompatActivity,
@@ -21,8 +22,16 @@ class UIStateManager(
     private val userRepository: UserRepository
 ) {
 
+    companion object {
+        private const val PREFS_NAME = "BaoBaoPrefs"
+        private const val KEY_TRIES = "remaining_tries"
+        private const val KEY_NEXT_REFRESH = "next_refresh_time"
+        private const val MAX_TRIES = 5
+        private const val TRY_REFRESH_INTERVAL_MS = 5 * 60 * 1000L // 5 minutes
+    }
+
     /**
-     * Updates the status bar with time, date, and mood
+     * Updates the status bar with time, date, currency, and claw machine info
      */
     fun updateStatus(currentMood: String? = null) {
         val now = Date()
@@ -32,51 +41,61 @@ class UIStateManager(
         binding.timeText.text = timeFormat.format(now)
         binding.dateText.text = dateFormat.format(now)
 
-        // Show user's actual mood
-        if (currentMood != null) {
-            showMoodInStatus(currentMood)
+        // Update currency display with caching
+        val cachedCurrency = CacheManager.getCachedCurrency()
+        if (cachedCurrency != null) {
+            // Use cached value
+            binding.currencyText.text = String.format(Locale.getDefault(), "%,d ✷", cachedCurrency)
         } else {
-            // Load user's last saved mood from database
+            // Fetch from database and cache
             lifecycleScope.launch {
-                val userData = userRepository.getUserData()
-                val savedMood = userData.currentMood
-                if (savedMood.isNotBlank() && savedMood != "okay") {
-                    showMoodInStatus(savedMood)
-                } else {
-                    showTimeBasedGreeting(now)
-                }
+                val currency = userRepository.getCurrency()
+                CacheManager.cacheCurrency(currency)
+                binding.currencyText.text = String.format(Locale.getDefault(), "%,d ✷", currency)
             }
         }
+
+        // Update claw machine attempts
+        updateClawMachineStatus()
     }
 
-    /**
-     * Shows mood-specific emoji and text in status bar
-     */
-    private fun showMoodInStatus(mood: String) {
-        val (emoji, moodName) = when (mood.lowercase()) {
-            "happy" -> "😊" to "Happy"
-            "okay" -> "😐" to "Okay"
-            "sad" -> "😢" to "Sad"
-            "anxious" -> "😰" to "Anxious"
-            "tired" -> "😴" to "Tired"
-            "intervention" -> "💙" to "Getting Help"
-            else -> "🐼" to "Checking in"
-        }
-        binding.moodText.text = "$emoji $moodName"
-    }
+    private fun updateClawMachineStatus() {
+        val prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        var remainingTries = prefs.getInt(KEY_TRIES, MAX_TRIES)
+        val nextRefreshTime = prefs.getLong(KEY_NEXT_REFRESH, 0L)
 
-    /**
-     * Shows time-based greeting for first-time users
-     */
-    private fun showTimeBasedGreeting(now: Date) {
-        val hour = SimpleDateFormat("HH", Locale.getDefault()).format(now).toInt()
-        val (emoji, mood) = when (hour) {
-            in 5..11 -> "🌅" to "Morning"
-            in 12..17 -> "☀️" to "Afternoon"
-            in 18..21 -> "🌙" to "Evening"
-            else -> "🌟" to "Night"
+        // Check if tries should refresh
+        val currentTime = System.currentTimeMillis()
+        if (currentTime >= nextRefreshTime && remainingTries < MAX_TRIES) {
+            remainingTries++
+            prefs.edit().apply {
+                putInt(KEY_TRIES, remainingTries)
+                if (remainingTries < MAX_TRIES) {
+                    putLong(KEY_NEXT_REFRESH, currentTime + TRY_REFRESH_INTERVAL_MS)
+                } else {
+                    putLong(KEY_NEXT_REFRESH, 0L)
+                }
+                apply()
+            }
         }
-        binding.moodText.text = "$emoji $mood"
+
+        // Display attempts
+        binding.clawAttemptsText.text = "🎮 $remainingTries/$MAX_TRIES"
+
+        // Display timer if not at max
+        if (remainingTries < MAX_TRIES) {
+            val remainingMs = nextRefreshTime - currentTime
+            if (remainingMs > 0) {
+                val minutes = (remainingMs / 1000 / 60).toInt()
+                val seconds = ((remainingMs / 1000) % 60).toInt()
+                binding.clawTimerText.text = String.format(Locale.getDefault(), "Next: %d:%02d", minutes, seconds)
+                binding.clawTimerText.visibility = android.view.View.VISIBLE
+            } else {
+                binding.clawTimerText.visibility = android.view.View.GONE
+            }
+        } else {
+            binding.clawTimerText.visibility = android.view.View.GONE
+        }
     }
 
     /**

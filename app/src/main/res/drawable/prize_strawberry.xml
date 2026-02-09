@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Light sage/mint green gradient -->
+    <gradient
+        android:type="radial"
+        android:gradientRadius="50%"
+        android:centerX="0.3"
+        android:centerY="0.3"
+        android:startColor="#F1F8E9"
+        android:centerColor="#DCEDC8"
+        android:endColor="#C5E1A5" />
+
+    <stroke
+        android:width="3dp"
+        android:color="#AED581" />
+
+    <size
+        android:width="60dp"
+        android:height="60dp" />
+
+</shape>
+
+

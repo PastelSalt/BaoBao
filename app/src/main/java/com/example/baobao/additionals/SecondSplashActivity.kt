@@ -8,7 +8,10 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.baobao.AuthActivity
+import com.example.baobao.MainActivity
 import com.example.baobao.R
+import com.example.baobao.database.SessionManager
+import com.example.baobao.optimization.MemoryOptimizer
 
 class SecondSplashActivity : AppCompatActivity() {
 
@@ -94,13 +97,25 @@ class SecondSplashActivity : AppCompatActivity() {
 
         isNavigating = true
         try {
-            val intent = Intent(this, AuthActivity::class.java).apply {
+            // Initialize SessionManager
+            SessionManager.init(this)
+
+            // Check if user is already logged in
+            val targetActivity = if (SessionManager.isLoggedIn(this)) {
+                // User has active session, go directly to MainActivity
+                MainActivity::class.java
+            } else {
+                // No session, go to AuthActivity
+                AuthActivity::class.java
+            }
+
+            val intent = Intent(this, targetActivity).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
             startActivity(intent)
             finish()
         } catch (e: Exception) {
-            Log.e(TAG, "Error navigating to AuthActivity: ${e.message}", e)
+            Log.e(TAG, "Error navigating: ${e.message}", e)
             // Try to finish anyway to prevent stuck state
             finish()
         }
@@ -109,13 +124,13 @@ class SecondSplashActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         // If user navigates away, clean up
-        handler.removeCallbacksAndMessages(null)
+        MemoryOptimizer.cleanupHandler(handler)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // Clean up all callbacks and resources
-        handler.removeCallbacksAndMessages(null)
+        MemoryOptimizer.cleanupHandler(handler)
 
         // Clear image reference to free memory
         try {

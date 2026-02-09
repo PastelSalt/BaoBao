@@ -1,9 +1,11 @@
-﻿package com.example.baobao.coreoperations
+package com.example.baobao.coreoperations
+
 import android.content.Intent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.example.baobao.R
+import com.example.baobao.audio.SoundManager
 import com.example.baobao.conversation.ConversationManager
 import com.example.baobao.conversation.ConversationNode
 import com.example.baobao.conversation.UserOption
@@ -14,6 +16,7 @@ import com.example.baobao.intervention.ResourcesActivity
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 import org.json.JSONArray
+
 class ConversationController(
     private val activity: AppCompatActivity,
     private val binding: ActivityMainBinding,
@@ -26,10 +29,19 @@ class ConversationController(
         private set
     private var currentNode: ConversationNode? = null
     private val conversationPath = mutableListOf<String>()
+
+    // Callback for when conversation ends and should return to mood selection
+    var onConversationEnd: (() -> Unit)? = null
+
     fun startConversation(mood: String) {
         currentMood = mood
         isConversationMode = true
         conversationPath.clear()
+
+        // Clear any previous conversation choices
+        binding.conversationChoicesContainer.removeAllViews()
+        binding.conversationChoicesContainer.visibility = View.VISIBLE
+
         binding.characterImage.setImageResource(CharacterImageManager.getCharacterImageForMood(mood))
         lifecycleScope.launch {
             val userData = userRepository.getUserData()
@@ -42,6 +54,7 @@ class ConversationController(
             showConversationNode(startingNode)
         }
     }
+
     fun showConversationNode(node: ConversationNode) {
         currentNode = node
         conversationPath.add(node.id)
@@ -53,6 +66,7 @@ class ConversationController(
         showFeatureNudge(node.featureNudge)
         showConversationChoices(node.userOptions)
     }
+
     fun onUserChoice(nextNodeId: String, moodEffect: Int, onShowResources: () -> Unit, onReturnToMood: () -> Unit) {
         if (nextNodeId == "show_resources_screen") {
             onShowResources()
@@ -73,14 +87,20 @@ class ConversationController(
             onReturnToMood()
         }
     }
+
     fun exitConversationMode() {
         isConversationMode = false
         currentMood = null
         currentNode = null
         conversationPath.clear()
         binding.conversationChoicesContainer.visibility = View.GONE
+        binding.conversationChoicesContainer.removeAllViews() // Clean up old buttons
         binding.featureNudgeCard.visibility = View.GONE
+
+        // Trigger callback to let MainActivity know conversation ended
+        onConversationEnd?.invoke()
     }
+
     fun showMoodGreeting(mood: String) {
         binding.characterImage.setImageResource(CharacterImageManager.getCharacterImageForMood(mood))
         binding.conversationText.text = when (mood.lowercase()) {
@@ -100,6 +120,7 @@ class ConversationController(
                 binding.characterImage.animate().scaleX(1.0f).scaleY(1.0f).setDuration(150).start()
             }.start()
     }
+
     private fun showFeatureNudge(feature: String?) {
         val nudgeText = when (feature) {
             "joke" -> "💡 Want a laugh? Tap here to hear BaoBao's jokes!"
@@ -116,6 +137,7 @@ class ConversationController(
             binding.featureNudgeCard.visibility = View.GONE
         }
     }
+
     private fun showConversationChoices(options: List<UserOption>) {
         binding.conversationChoicesContainer.removeAllViews()
         options.forEachIndexed { index, option ->
@@ -142,10 +164,32 @@ class ConversationController(
                 )
                 layoutParams.setMargins(0, 0, 0, 12)
                 this.layoutParams = layoutParams
+
+                // Add click listener to handle user choice
+                setOnClickListener {
+                    SoundManager.playClickSound(activity)
+                    onUserChoice(
+                        nextNodeId = option.nextNodeId,
+                        moodEffect = option.moodEffect,
+                        onShowResources = {
+                            val intent = Intent(activity, ResourcesActivity::class.java)
+                            activity.startActivity(intent)
+                        },
+                        onReturnToMood = {
+                            // Properly exit conversation mode and cleanup UI
+                            exitConversationMode()
+                            // Note: MainActivity will handle showing mood dialog again
+                        }
+                    )
+                }
             }
             binding.conversationChoicesContainer.addView(button)
         }
+
+        // Make sure container is visible
+        binding.conversationChoicesContainer.visibility = View.VISIBLE
     }
+
     private fun saveConversationState() {
         lifecycleScope.launch {
             val userData = userRepository.getUserData()
@@ -158,6 +202,7 @@ class ConversationController(
             userRepository.updateUserData(updatedData)
         }
     }
+
     private fun applyMoodEffect(effect: Int) {
         lifecycleScope.launch {
             val userData = userRepository.getUserData()
@@ -173,3 +218,4 @@ class ConversationController(
         }
     }
 }
+

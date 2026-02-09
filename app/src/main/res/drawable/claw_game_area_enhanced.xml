@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Main background with gradient -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="270"
+                android:startColor="#E8F5E9"
+                android:centerColor="#C8E6C9"
+                android:endColor="#A5D6A7" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+    <!-- Inner shadow/border effect -->
+    <item
+        android:left="3dp"
+        android:top="3dp"
+        android:right="3dp"
+        android:bottom="3dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="270"
+                android:startColor="#F1F8E9"
+                android:centerColor="#DCEDC8"
+                android:endColor="#C5E1A5" />
+            <corners android:radius="13dp" />
+            <stroke
+                android:width="2dp"
+                android:color="#81C784" />
+        </shape>
+    </item>
+
+    <!-- Glass/shine effect at top -->
+    <item
+        android:left="8dp"
+        android:top="6dp"
+        android:right="8dp"
+        android:bottom="0dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="270"
+                android:startColor="#40FFFFFF"
+                android:endColor="#00FFFFFF" />
+            <corners
+                android:topLeftRadius="10dp"
+                android:topRightRadius="10dp"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp" />
+            <size android:height="40dp" />
+        </shape>
+    </item>
+
+</layer-list>
+

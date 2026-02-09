@@ -12,16 +12,25 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.BounceInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.baobao.additionals.LoadingActivity
 import com.example.baobao.audio.VoiceManager
 import com.example.baobao.conversation.ConversationManager
+import com.example.baobao.database.AppDatabase
+import com.example.baobao.database.SessionManager
+import com.example.baobao.database.UserRepository
 import com.example.baobao.databinding.ActivityAuthBinding
+import com.example.baobao.optimization.MemoryOptimizer
+import kotlinx.coroutines.launch
 
 class AuthActivity : AppCompatActivity() {
     private var binding: ActivityAuthBinding? = null
     private var isSignUp = false
     private val handler = Handler(Looper.getMainLooper())
+    private lateinit var userRepository: UserRepository
 
     // Track all animators for cleanup
     private val activeAnimators = mutableListOf<ValueAnimator>()
@@ -39,6 +48,11 @@ class AuthActivity : AppCompatActivity() {
             binding = ActivityAuthBinding.inflate(layoutInflater)
             binding?.let {
                 setContentView(it.root)
+
+                // Initialize database and session
+                val database = AppDatabase.getDatabase(this)
+                userRepository = UserRepository(database.userDao())
+                SessionManager.init(this)
 
                 // Apply voice settings
                 VoiceManager.applySettings(this)
@@ -60,6 +74,16 @@ class AuthActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         val bind = binding ?: return
 
+        // Secret button - click logo to show all accounts
+        bind.logoImage.setOnClickListener {
+            showAllAccountsDialog()
+        }
+
+        // Guest button - continue as guest
+        bind.guestButton.setOnClickListener {
+            performGuestLogin()
+        }
+
         bind.signupButton.setOnClickListener {
             if (!isDestroyed && !isFinishing) {
                 isSignUp = !isSignUp
@@ -70,18 +94,139 @@ class AuthActivity : AppCompatActivity() {
 
         bind.loginButton.setOnClickListener {
             if (!isDestroyed && !isFinishing) {
-                animateButtonPress {
-                    try {
-                        // Navigate directly to Main screen
-                        LoadingActivity.startWithTarget(this, MainActivity::class.java, 1500L)
-                        finish()
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Error navigating: ${e.message}", e)
-                        finish()
-                    }
+                val username = bind.usernameInputLayout.editText?.text.toString().trim()
+                val password = bind.passwordInputLayout.editText?.text.toString().trim()
+
+                // Validation
+                if (username.isEmpty()) {
+                    Toast.makeText(this, "Please enter a username", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (password.isEmpty()) {
+                    Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (isSignUp) {
+                    // Sign up flow
+                    performSignup(username, password)
+                } else {
+                    // Login flow
+                    performLogin(username, password)
                 }
             }
         }
+    }
+
+    private fun performGuestLogin() {
+        lifecycleScope.launch {
+            try {
+                val guestUser = userRepository.createGuestAccount()
+                if (guestUser != null) {
+                    // Login as guest
+                    SessionManager.login(this@AuthActivity, guestUser.userId, guestUser.username, isGuestAccount = true)
+                    Toast.makeText(this@AuthActivity, "Welcome, Guest!", Toast.LENGTH_SHORT).show()
+
+                    // Navigate to Main screen
+                    LoadingActivity.startWithTarget(this@AuthActivity, MainActivity::class.java, 1500L)
+                    finish()
+                } else {
+                    Toast.makeText(this@AuthActivity, "Failed to create guest account", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error creating guest account: ${e.message}", e)
+                Toast.makeText(this@AuthActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun performLogin(username: String, password: String) {
+        animateButtonPress {
+            lifecycleScope.launch {
+                try {
+                    val user = userRepository.login(username, password)
+                    if (user != null) {
+                        // Login successful
+                        SessionManager.login(this@AuthActivity, user.userId, user.username)
+                        Toast.makeText(this@AuthActivity, "Welcome back, $username!", Toast.LENGTH_SHORT).show()
+
+                        // Navigate to Main screen
+                        LoadingActivity.startWithTarget(this@AuthActivity, MainActivity::class.java, 1500L)
+                        finish()
+                    } else {
+                        // Login failed
+                        Toast.makeText(this@AuthActivity, "Invalid username or password", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error during login: ${e.message}", e)
+                    Toast.makeText(this@AuthActivity, "Login error: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun performSignup(username: String, password: String) {
+        animateButtonPress {
+            lifecycleScope.launch {
+                try {
+                    val user = userRepository.signup(username, password)
+                    if (user != null) {
+                        // Signup successful
+                        SessionManager.login(this@AuthActivity, user.userId, user.username)
+                        Toast.makeText(this@AuthActivity, "Welcome, $username! Account created successfully!", Toast.LENGTH_LONG).show()
+
+                        // Navigate to Main screen
+                        LoadingActivity.startWithTarget(this@AuthActivity, MainActivity::class.java, 1500L)
+                        finish()
+                    } else {
+                        // Signup failed (username taken)
+                        Toast.makeText(this@AuthActivity, "Username already exists. Please choose another.", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error during signup: ${e.message}", e)
+                    Toast.makeText(this@AuthActivity, "Signup error: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun showAllAccountsDialog() {
+        lifecycleScope.launch {
+            try {
+                val allUsers = userRepository.getAllUsers()
+
+                val message = if (allUsers.isEmpty()) {
+                    "No accounts found in database.\n\nCreate your first account!"
+                } else {
+                    buildString {
+                        appendLine("📋 All Accounts (${allUsers.size})")
+                        appendLine()
+                        allUsers.forEach { user ->
+                            appendLine("👤 ${user.username}")
+                            appendLine("   User ID: ${user.userId}")
+                            appendLine("   Currency: ${user.currency} ✷")
+                            appendLine("   Created: ${formatDate(user.createdAt)}")
+                            appendLine()
+                        }
+                    }
+                }
+
+                AlertDialog.Builder(this@AuthActivity)
+                    .setTitle("🔐 Debug: Account List")
+                    .setMessage(message)
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error fetching accounts: ${e.message}", e)
+                Toast.makeText(this@AuthActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun formatDate(timestamp: Long): String {
+        val sdf = java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault())
+        return sdf.format(java.util.Date(timestamp))
     }
 
     private fun startEntranceAnimations() {
@@ -246,31 +391,6 @@ class AuthActivity : AppCompatActivity() {
             })
 
             scaleDown.start()
-
-            // Animate nickname field visibility
-            if (isSignUp) {
-                bind.nicknameInputLayout.visibility = View.VISIBLE
-                bind.nicknameInputLayout.alpha = 0f
-                bind.nicknameInputLayout.translationY = 30f
-                bind.nicknameInputLayout.animate()
-                    .alpha(1f)
-                    .translationY(0f)
-                    .setDuration(400)
-                    .setStartDelay(200)
-                    .setInterpolator(DecelerateInterpolator())
-                    .start()
-            } else {
-                bind.nicknameInputLayout.animate()
-                    .alpha(0f)
-                    .translationY(30f)
-                    .setDuration(300)
-                    .withEndAction {
-                        if (binding != null) {
-                            bind.nicknameInputLayout.visibility = View.GONE
-                        }
-                    }
-                    .start()
-            }
         } catch (e: Exception) {
             Log.e(TAG, "Error in card transition: ${e.message}", e)
         }
@@ -346,14 +466,12 @@ class AuthActivity : AppCompatActivity() {
         val bind = binding ?: return
 
         if (isSignUp) {
-            bind.nicknameInputLayout.visibility = View.VISIBLE
             bind.loginButton.text = "Sign Up"
             bind.signupButton.text = "Already have an account? Login"
             val (text, index) = ConversationManager.getRandomSignupWithIndex()
             animateTextReveal(bind.bubbleText, text)
             VoiceManager.playVoice(this, VoiceManager.getSignupAudioId(this, index))
         } else {
-            bind.nicknameInputLayout.visibility = View.GONE
             bind.loginButton.text = "Login"
             bind.signupButton.text = "Don't have an account? Sign Up"
             val (text, index) = ConversationManager.getRandomLoginWithIndex()
@@ -398,6 +516,7 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacksAndMessages(null)
+        MemoryOptimizer.cleanupHandler(handler)
+        VoiceManager.stopVoice()
     }
 }

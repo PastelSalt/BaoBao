@@ -162,16 +162,39 @@
                 android:alpha="0.3"
                 android:background="@color/tan" />
 
+            <!-- Currency Display -->
             <TextView
-                android:id="@+id/moodText"
+                android:id="@+id/currencyText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="😊 Happy"
+                android:text="3,000 ✷"
                 android:textColor="@color/green"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:alpha="1"
-                 />
+                android:alpha="1" />
+
+            <!-- Claw Machine Attempts -->
+            <TextView
+                android:id="@+id/clawAttemptsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="🎮 5/5"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:alpha="1" />
+
+            <!-- Refresh Timer -->
+            <TextView
+                android:id="@+id/clawTimerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next: 4:30"
+                android:textColor="@color/gray"
+                android:textSize="10sp"
+                android:visibility="gone"
+                android:alpha="1" />
         </LinearLayout>
     </FrameLayout>
 
@@ -187,15 +210,13 @@
         app:layout_constraintStart_toStartOf="@id/characterImage"
         android:layout_marginBottom="-5dp" />
 
-    <!-- Character with animation setup -->
+    <!-- Character with animation setup - Centered vertically, static position -->
     <ImageView
         android:id="@+id/characterImage"
-        android:layout_width="463dp"
-        android:layout_height="531dp"
+        android:layout_width="418dp"
+        android:layout_height="484dp"
         android:layout_marginStart="48dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="48dp"
-        android:layout_marginBottom="8dp"
         android:alpha="1"
         android:clickable="true"
         android:contentDescription="BaoBao the panda character"
@@ -204,19 +225,19 @@
         android:scaleX="1"
         android:scaleY="1"
         android:src="@drawable/mainscreen_outfit1_fullbody_hello"
-        app:layout_constraintBottom_toTopOf="@+id/hintText"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/statusCard" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.42" />
 
-    <!-- Interaction Hint Text with animation setup -->
+    <!-- Interaction Hint Text with animation setup - Positioned independently -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/hintText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:alpha="1"
-        
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="14dp"
         app:cardElevation="1dp"
@@ -237,7 +258,7 @@
             android:textStyle="bold" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Conversation Card with animation setup -->
+    <!-- Conversation Card with animation setup - Fixed max height to prevent pushing character -->
     <FrameLayout
         android:id="@+id/conversationArea"
         android:layout_width="0dp"
@@ -247,25 +268,33 @@
         android:layout_marginBottom="8dp"
         android:alpha="1"
         android:background="@drawable/bamboo_textarea_bg"
-        
+        android:maxHeight="120dp"
         app:layout_constraintBottom_toTopOf="@+id/buttonToggleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/conversationText"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingHorizontal="24dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
-            android:text="How can I help you today?"
-            android:textColor="@color/black"
-            android:textSize="17sp"
-            android:lineSpacingExtra="4dp"
-            android:fontFamily="sans-serif-medium"
-            android:alpha="1" />
+            android:maxHeight="120dp"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="true">
+
+            <TextView
+                android:id="@+id/conversationText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:text="How can I help you today?"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:lineSpacingExtra="3dp"
+                android:fontFamily="sans-serif-medium"
+                android:alpha="1" />
+        </ScrollView>
     </FrameLayout>
 
     <!-- Feature Nudge -->

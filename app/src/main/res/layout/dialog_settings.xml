@@ -22,7 +22,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="BaoBao character"
-                android:src="@drawable/baobao_main_default"
+                android:src="@drawable/baobaotextlogo"
                 android:scaleType="fitCenter" />
 
             <!-- Title -->

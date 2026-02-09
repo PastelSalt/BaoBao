@@ -146,6 +146,60 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <!-- Classic Bao Outfit (Default) -->
+                    <FrameLayout
+                        android:id="@+id/outfitClassicBaoCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/bamboo_status_bg"
+                        android:padding="12dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <FrameLayout
+                                android:layout_width="120dp"
+                                android:layout_height="140dp"
+                                android:background="@drawable/bamboo_button_pale_green"
+                                android:padding="8dp">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:contentDescription="Classic Bao Outfit"
+                                    android:src="@drawable/mainscreen_outfit1_fullbody_hello"
+                                    android:scaleType="centerCrop" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="Classic Bao"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/outfitClassicBaoPrice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="✓ Default"
+                                android:textColor="@color/green"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </FrameLayout>
+
                     <!-- Blue Bao Outfit -->
                     <FrameLayout
                         android:id="@+id/outfitBlueBaoCard"
@@ -238,13 +292,16 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- Background Item 1 -->
+                    <!-- Default Background -->
                     <FrameLayout
+                        android:id="@+id/bgDefaultCard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
                         android:background="@drawable/bamboo_status_bg"
-                        android:padding="12dp">
+                        android:padding="12dp"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -256,14 +313,14 @@
                                 android:layout_width="100dp"
                                 android:layout_height="100dp"
                                 android:background="@drawable/bamboo_button_pale_green"
-                                android:padding="16dp">
+                                android:padding="8dp">
 
                                 <ImageView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:contentDescription="Zen Garden"
-                                    android:src="@android:drawable/ic_menu_gallery"
-                                    app:tint="@color/green" />
+                                    android:contentDescription="Default Bamboo Background"
+                                    android:src="@drawable/main_bamboo_background"
+                                    android:scaleType="centerCrop" />
                             </FrameLayout>
 
                             <TextView
@@ -271,22 +328,78 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
                                 android:fontFamily="sans-serif-medium"
-                                android:text="Zen Garden"
+                                android:text="Bamboo Forest"
                                 android:textColor="@color/black"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/bgDefaultPrice"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="sans-serif-medium"
-                                android:text="1000 ✷"
+                                android:text="✓ Default"
                                 android:textColor="@color/green"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
                     </FrameLayout>
+
+                    <!-- Pastel Blue Sky Background -->
+                    <FrameLayout
+                        android:id="@+id/bgPastelBlueSkyCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/bamboo_status_bg"
+                        android:padding="12dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <FrameLayout
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:background="@drawable/bamboo_button_pale_green"
+                                android:padding="8dp">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:contentDescription="Pastel Blue Sky Background"
+                                    android:src="@drawable/bg_pastel_blue_sky"
+                                    android:scaleType="centerCrop" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="Blue Sky"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/bgPastelBlueSkyPrice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="800 ✷"
+                                android:textColor="@color/green"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </FrameLayout>
+
 
                     <!-- More background items can be added here -->
                 </LinearLayout>
@@ -343,15 +456,14 @@
                             <FrameLayout
                                 android:layout_width="100dp"
                                 android:layout_height="100dp"
-                                android:background="@drawable/bamboo_button_pale_green"
-                                android:padding="16dp">
+                                android:background="@drawable/bamboo_button_pale_green">
 
-                                <ImageView
+                                <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:contentDescription="Kakushigoto BGM"
-                                    android:src="@android:drawable/ic_media_play"
-                                    app:tint="@color/green" />
+                                    android:gravity="center"
+                                    android:text="🎵"
+                                    android:textSize="48sp" />
                             </FrameLayout>
 
                             <TextView
@@ -396,15 +508,14 @@
                             <FrameLayout
                                 android:layout_width="100dp"
                                 android:layout_height="100dp"
-                                android:background="@drawable/bamboo_button_pale_green"
-                                android:padding="16dp">
+                                android:background="@drawable/bamboo_button_pale_green">
 
-                                <ImageView
+                                <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:contentDescription="Little BGM"
-                                    android:src="@android:drawable/ic_media_play"
-                                    app:tint="@color/green" />
+                                    android:gravity="center"
+                                    android:text="🎶"
+                                    android:textSize="48sp" />
                             </FrameLayout>
 
                             <TextView
@@ -448,15 +559,14 @@
                             <FrameLayout
                                 android:layout_width="100dp"
                                 android:layout_height="100dp"
-                                android:background="@drawable/bamboo_button_pale_green"
-                                android:padding="16dp">
+                                android:background="@drawable/bamboo_button_pale_green">
 
-                                <ImageView
+                                <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:contentDescription="Ordinary Days BGM"
-                                    android:src="@android:drawable/ic_media_play"
-                                    app:tint="@color/green" />
+                                    android:gravity="center"
+                                    android:text="🎼"
+                                    android:textSize="48sp" />
                             </FrameLayout>
 
                             <TextView
@@ -477,56 +587,6 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="750 ✷"
                                 android:textColor="@color/green"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </FrameLayout>
-
-                    <!-- BGM Item 3 - Future Expansion Slot -->
-                    <FrameLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bamboo_status_bg"
-                        android:padding="12dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
-
-                            <FrameLayout
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:background="@drawable/bamboo_button_frame"
-                                android:backgroundTint="@color/gray"
-                                android:padding="16dp">
-
-                                <ImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:contentDescription="Coming Soon"
-                                    android:src="@android:drawable/ic_dialog_info"
-                                    app:tint="@color/white" />
-                            </FrameLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:fontFamily="sans-serif-medium"
-                                android:text="Coming Soon"
-                                android:textColor="@color/gray"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:fontFamily="sans-serif-medium"
-                                android:text="..."
-                                android:textColor="@color/gray"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </LinearLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Light brown/tan gradient -->
+    <gradient
+        android:type="radial"
+        android:gradientRadius="50%"
+        android:centerX="0.3"
+        android:centerY="0.3"
+        android:startColor="#FFF8E1"
+        android:centerColor="#FFECB3"
+        android:endColor="#D7CCC8" />
+
+    <stroke
+        android:width="3dp"
+        android:color="#BCAAA4" />
+
+    <size
+        android:width="60dp"
+        android:height="60dp" />
+
+</shape>
+
+

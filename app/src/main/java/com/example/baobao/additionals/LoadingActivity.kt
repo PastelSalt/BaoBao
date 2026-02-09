@@ -11,6 +11,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import com.example.baobao.databinding.ActivityLoadingBinding
+import com.example.baobao.optimization.MemoryOptimizer
 
 class LoadingActivity : AppCompatActivity() {
 
@@ -128,7 +129,8 @@ class LoadingActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        dotAnimationRunnable?.let { handler.removeCallbacks(it) }
+        dotAnimationRunnable?.let { MemoryOptimizer.removeCallback(handler, it) }
+        MemoryOptimizer.cleanupHandler(handler)
     }
 
     companion object {

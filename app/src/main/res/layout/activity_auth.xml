@@ -113,7 +113,7 @@
                 app:startIconTint="@color/green">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/usernameEditText"
+                    android:id="@+id/usernameInput"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:fontFamily="sans-serif-medium"
@@ -124,14 +124,13 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/nicknameInputLayout"
+                android:id="@+id/passwordInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="16dp"
-                android:hint="Name (Nickname)"
-                android:visibility="gone"
+                android:hint="Password"
                 app:boxBackgroundColor="@android:color/transparent"
                 app:boxCornerRadiusBottomEnd="14dp"
                 app:boxCornerRadiusBottomStart="14dp"
@@ -141,19 +140,21 @@
                 app:boxStrokeWidth="2dp"
                 app:boxStrokeWidthFocused="3dp"
                 app:hintTextColor="@color/green"
-                app:startIconDrawable="@android:drawable/ic_menu_edit"
+                app:endIconMode="password_toggle"
+                app:startIconDrawable="@android:drawable/ic_lock_lock"
                 app:startIconTint="@color/green">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/nicknameEditText"
+                    android:id="@+id/passwordInput"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
-                    android:inputType="textPersonName"
+                    android:inputType="textPassword"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
+
 
             <Button
                 android:id="@+id/loginButton"
@@ -194,6 +195,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/authCard"
         app:rippleColor="@color/tan" />
+
+    <!-- Guest Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/guestButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.02"
+        android:minHeight="48dp"
+        android:paddingHorizontal="32dp"
+        android:text="Continue as Guest"
+        android:textAllCaps="false"
+        android:textColor="@color/green"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:strokeColor="@color/green"
+        app:strokeWidth="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/signupButton"
+        app:rippleColor="@color/pale_green" />
 
     <!-- Footer with updated year -->
     <TextView

@@ -15,13 +15,14 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/bamboo_status_bg"
-        android:paddingVertical="8dp"
+        android:elevation="4dp"
+        android:paddingVertical="10dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="8dp">
+            android:paddingHorizontal="12dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/backButton"
@@ -33,35 +34,46 @@
                 android:text="Back"
                 android:textAllCaps="false"
                 android:textColor="@color/green"
+                android:textSize="14sp"
                 app:icon="@android:drawable/ic_menu_revert"
+                app:iconSize="18dp"
                 app:iconTint="@color/green"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/clawMachineTitle"
+            <!-- Title with icon -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.05"
-                android:text="Claw Machine"
-                android:textColor="@color/green"
-                android:textSize="22sp"
-                android:textStyle="bold"
+                android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <!-- Tries Counter with bamboo frame -->
+                <TextView
+                    android:id="@+id/clawMachineTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.05"
+                    android:text="🎮 Claw Machine"
+                    android:textColor="@color/green"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Tries Counter with enhanced styling -->
             <FrameLayout
                 android:id="@+id/triesLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bamboo_button_pale_green"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -79,7 +91,7 @@
                         android:fontFamily="sans-serif-medium"
                         android:text="5/5"
                         android:textColor="@color/green"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -87,9 +99,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
-                        android:text="Tries"
+                        android:text="🎯 Tries"
                         android:textColor="@color/gray"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <TextView
                         android:id="@+id/timerText"
@@ -97,9 +109,9 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
                         android:textColor="@color/tan"
-                        android:textSize="9sp"
+                        android:textSize="10sp"
                         android:visibility="gone"
-                        tools:text="Next in 4:30" />
+                        tools:text="⏱ 4:30" />
 
                 </LinearLayout>
             </FrameLayout>
@@ -107,15 +119,16 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
-    <!-- Game Area -->
+    <!-- Game Area with bamboo frame -->
     <FrameLayout
         android:id="@+id/gameArea"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/bamboo_game_area_bg"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/claw_game_bamboo_frame"
+        android:elevation="4dp"
         app:layout_constraintBottom_toTopOf="@+id/grabButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -125,107 +138,136 @@
             android:id="@+id/gameContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="16dp"
+            android:layout_margin="14dp"
             android:clipChildren="false">
 
-            <!-- Designated Drop Zone -->
+            <!-- Enhanced Drop Zone -->
             <View
                 android:id="@+id/dropZone"
-                android:layout_width="120dp"
-                android:layout_height="80dp"
-                android:background="@drawable/drop_zone_bg"
+                android:layout_width="100dp"
+                android:layout_height="70dp"
+                android:background="@drawable/drop_zone_enhanced"
+                android:elevation="2dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Drop Zone Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🕳️"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@id/dropZone"
+                app:layout_constraintEnd_toEndOf="@id/dropZone"
+                app:layout_constraintStart_toStartOf="@id/dropZone"
+                app:layout_constraintTop_toTopOf="@id/dropZone" />
 
             <!-- Claw Group (Synced horizontal movement) -->
             <FrameLayout
                 android:id="@+id/clawGroup"
-                android:layout_width="140dp"
+                android:layout_width="130dp"
                 android:layout_height="match_parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <!-- Claw String - set to match_parent for scale logic -->
+                <!-- Claw String with better styling -->
                 <View
                     android:id="@+id/clawString"
-                    android:layout_width="10dp"
+                    android:layout_width="8dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:background="#8B5E3C"
+                    android:background="@drawable/claw_string_gradient"
                     android:pivotY="0"
                     android:scaleY="0.01" />
 
                 <!-- Bamboo Claw -->
                 <ImageView
                     android:id="@+id/claw"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
                     android:layout_gravity="center_horizontal"
-                    android:contentDescription="Bamboo claw grabber"
+                    android:contentDescription="Claw"
                     android:src="@drawable/bamboo_claw"
                     android:translationZ="10dp" />
             </FrameLayout>
 
-            <!-- Prizes - spread across the bottom of the game area -->
-            <ImageView
+            <!-- Prizes with themed icons (Changed to TextView to show emojis) -->
+            <TextView
                 android:id="@+id/prize1"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_marginStart="130dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/prize_placeholder"
-                android:contentDescription="Prize 1"
+                android:layout_marginStart="110dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/prize_bamboo"
+                android:contentDescription="Bamboo Prize"
+                android:elevation="6dp"
+                android:gravity="center"
+                android:textSize="28sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="🎋" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/prize2"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/prize_placeholder"
-                android:contentDescription="Prize 2"
+                android:layout_marginStart="12dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/prize_carrot"
+                android:contentDescription="Carrot Prize"
+                android:elevation="6dp"
+                android:gravity="center"
+                android:textSize="28sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/prize1" />
+                app:layout_constraintStart_toEndOf="@id/prize1"
+                tools:text="🥕" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/prize3"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/prize_placeholder"
-                android:contentDescription="Prize 3"
+                android:layout_marginStart="12dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/prize_apple"
+                android:contentDescription="Apple Prize"
+                android:elevation="6dp"
+                android:gravity="center"
+                android:textSize="28sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/prize2" />
+                app:layout_constraintStart_toEndOf="@id/prize2"
+                tools:text="🍎" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/prize4"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/prize_placeholder"
-                android:contentDescription="Prize 4"
+                android:layout_marginStart="12dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/prize_grape"
+                android:contentDescription="Grape Prize"
+                android:elevation="6dp"
+                android:gravity="center"
+                android:textSize="28sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/prize3" />
+                app:layout_constraintStart_toEndOf="@id/prize3"
+                tools:text="🍇" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
-    <!-- Operation Button with bamboo styling -->
+    <!-- Enhanced Grab Button -->
     <Button
         android:id="@+id/grabButton"
         android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="72dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="12dp"
         android:background="@drawable/bamboo_button_green"
+        android:elevation="8dp"
         android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.03"
+        android:letterSpacing="0.02"
         android:stateListAnimator="@null"
-        android:text="HOLD TO MOVE • RELEASE TO DROP"
+        android:text="🎯 HOLD TO MOVE • RELEASE TO GRAB 🎯"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="14sp"
@@ -234,22 +276,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Character Area with bamboo styling -->
+    <!-- Character Area with enhanced styling -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/characterArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="20dp"
-        android:paddingBottom="20dp"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <FrameLayout
             android:id="@+id/speechBubble"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="10dp"
             android:background="@drawable/bamboo_speech_bubble"
-            android:elevation="4dp"
+            android:elevation="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/characterIcon"
             app:layout_constraintStart_toStartOf="parent"
@@ -261,19 +303,20 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="16dp"
-                android:text="Ready to play? Hold the button to move the claw!"
+                android:lineSpacingExtra="2dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="14dp"
+                android:text="🎮 Ready to play? Hold the button to move the claw!"
                 android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
         </FrameLayout>
 
         <ImageView
             android:id="@+id/characterIcon"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
-            android:contentDescription="BaoBao character"
-            android:elevation="6dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:contentDescription="BaoBao"
+            android:elevation="8dp"
             android:src="@drawable/baobao_main_default"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -5,39 +5,61 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
-    // User Data queries
-    @Query("SELECT * FROM user_data WHERE userId = 1")
-    fun getUserData(): Flow<UserData?>
+    // Authentication queries
+    @Query("SELECT * FROM user_data WHERE username = :username LIMIT 1")
+    suspend fun getUserByUsername(username: String): UserData?
 
-    @Query("SELECT * FROM user_data WHERE userId = 1")
-    suspend fun getUserDataOnce(): UserData?
+    @Query("SELECT * FROM user_data")
+    suspend fun getAllUsers(): List<UserData>
+
+    @Query("SELECT * FROM user_data WHERE userId = :userId")
+    suspend fun getUserById(userId: Int): UserData?
+
+    @Query("UPDATE user_data SET lastLoginAt = :timestamp WHERE userId = :userId")
+    suspend fun updateLastLogin(userId: Int, timestamp: Long)
+
+    @Query("DELETE FROM user_data WHERE userId = :userId")
+    suspend fun deleteUser(userId: Int)
+
+    // User Data queries
+    @Query("SELECT * FROM user_data WHERE userId = :userId")
+    fun getUserData(userId: Int): Flow<UserData?>
+
+    @Query("SELECT * FROM user_data WHERE userId = :userId")
+    suspend fun getUserDataOnce(userId: Int): UserData?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserData(userData: UserData)
+    suspend fun insertUserData(userData: UserData): Long
 
     @Update
     suspend fun updateUserData(userData: UserData)
 
-    @Query("UPDATE user_data SET currency = :currency WHERE userId = 1")
-    suspend fun updateCurrency(currency: Int)
+    @Query("UPDATE user_data SET currency = :currency WHERE userId = :userId")
+    suspend fun updateCurrency(userId: Int, currency: Int)
 
-    @Query("UPDATE user_data SET purchasedBgm = :purchasedBgm WHERE userId = 1")
-    suspend fun updatePurchasedBgm(purchasedBgm: String)
+    @Query("UPDATE user_data SET purchasedBgm = :purchasedBgm WHERE userId = :userId")
+    suspend fun updatePurchasedBgm(userId: Int, purchasedBgm: String)
 
-    @Query("UPDATE user_data SET purchasedThemes = :purchasedThemes WHERE userId = 1")
-    suspend fun updatePurchasedThemes(purchasedThemes: String)
+    @Query("UPDATE user_data SET purchasedThemes = :purchasedThemes WHERE userId = :userId")
+    suspend fun updatePurchasedThemes(userId: Int, purchasedThemes: String)
 
-    @Query("UPDATE user_data SET selectedBgm = :selectedBgm WHERE userId = 1")
-    suspend fun updateSelectedBgm(selectedBgm: String)
+    @Query("UPDATE user_data SET selectedBgm = :selectedBgm WHERE userId = :userId")
+    suspend fun updateSelectedBgm(userId: Int, selectedBgm: String)
 
-    @Query("UPDATE user_data SET selectedTheme = :selectedTheme WHERE userId = 1")
-    suspend fun updateSelectedTheme(selectedTheme: String)
+    @Query("UPDATE user_data SET selectedTheme = :selectedTheme WHERE userId = :userId")
+    suspend fun updateSelectedTheme(userId: Int, selectedTheme: String)
 
-    @Query("UPDATE user_data SET purchasedOutfits = :purchasedOutfits WHERE userId = 1")
-    suspend fun updatePurchasedOutfits(purchasedOutfits: String)
+    @Query("UPDATE user_data SET purchasedOutfits = :purchasedOutfits WHERE userId = :userId")
+    suspend fun updatePurchasedOutfits(userId: Int, purchasedOutfits: String)
 
-    @Query("UPDATE user_data SET selectedOutfit = :selectedOutfit WHERE userId = 1")
-    suspend fun updateSelectedOutfit(selectedOutfit: String)
+    @Query("UPDATE user_data SET selectedOutfit = :selectedOutfit WHERE userId = :userId")
+    suspend fun updateSelectedOutfit(userId: Int, selectedOutfit: String)
+
+    @Query("UPDATE user_data SET purchasedBackgrounds = :purchasedBackgrounds WHERE userId = :userId")
+    suspend fun updatePurchasedBackgrounds(userId: Int, purchasedBackgrounds: String)
+
+    @Query("UPDATE user_data SET selectedBackground = :selectedBackground WHERE userId = :userId")
+    suspend fun updateSelectedBackground(userId: Int, selectedBackground: String)
 
     // Purchase queries
     @Query("SELECT * FROM purchases WHERE itemType = :itemType")

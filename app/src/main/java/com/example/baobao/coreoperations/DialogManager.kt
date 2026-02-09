@@ -14,6 +14,7 @@ import com.example.baobao.audio.SoundManager
 import com.example.baobao.audio.VoiceManager
 import com.example.baobao.conversation.ConversationManager
 import com.example.baobao.database.UserRepository
+import com.example.baobao.database.SessionManager
 import com.example.baobao.databinding.DialogCustomizeBinding
 import com.example.baobao.databinding.DialogMoodSelectionBinding
 import com.example.baobao.databinding.DialogSettingsBinding
@@ -28,7 +29,8 @@ class DialogManager(
     private val activity: AppCompatActivity,
     private val lifecycleScope: LifecycleCoroutineScope,
     private val userRepository: UserRepository,
-    private val onCharacterImageUpdate: (() -> Unit)? = null
+    private val onCharacterImageUpdate: (() -> Unit)? = null,
+    private val onBackgroundUpdate: (() -> Unit)? = null
 ) {
 
     /**
@@ -41,6 +43,16 @@ class DialogManager(
             .create()
 
         val prefs = activity.getSharedPreferences("BaoBaoPrefs", Context.MODE_PRIVATE)
+
+        // Load and apply selected outfit to character icon
+        lifecycleScope.launch {
+            val selectedOutfit = userRepository.getSelectedOutfit()
+            CharacterImageManager.setOutfit(selectedOutfit)
+            // Update character icon with current outfit
+            dialogBinding.characterIcon.setImageResource(
+                CharacterImageManager.getCharacterImage(CharacterImageManager.Emotion.HELLO)
+            )
+        }
 
         // Load BGM volume
         val currentBgmVolume = prefs.getFloat("bgm_volume", 0.7f)
@@ -96,9 +108,26 @@ class DialogManager(
 
         dialogBinding.signOutButton.setOnClickListener {
             dialog.dismiss()
-            val intent = Intent(activity, AuthActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            activity.startActivity(intent)
+
+            // Delete guest account if signing out from guest account
+            lifecycleScope.launch {
+                if (SessionManager.isGuestAccount()) {
+                    val userId = SessionManager.getCurrentUserId()
+                    try {
+                        userRepository.deleteUser(userId)
+                    } catch (e: Exception) {
+                        android.util.Log.e("DialogManager", "Error deleting guest account: ${e.message}")
+                    }
+                }
+
+                // Logout and clear session
+                SessionManager.logout(activity)
+
+                // Navigate to AuthActivity
+                val intent = Intent(activity, AuthActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                activity.startActivity(intent)
+            }
         }
 
         dialogBinding.closeButton.setOnClickListener {
@@ -123,6 +152,8 @@ class DialogManager(
             val selectedBgm = userRepository.getSelectedBgm()
             val purchasedOutfits = userRepository.getPurchasedOutfitsList()
             val selectedOutfit = userRepository.getSelectedOutfit()
+            val purchasedBackgrounds = userRepository.getPurchasedBackgroundsList()
+            val selectedBackground = userRepository.getSelectedBackground()
 
             // Populate BGM options
             populateBgmOptions(dialogBinding, dialog, purchasedBgms, selectedBgm)
@@ -130,11 +161,9 @@ class DialogManager(
             // Populate outfit options
             populateOutfitOptions(dialogBinding, dialog, purchasedOutfits, selectedOutfit)
 
-            // Update character preview
-            updateCharacterPreview(dialogBinding, selectedOutfit)
+            // Populate background options
+            populateBackgroundOptions(dialogBinding, dialog, purchasedBackgrounds, selectedBackground)
 
-            // Set initial bubble text
-            dialogBinding.bubbleText.text = "Choose your favorite style and music! 🎨✨"
 
             dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
@@ -206,7 +235,6 @@ class DialogManager(
                     SoundManager.playClickSound(activity)
                     lifecycleScope.launch {
                         userRepository.setSelectedBgm(bgmId)
-                        dialogBinding.bubbleText.text = "BGM changed! It will apply when you return to the main screen! 🎵"
                         dialog.dismiss()
                     }
                 }
@@ -269,14 +297,9 @@ class DialogManager(
                         // Update CharacterImageManager globally
                         CharacterImageManager.setOutfit(outfitId)
 
-                        // Update preview in dialog
-                        updateCharacterPreview(dialogBinding, outfitId)
-
                         // Update main screen character image
                         onCharacterImageUpdate?.invoke()
 
-                        // Show confirmation message
-                        dialogBinding.bubbleText.text = "New outfit equipped! Looking good! ✨"
 
                         // Close dialog
                         dialog.dismiss()
@@ -288,12 +311,73 @@ class DialogManager(
         }
     }
 
-    private fun updateCharacterPreview(dialogBinding: DialogCustomizeBinding, outfitId: String) {
-        val previewImage = CharacterImageManager.getCharacterImage(
-            CharacterImageManager.Emotion.HELLO,
-            outfitId
+    private fun populateBackgroundOptions(
+        dialogBinding: DialogCustomizeBinding,
+        dialog: AlertDialog,
+        purchasedBackgrounds: List<String>,
+        selectedBackground: String
+    ) {
+        val container = dialogBinding.ownedBackgroundContainer
+        val noBackgroundContainer = dialogBinding.noBackgroundContainer
+
+        container.removeAllViews()
+
+        if (purchasedBackgrounds.isEmpty()) {
+            container.visibility = android.view.View.GONE
+            noBackgroundContainer.visibility = android.view.View.VISIBLE
+            return
+        }
+
+        container.visibility = android.view.View.VISIBLE
+        noBackgroundContainer.visibility = android.view.View.GONE
+
+        val backgroundNames = mapOf(
+            "default" to "Bamboo Forest (Default)",
+            "pastel_blue_sky" to "Blue Sky"
         )
-        dialogBinding.characterIcon.setImageResource(previewImage)
+
+        for (backgroundId in purchasedBackgrounds) {
+            val backgroundButton = com.google.android.material.button.MaterialButton(activity)
+            val isSelected = backgroundId == selectedBackground
+
+            backgroundButton.apply {
+                text = backgroundNames[backgroundId] ?: backgroundId.replaceFirstChar { it.uppercase() }
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 0, 0, 12)
+                }
+                setBackgroundColor(if (isSelected) activity.getColor(R.color.green) else activity.getColor(R.color.pale_green))
+                setTextColor(if (isSelected) activity.getColor(R.color.white) else activity.getColor(R.color.green))
+                cornerRadius = 12
+                elevation = if (isSelected) 6f else 2f
+                textSize = 14f
+                isAllCaps = false
+
+                setOnClickListener {
+                    SoundManager.playClickSound(activity)
+                    lifecycleScope.launch {
+                        // Save background selection to database
+                        userRepository.setSelectedBackground(backgroundId)
+
+                        // Update main screen background immediately
+                        onBackgroundUpdate?.invoke()
+
+                        // Show confirmation and close dialog
+                        android.widget.Toast.makeText(
+                            activity,
+                            "Background changed!",
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+
+                        dialog.dismiss()
+                    }
+                }
+            }
+
+            container.addView(backgroundButton)
+        }
     }
 
     /**
@@ -342,4 +426,3 @@ class DialogManager(
         dialog.show()
     }
 }
-

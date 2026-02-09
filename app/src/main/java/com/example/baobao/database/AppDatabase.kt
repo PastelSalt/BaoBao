@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [UserData::class, Purchase::class], version = 3, exportSchema = false)
+@Database(entities = [UserData::class, Purchase::class], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
@@ -26,13 +26,6 @@ abstract class AppDatabase : RoomDatabase() {
                 .fallbackToDestructiveMigration() // For development - handles schema changes
                 .build()
 
-                // Initialize default user data if first time
-                CoroutineScope(Dispatchers.IO).launch {
-                    val userData = instance.userDao().getUserDataOnce()
-                    if (userData == null) {
-                        instance.userDao().insertUserData(UserData())
-                    }
-                }
 
                 INSTANCE = instance
                 instance
