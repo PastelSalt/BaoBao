@@ -485,12 +485,14 @@ class AuthActivity : AppCompatActivity() {
         val bind = binding ?: return
 
         if (isSignUp) {
+            bind.authTitle.text = "Sign Up"
             bind.loginButton.text = "Sign Up"
             bind.signupButton.text = "Already have an account? Login"
             val (text, index) = ConversationManager.getRandomSignupWithIndex()
             animateTextReveal(bind.bubbleText, text)
             VoiceManager.playVoice(this, VoiceManager.getSignupAudioId(this, index))
         } else {
+            bind.authTitle.text = "Sign In"
             bind.loginButton.text = "Login"
             bind.signupButton.text = "Don't have an account? Sign Up"
             val (text, index) = ConversationManager.getRandomLoginWithIndex()
