@@ -30,7 +30,8 @@ object BackgroundManager {
     fun getBackgroundDrawable(backgroundId: String): Int {
         return when (backgroundId) {
             "default" -> R.drawable.main_bamboo_background
-            "pastel_blue_sky" -> R.drawable.bg_pastel_blue_sky
+            "bamboo_clouds" -> R.drawable.bg_bamboo_clouds
+            "bamboo_plum" -> R.drawable.bg_bamboo_plum
             else -> R.drawable.main_bamboo_background
         }
     }
@@ -56,7 +57,7 @@ object BackgroundManager {
      * Get list of available backgrounds
      */
     fun getAvailableBackgrounds(): List<String> {
-        return listOf("default", "pastel_blue_sky")
+        return listOf("default", "bamboo_clouds", "bamboo_plum")
     }
 
     /**

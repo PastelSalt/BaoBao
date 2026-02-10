@@ -205,6 +205,15 @@ object VoiceManager {
         return context.resources.getIdentifier(name, "raw", context.packageName)
     }
 
+    /**
+     * Get audio resource ID for greeting scripts (1-3)
+     * 1 = Good Morning, 2 = Good Afternoon, 3 = Good Evening
+     */
+    fun getGreetingAudioId(context: Context, index: Int): Int {
+        val name = "g_greetings_%02d".format(index.coerceIn(1, 3))
+        return context.resources.getIdentifier(name, "raw", context.packageName)
+    }
+
     // ========== MOOD CONVERSATION VOICE LINES ==========
 
     /**

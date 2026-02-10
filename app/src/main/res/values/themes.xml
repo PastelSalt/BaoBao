@@ -18,6 +18,10 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Activity transition animations -->
+        <item name="android:windowAnimationStyle">@style/BaoBaoActivityAnimation</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <style name="Theme.BaoBao.NoActionBar" parent="Theme.BaoBao">
@@ -29,8 +33,39 @@
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
+    <!-- Activity Transition Animation Style -->
+    <style name="BaoBaoActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+
+    <!-- Dialog Animation Style -->
+    <style name="BaoBaoDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
+    </style>
+
     <style name="CustomDialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:windowAnimationStyle">@style/BaoBaoDialogAnimation</item>
+    </style>
+
+    <!-- Pop-in Activity Animation (for special screens) -->
+    <style name="BaoBaoPopActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/pop_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/pop_out</item>
+    </style>
+
+    <!-- Slide Up Activity Animation (for modal screens) -->
+    <style name="BaoBaoSlideUpActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:activityOpenExitAnimation">@anim/fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_down</item>
     </style>
 </resources>

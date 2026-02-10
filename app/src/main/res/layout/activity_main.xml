@@ -8,16 +8,47 @@
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <!-- Sidebar Decorative Bamboo Stalk -->
+    <!-- 1. Background / Character Layer (Rendered First) -->
 
-    <!-- Navigation Buttons with slide-in animation setup -->
+    <View
+        android:id="@+id/characterShadow"
+        android:layout_width="140dp"
+        android:layout_height="28dp"
+        android:alpha="0.4"
+        android:background="@drawable/platform_shadow"
+        app:layout_constraintBottom_toBottomOf="@id/characterImage"
+        app:layout_constraintEnd_toEndOf="@id/characterImage"
+        app:layout_constraintStart_toStartOf="@id/characterImage"
+        android:layout_marginBottom="-5dp" />
+
+    <ImageView
+        android:id="@+id/characterImage"
+        android:layout_width="418dp"
+        android:layout_height="484dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginEnd="48dp"
+        android:clickable="true"
+        android:contentDescription="BaoBao the panda character"
+        android:focusable="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/mainscreen_outfit1_fullbody_hello"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.42" />
+
+    <!-- 2. UI Interaction Layer (Rendered Last/On Top) -->
+
+    <!-- Navigation Buttons - VERTICAL -->
     <LinearLayout
         android:id="@+id/navButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
+        android:elevation="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -32,13 +63,13 @@
             android:foreground="?attr/selectableItemBackgroundBorderless"
             app:cardBackgroundColor="@color/tan"
             app:cardCornerRadius="26dp"
-            app:cardElevation="4dp"
+            app:cardElevation="6dp"
             app:strokeColor="@color/white"
             app:strokeWidth="2dp">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_gravity="center"
                 android:contentDescription="Settings icon"
                 android:src="@drawable/ic_settings_bamboo" />
@@ -55,19 +86,19 @@
             android:foreground="?attr/selectableItemBackgroundBorderless"
             app:cardBackgroundColor="@color/green"
             app:cardCornerRadius="26dp"
-            app:cardElevation="4dp"
+            app:cardElevation="6dp"
             app:strokeColor="@color/white"
             app:strokeWidth="2dp">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_gravity="center"
                 android:contentDescription="Shop icon"
                 android:src="@drawable/ic_shop_bamboo" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Claw Machine Button -->
+        <!-- Claws for Paws Button -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/clawMachineButton"
             android:layout_width="52dp"
@@ -78,16 +109,16 @@
             android:foreground="?attr/selectableItemBackgroundBorderless"
             app:cardBackgroundColor="@color/light_green"
             app:cardCornerRadius="26dp"
-            app:cardElevation="4dp"
+            app:cardElevation="6dp"
             app:strokeColor="@color/white"
             app:strokeWidth="2dp">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_gravity="center"
-                android:contentDescription="Claw machine game icon"
-                android:src="@drawable/ic_claw_bamboo" />
+                android:contentDescription="Claws for Paws icon"
+                android:src="@drawable/ic_claw_nav" />
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Customization Button -->
@@ -100,20 +131,20 @@
             android:foreground="?attr/selectableItemBackgroundBorderless"
             app:cardBackgroundColor="@color/pale_green"
             app:cardCornerRadius="26dp"
-            app:cardElevation="4dp"
+            app:cardElevation="6dp"
             app:strokeColor="@color/white"
             app:strokeWidth="2dp">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_gravity="center"
                 android:contentDescription="Customize icon"
                 android:src="@drawable/ic_edit_bamboo" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
-    <!-- Status Card with animation setup -->
+    <!-- Status Card -->
     <FrameLayout
         android:id="@+id/statusCard"
         android:layout_width="160dp"
@@ -122,6 +153,7 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/bamboo_status_bg"
         android:padding="4dp"
+        android:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -139,9 +171,7 @@
                 android:text="Mon, Oct 23"
                 android:textColor="@color/gray"
                 android:textSize="11sp"
-                android:textStyle="bold"
-                android:alpha="1"
-                 />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/timeText"
@@ -150,10 +180,7 @@
                 android:text="10:30 AM"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:alpha="1"
-                android:scaleX="1"
-                android:scaleY="1" />
+                android:textStyle="bold" />
 
             <View
                 android:layout_width="40dp"
@@ -162,7 +189,6 @@
                 android:alpha="0.3"
                 android:background="@color/tan" />
 
-            <!-- Currency Display -->
             <TextView
                 android:id="@+id/currencyText"
                 android:layout_width="wrap_content"
@@ -170,10 +196,8 @@
                 android:text="3,000 ✷"
                 android:textColor="@color/green"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                android:alpha="1" />
+                android:textStyle="bold" />
 
-            <!-- Claw Machine Attempts -->
             <TextView
                 android:id="@+id/clawAttemptsText"
                 android:layout_width="wrap_content"
@@ -182,10 +206,8 @@
                 android:text="🎮 5/5"
                 android:textColor="@color/black"
                 android:textSize="11sp"
-                android:textStyle="bold"
-                android:alpha="1" />
+                android:textStyle="bold" />
 
-            <!-- Refresh Timer -->
             <TextView
                 android:id="@+id/clawTimerText"
                 android:layout_width="wrap_content"
@@ -193,51 +215,17 @@
                 android:text="Next: 4:30"
                 android:textColor="@color/gray"
                 android:textSize="10sp"
-                android:visibility="gone"
-                android:alpha="1" />
+                android:visibility="gone" />
         </LinearLayout>
     </FrameLayout>
 
-    <!-- Character Shadow -->
-    <View
-        android:id="@+id/characterShadow"
-        android:layout_width="140dp"
-        android:layout_height="28dp"
-        android:alpha="0.4"
-        android:background="@drawable/platform_shadow"
-        app:layout_constraintBottom_toBottomOf="@id/characterImage"
-        app:layout_constraintEnd_toEndOf="@id/characterImage"
-        app:layout_constraintStart_toStartOf="@id/characterImage"
-        android:layout_marginBottom="-5dp" />
-
-    <!-- Character with animation setup - Centered vertically, static position -->
-    <ImageView
-        android:id="@+id/characterImage"
-        android:layout_width="418dp"
-        android:layout_height="484dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginEnd="48dp"
-        android:alpha="1"
-        android:clickable="true"
-        android:contentDescription="BaoBao the panda character"
-        android:focusable="true"
-        android:scaleType="fitCenter"
-        android:scaleX="1"
-        android:scaleY="1"
-        android:src="@drawable/mainscreen_outfit1_fullbody_hello"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.42" />
-
-    <!-- Interaction Hint Text with animation setup - Positioned independently -->
+    <!-- Interaction Hint Text -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/hintText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:alpha="1"
+        android:elevation="10dp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="14dp"
         app:cardElevation="1dp"
@@ -258,7 +246,7 @@
             android:textStyle="bold" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Conversation Card with animation setup - Fixed max height to prevent pushing character -->
+    <!-- Conversation Area -->
     <FrameLayout
         android:id="@+id/conversationArea"
         android:layout_width="0dp"
@@ -266,9 +254,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="8dp"
-        android:alpha="1"
         android:background="@drawable/bamboo_textarea_bg"
-        android:maxHeight="120dp"
+        android:elevation="10dp"
         app:layout_constraintBottom_toTopOf="@+id/buttonToggleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -280,7 +267,7 @@
             android:scrollbars="vertical"
             android:fadeScrollbars="true">
 
-            <TextView
+            <com.example.baobao.coreoperations.TypewriterTextView
                 android:id="@+id/conversationText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -288,12 +275,11 @@
                 android:paddingHorizontal="24dp"
                 android:paddingTop="20dp"
                 android:paddingBottom="20dp"
-                android:text="How can I help you today?"
+                android:text="Good morning! I'm so glad you're here. Let's take today one step at a time 🌞"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:lineSpacingExtra="3dp"
-                android:fontFamily="sans-serif-medium"
-                android:alpha="1" />
+                android:fontFamily="sans-serif-medium" />
         </ScrollView>
     </FrameLayout>
 
@@ -306,6 +292,7 @@
         android:layout_marginEnd="40dp"
         android:layout_marginTop="16dp"
         android:visibility="gone"
+        android:elevation="12dp"
         app:cardBackgroundColor="@color/pale_green"
         app:cardCornerRadius="10dp"
         app:cardElevation="8dp"
@@ -324,36 +311,32 @@
             android:textColor="@color/green"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:gravity="center"
-            android:alpha="1"
-             />
+            android:gravity="center" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Button Toggle Switch -->
+    <!-- Show Choices Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonToggleButton"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="🔄 Switch View"
-        android:textColor="@color/green"
+        android:text="Show Choices"
+        android:textColor="@color/white"
         android:textAllCaps="false"
-        android:textSize="10sp"
-        android:paddingHorizontal="12dp"
-        android:minHeight="0dp"
-        android:minWidth="0dp"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
-        android:visibility="visible"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:background="@drawable/bamboo_button_green"
+        android:elevation="10dp"
+        app:backgroundTint="@null"
         app:cornerRadius="16dp"
-        app:strokeColor="@color/green"
-        app:strokeWidth="1dp"
+        app:icon="@drawable/ic_customize_bamboo"
+        app:iconSize="14dp"
+        app:iconTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/buttonContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Bottom Action Buttons Container with animation setup -->
+    <!-- Bottom Buttons -->
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="0dp"
@@ -361,14 +344,13 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:alpha="1"
         android:orientation="vertical"
-        
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Default Action Buttons -->
+        <!-- Default Buttons -->
         <LinearLayout
             android:id="@+id/defaultButtonsContainer"
             android:layout_width="match_parent"
@@ -384,7 +366,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/jokeButton"
-                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:layout_width="0dp"
                     android:layout_height="52dp"
                     android:layout_weight="1"
@@ -398,7 +379,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/affirmationButton"
-                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:layout_width="0dp"
                     android:layout_height="52dp"
                     android:layout_weight="1"
@@ -418,7 +398,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/selfCareButton"
-                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:layout_width="0dp"
                     android:layout_height="52dp"
                     android:layout_weight="1"
@@ -432,7 +411,6 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/goodbyeButton"
-                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:layout_width="0dp"
                     android:layout_height="52dp"
                     android:layout_weight="1"
@@ -446,15 +424,13 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Conversation Choice Buttons -->
+        <!-- Choices Container -->
         <LinearLayout
             android:id="@+id/conversationChoicesContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
-            <!-- Choice buttons will be added dynamically here -->
-        </LinearLayout>
+            android:visibility="gone" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

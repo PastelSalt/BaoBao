@@ -99,6 +99,12 @@ object ConversationManager {
         "Time for a little panda nap! You go be awesome, and I'll be right here when you get back."
     )
 
+    private val greetingScripts = listOf(
+        "Good morning! I'm so glad you're here. Let's take today one step at a time 🌞",
+        "Good afternoon. It's okay to pause sometimes. I'm here with you 🌿",
+        "Good evening. Let's slow down together and take a soft breath 🌙"
+    )
+
     private var lastSignupIndex = -1
     private var lastLoginIndex = -1
     private var lastShopIndex = -1
@@ -236,6 +242,25 @@ object ConversationManager {
     }
 
     fun getRandomGoodbye(): String = getRandomGoodbyeWithIndex().first
+
+    /**
+     * Get time-based greeting with index (for audio playback)
+     * @return Pair of (text, 1-based audio index)
+     * 1 = Good Morning (5am-12pm)
+     * 2 = Good Afternoon (12pm-6pm)
+     * 3 = Good Evening (6pm-5am)
+     */
+    fun getTimeBasedGreetingWithIndex(): Pair<String, Int> {
+        val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        val index = when (hour) {
+            in 5..11 -> 0   // Morning: 5am-11:59am
+            in 12..17 -> 1  // Afternoon: 12pm-5:59pm
+            else -> 2       // Evening: 6pm-4:59am
+        }
+        return greetingScripts[index] to (index + 1)
+    }
+
+    fun getTimeBasedGreeting(): String = getTimeBasedGreetingWithIndex().first
 
     // ========== CONVERSATION NODE SYSTEM ==========
     // This system manages all mood-based conversations with branching dialogue

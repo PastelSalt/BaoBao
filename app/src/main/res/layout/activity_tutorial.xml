@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_bamboo_background"
+    tools:context=".tutorial.TutorialActivity">
+
+    <!-- Tutorial Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/tutorialCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:elevation="8dp"
+        app:cardBackgroundColor="#F5F5DC"
+        app:cardCornerRadius="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Progress Bar -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginBottom="8dp"
+                android:max="100"
+                android:progress="0"
+                android:progressDrawable="@drawable/bamboo_button_green" />
+
+            <TextView
+                android:id="@+id/progressText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:text="Step 1 of 50"
+                android:textColor="#6B8E23"
+                android:textSize="12sp" />
+
+            <!-- Icon -->
+            <ImageView
+                android:id="@+id/stepIcon"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:contentDescription="Tutorial step icon"
+                android:src="@drawable/mainscreen_outfit1_fullbody_hello" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/stepTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:gravity="center"
+                android:text="Welcome to BaoBao!"
+                android:textColor="#4A4A4A"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/stepDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:lineSpacingExtra="4dp"
+                android:text="Hi there! I'm BaoBao, your friendly panda companion. I'm here to support you through good days and tough ones alike."
+                android:textColor="#4A4A4A"
+                android:textSize="16sp" />
+
+            <!-- Buttons Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Next Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/nextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="#6B8E23"
+                    android:text="Next"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    app:cornerRadius="16dp" />
+
+                <!-- Previous and Skip Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/previousButton"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="← Previous"
+                        android:textAllCaps="false"
+                        android:textColor="#6B8E23"
+                        android:textSize="14sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/skipButton"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="Skip Tutorial"
+                        android:textAllCaps="false"
+                        android:textColor="#999999"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- BaoBao Character (Bottom) -->
+    <ImageView
+        android:id="@+id/baobaoCharacter"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="BaoBao character"
+        android:src="@drawable/mainscreen_outfit1_fullbody_hello"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

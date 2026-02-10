@@ -58,7 +58,8 @@ class ConversationController(
     fun showConversationNode(node: ConversationNode) {
         currentNode = node
         conversationPath.add(node.id)
-        binding.conversationText.text = node.baobaoLine
+        // Use typewriter animation for text reveal
+        binding.conversationText.animateText(node.baobaoLine)
         if (currentMood != null) {
             ConversationManager.playNodeAudio(activity, node.id, currentMood!!)
         }
@@ -103,7 +104,7 @@ class ConversationController(
 
     fun showMoodGreeting(mood: String) {
         binding.characterImage.setImageResource(CharacterImageManager.getCharacterImageForMood(mood))
-        binding.conversationText.text = when (mood.lowercase()) {
+        val greetingText = when (mood.lowercase()) {
             "happy" -> "I'm so happy you're feeling good! What would you like to do today? Maybe hear a joke or just hang out? 😊"
             "okay" -> "Thanks for sharing how you're feeling. I'm here with you! Want to chat, play a game, or just take it easy? 🐼"
             "sad" -> "I'm here for you, friend. It's okay to feel this way. Would you like some comfort, a distraction, or just someone to be with? 💙"
@@ -111,6 +112,8 @@ class ConversationController(
             "tired" -> "You've been working so hard. Let's find a gentle way to help you feel better. Maybe something relaxing? 🌙"
             else -> "I'm so glad you're here! How can I brighten your day? 🐼"
         }
+        // Use typewriter animation for text reveal
+        binding.conversationText.animateText(greetingText)
     }
 
     private fun animateCharacter() {

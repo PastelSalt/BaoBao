@@ -19,11 +19,14 @@ import androidx.lifecycle.lifecycleScope
 import com.example.baobao.additionals.LoadingActivity
 import com.example.baobao.audio.VoiceManager
 import com.example.baobao.conversation.ConversationManager
+import com.example.baobao.coreoperations.AnimationManager
 import com.example.baobao.database.AppDatabase
 import com.example.baobao.database.SessionManager
 import com.example.baobao.database.UserRepository
 import com.example.baobao.databinding.ActivityAuthBinding
 import com.example.baobao.optimization.MemoryOptimizer
+import com.example.baobao.tutorial.TutorialActivity
+import com.example.baobao.tutorial.TutorialManager
 import kotlinx.coroutines.launch
 
 class AuthActivity : AppCompatActivity() {
@@ -81,14 +84,18 @@ class AuthActivity : AppCompatActivity() {
 
         // Guest button - continue as guest
         bind.guestButton.setOnClickListener {
-            performGuestLogin()
+            AnimationManager.buttonPressEffect(it) {
+                performGuestLogin()
+            }
         }
 
         bind.signupButton.setOnClickListener {
             if (!isDestroyed && !isFinishing) {
-                isSignUp = !isSignUp
-                updateUI()
-                animateCardTransition()
+                AnimationManager.buttonPressEffect(it) {
+                    isSignUp = !isSignUp
+                    updateUI()
+                    animateCardTransition()
+                }
             }
         }
 
@@ -100,20 +107,24 @@ class AuthActivity : AppCompatActivity() {
                 // Validation
                 if (username.isEmpty()) {
                     Toast.makeText(this, "Please enter a username", Toast.LENGTH_SHORT).show()
+                    AnimationManager.shake(bind.usernameInputLayout)
                     return@setOnClickListener
                 }
 
                 if (password.isEmpty()) {
                     Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show()
+                    AnimationManager.shake(bind.passwordInputLayout)
                     return@setOnClickListener
                 }
 
-                if (isSignUp) {
-                    // Sign up flow
-                    performSignup(username, password)
-                } else {
-                    // Login flow
-                    performLogin(username, password)
+                AnimationManager.buttonPressEffect(it) {
+                    if (isSignUp) {
+                        // Sign up flow
+                        performSignup(username, password)
+                    } else {
+                        // Login flow
+                        performLogin(username, password)
+                    }
                 }
             }
         }
@@ -128,8 +139,12 @@ class AuthActivity : AppCompatActivity() {
                     SessionManager.login(this@AuthActivity, guestUser.userId, guestUser.username, isGuestAccount = true)
                     Toast.makeText(this@AuthActivity, "Welcome, Guest!", Toast.LENGTH_SHORT).show()
 
-                    // Navigate to Main screen
-                    LoadingActivity.startWithTarget(this@AuthActivity, MainActivity::class.java, 1500L)
+                    // Navigate to Tutorial for first-time guests, otherwise to Main screen
+                    if (!TutorialManager.isTutorialCompleted(this@AuthActivity)) {
+                        LoadingActivity.startWithTarget(this@AuthActivity, TutorialActivity::class.java, 1500L)
+                    } else {
+                        LoadingActivity.startWithTarget(this@AuthActivity, MainActivity::class.java, 1500L)
+                    }
                     finish()
                 } else {
                     Toast.makeText(this@AuthActivity, "Failed to create guest account", Toast.LENGTH_SHORT).show()
@@ -176,8 +191,12 @@ class AuthActivity : AppCompatActivity() {
                         SessionManager.login(this@AuthActivity, user.userId, user.username)
                         Toast.makeText(this@AuthActivity, "Welcome, $username! Account created successfully!", Toast.LENGTH_LONG).show()
 
-                        // Navigate to Main screen
-                        LoadingActivity.startWithTarget(this@AuthActivity, MainActivity::class.java, 1500L)
+                        // Navigate to Tutorial for new users
+                        if (!TutorialManager.isTutorialCompleted(this@AuthActivity)) {
+                            LoadingActivity.startWithTarget(this@AuthActivity, TutorialActivity::class.java, 1500L)
+                        } else {
+                            LoadingActivity.startWithTarget(this@AuthActivity, MainActivity::class.java, 1500L)
+                        }
                         finish()
                     } else {
                         // Signup failed (username taken)

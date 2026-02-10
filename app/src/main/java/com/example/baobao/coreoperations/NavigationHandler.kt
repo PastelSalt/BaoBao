@@ -32,22 +32,30 @@ class NavigationHandler(
     ) {
         binding.settingsButton.setOnClickListener {
             SoundManager.playClickSound(activity)
-            onShowSettings()
+            AnimationManager.cardTapEffect(it) {
+                onShowSettings()
+            }
         }
 
         binding.shopButton.setOnClickListener {
             SoundManager.playClickSound(activity)
-            LoadingActivity.startWithTarget(activity, ShopActivity::class.java)
+            AnimationManager.cardTapEffect(it) {
+                LoadingActivity.startWithTarget(activity, ShopActivity::class.java)
+            }
         }
 
         binding.clawMachineButton.setOnClickListener {
             SoundManager.playClickSound(activity)
-            LoadingActivity.startWithTarget(activity, ClawMachineActivity::class.java)
+            AnimationManager.cardTapEffect(it) {
+                LoadingActivity.startWithTarget(activity, ClawMachineActivity::class.java)
+            }
         }
 
         binding.customizeButton.setOnClickListener {
             SoundManager.playClickSound(activity)
-            onShowCustomize()
+            AnimationManager.cardTapEffect(it) {
+                onShowCustomize()
+            }
         }
     }
 
@@ -58,32 +66,40 @@ class NavigationHandler(
         binding.jokeButton.setOnClickListener {
             if (isConversationMode()) return@setOnClickListener
             SoundManager.playClickSound(activity)
+            AnimationManager.buttonPressEffect(it)
             val (text, index) = ConversationManager.getRandomJokeWithIndex()
-            binding.conversationText.text = text
+            // Use typewriter animation for text reveal
+            binding.conversationText.animateText(text)
             ConversationManager.playSimpleAudio(activity, "joke", index)
         }
 
         binding.affirmationButton.setOnClickListener {
             if (isConversationMode()) return@setOnClickListener
             SoundManager.playClickSound(activity)
+            AnimationManager.buttonPressEffect(it)
             val (text, index) = ConversationManager.getRandomAffirmationWithIndex()
-            binding.conversationText.text = text
+            // Use typewriter animation for text reveal
+            binding.conversationText.animateText(text)
             ConversationManager.playSimpleAudio(activity, "affirmation", index)
         }
 
         binding.selfCareButton.setOnClickListener {
             if (isConversationMode()) return@setOnClickListener
             SoundManager.playClickSound(activity)
+            AnimationManager.buttonPressEffect(it)
             val (text, index) = ConversationManager.getRandomSelfCareWithIndex()
-            binding.conversationText.text = text
+            // Use typewriter animation for text reveal
+            binding.conversationText.animateText(text)
             ConversationManager.playSimpleAudio(activity, "selfcare", index)
         }
 
         binding.goodbyeButton.setOnClickListener {
             if (isConversationMode()) return@setOnClickListener
             SoundManager.playClickSound(activity)
+            AnimationManager.buttonPressEffect(it)
             val (text, index) = ConversationManager.getRandomGoodbyeWithIndex()
-            binding.conversationText.text = text
+            // Use typewriter animation for text reveal
+            binding.conversationText.animateText(text)
             ConversationManager.playSimpleAudio(activity, "goodbye", index)
             android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                 activity.finishAffinity()
@@ -97,12 +113,13 @@ class NavigationHandler(
     fun setupButtonToggle(isConversationMode: () -> Boolean, onCreateMockChoices: () -> Unit) {
         binding.buttonToggleButton.setOnClickListener {
             SoundManager.playClickSound(activity)
+            AnimationManager.buttonPressEffect(it)
             toggleButtonContainers(isConversationMode(), onCreateMockChoices)
         }
     }
 
     /**
-     * Toggles between static buttons and conversation choices
+     * Toggles between static buttons and conversation choices with animation
      */
     fun toggleButtonContainers(isConversationMode: Boolean, onCreateMockChoices: () -> Unit) {
         if (isConversationMode) {
@@ -110,13 +127,19 @@ class NavigationHandler(
             isShowingStaticButtons = !isShowingStaticButtons
 
             if (isShowingStaticButtons) {
-                binding.defaultButtonsContainer.visibility = View.VISIBLE
-                binding.conversationChoicesContainer.visibility = View.GONE
+                AnimationManager.crossFade(binding.conversationChoicesContainer, binding.defaultButtonsContainer)
                 binding.buttonToggleButton.text = "💬 Show Choices"
+                // Staggered animation for buttons
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    AnimationManager.staggeredFadeIn(binding.defaultButtonsContainer, delayBetween = 50)
+                }, 100)
             } else {
-                binding.defaultButtonsContainer.visibility = View.GONE
-                binding.conversationChoicesContainer.visibility = View.VISIBLE
+                AnimationManager.crossFade(binding.defaultButtonsContainer, binding.conversationChoicesContainer)
                 binding.buttonToggleButton.text = "📋 Show Menu"
+                // Staggered animation for choices
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    AnimationManager.staggeredPopIn(binding.conversationChoicesContainer, delayBetween = 80)
+                }, 100)
             }
         } else {
             // Not in conversation mode: create mock choices for demonstration
@@ -124,13 +147,17 @@ class NavigationHandler(
             isShowingStaticButtons = !isShowingStaticButtons
 
             if (isShowingStaticButtons) {
-                binding.defaultButtonsContainer.visibility = View.VISIBLE
-                binding.conversationChoicesContainer.visibility = View.GONE
+                AnimationManager.crossFade(binding.conversationChoicesContainer, binding.defaultButtonsContainer)
                 binding.buttonToggleButton.text = "💬 Show Choices"
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    AnimationManager.staggeredFadeIn(binding.defaultButtonsContainer, delayBetween = 50)
+                }, 100)
             } else {
-                binding.defaultButtonsContainer.visibility = View.GONE
-                binding.conversationChoicesContainer.visibility = View.VISIBLE
+                AnimationManager.crossFade(binding.defaultButtonsContainer, binding.conversationChoicesContainer)
                 binding.buttonToggleButton.text = "📋 Show Menu"
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    AnimationManager.staggeredPopIn(binding.conversationChoicesContainer, delayBetween = 80)
+                }, 100)
             }
         }
     }
@@ -149,11 +176,7 @@ class NavigationHandler(
         )
 
         mockChoices.forEachIndexed { index, (text, action) ->
-            val button = MaterialButton(
-                activity,
-                null,
-                com.google.android.material.R.attr.materialButtonOutlinedStyle
-            )
+            val button = MaterialButton(activity)
             button.apply {
                 this.text = text
                 textSize = 15f
@@ -179,9 +202,11 @@ class NavigationHandler(
                 layoutParams.setMargins(0, 0, 0, 12)
                 this.layoutParams = layoutParams
 
-                setOnClickListener {
+                setOnClickListener { view ->
                     SoundManager.playClickSound(activity)
-                    onMockChoiceSelected(action)
+                    AnimationManager.buttonPressEffect(view) {
+                        onMockChoiceSelected(action)
+                    }
                 }
             }
 
@@ -190,32 +215,54 @@ class NavigationHandler(
     }
 
     /**
-     * Shows conversation mode UI
+     * Shows conversation mode UI with animations
      */
     fun showConversationModeUI() {
         isShowingStaticButtons = false
-        binding.buttonToggleButton.visibility = View.VISIBLE
+
+        // Animate toggle button appearance
+        AnimationManager.popIn(binding.buttonToggleButton, delay = 100)
         binding.buttonToggleButton.text = "📋 Show Menu"
-        binding.defaultButtonsContainer.visibility = View.GONE
+
+        // Crossfade button containers
+        AnimationManager.slideOutDown(binding.defaultButtonsContainer)
         binding.conversationChoicesContainer.visibility = View.VISIBLE
+        AnimationManager.slideInUp(binding.conversationChoicesContainer, delay = 150)
+
+        // Staggered animation for choice buttons
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            AnimationManager.staggeredPopIn(binding.conversationChoicesContainer, delayBetween = 80)
+        }, 200)
     }
 
     /**
-     * Hides conversation mode UI
+     * Hides conversation mode UI with animations
      */
     fun hideConversationModeUI() {
         isShowingStaticButtons = true
-        binding.buttonToggleButton.visibility = View.GONE
-        binding.conversationChoicesContainer.visibility = View.GONE
+
+        // Animate toggle button disappearance
+        AnimationManager.popOut(binding.buttonToggleButton)
+
+        // Crossfade button containers
+        AnimationManager.slideOutDown(binding.conversationChoicesContainer)
         binding.defaultButtonsContainer.visibility = View.VISIBLE
+        AnimationManager.slideInUp(binding.defaultButtonsContainer, delay = 100)
+
+        // Staggered animation for default buttons
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            AnimationManager.staggeredFadeIn(binding.defaultButtonsContainer, delayBetween = 60)
+        }, 150)
     }
 
     /**
-     * Initializes the button toggle button visibility
+     * Initializes the button toggle button visibility with animation
      */
     fun initializeButtonToggle() {
+        binding.buttonToggleButton.alpha = 0f
         binding.buttonToggleButton.visibility = View.VISIBLE
         binding.buttonToggleButton.text = "💬 Show Choices"
+        AnimationManager.fadeIn(binding.buttonToggleButton, delay = 500)
     }
 }
 

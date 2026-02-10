@@ -7,6 +7,7 @@ import com.example.baobao.additionals.LoadingActivity
 import com.example.baobao.audio.SoundManager
 import com.example.baobao.audio.VoiceManager
 import com.example.baobao.conversation.ConversationManager
+import com.example.baobao.coreoperations.AnimationManager
 import com.example.baobao.coreoperations.BaseActivity
 import com.example.baobao.coreoperations.CharacterImageManager
 import com.example.baobao.database.AppDatabase
@@ -34,7 +35,9 @@ class ShopActivity : BaseActivity() {
 
         binding.backButton.setOnClickListener {
             SoundManager.playClickSound(this)
-            goBackWithLoading()
+            AnimationManager.buttonPressEffect(it) {
+                goBackWithLoading()
+            }
         }
 
         val (text, index) = ConversationManager.getRandomShopWithIndex()
@@ -55,6 +58,20 @@ class ShopActivity : BaseActivity() {
 
         // Setup background purchase functionality
         setupBackgroundPurchases()
+
+        // Start entrance animations
+        startEntranceAnimations()
+    }
+
+    private fun startEntranceAnimations() {
+        // Header slide in from top
+        AnimationManager.slideInDown(binding.headerLayout, delay = 50)
+
+        // Character icon bounce in
+        AnimationManager.bounceIn(binding.characterIcon, delay = 200)
+
+        // Speech bubble pop in
+        AnimationManager.popIn(binding.speechBubble, delay = 300)
     }
 
     override fun onResume() {
@@ -88,13 +105,17 @@ class ShopActivity : BaseActivity() {
         // Setup Little BGM purchase
         binding.bgmLittleCard.setOnClickListener {
             SoundManager.playClickSound(this)
-            purchaseBgm("little", 500)
+            AnimationManager.cardTapEffect(it) {
+                purchaseBgm("little", 500)
+            }
         }
 
         // Setup Ordinary Days BGM purchase
         binding.bgmOrdinaryCard.setOnClickListener {
             SoundManager.playClickSound(this)
-            purchaseBgm("ordinary", 750)
+            AnimationManager.cardTapEffect(it) {
+                purchaseBgm("ordinary", 750)
+            }
         }
 
         // Update initial states
@@ -166,6 +187,7 @@ class ShopActivity : BaseActivity() {
                 val purchasedBgm = userRepository.getPurchasedBgmList()
                 if (purchasedBgm.contains(bgmKey)) {
                     android.widget.Toast.makeText(this@ShopActivity, "Already owned!", android.widget.Toast.LENGTH_SHORT).show()
+                    AnimationManager.shake(binding.currencyCard)
                     return@launch
                 }
 
@@ -174,20 +196,26 @@ class ShopActivity : BaseActivity() {
                     // Purchase BGM
                     userRepository.purchaseBgm(bgmKey)
 
-                    // Update displays
+                    // Update displays with celebration animation
+                    AnimationManager.celebrationEffect(binding.currencyCard)
                     updateCurrencyDisplay()
                     updateBgmPurchaseStates()
 
                     // Show success message
                     android.widget.Toast.makeText(this@ShopActivity, "BGM purchased! Check customize dialog to use it.", android.widget.Toast.LENGTH_LONG).show()
 
-                    // Update bubble text
-                    binding.bubbleText.text = "Great choice! You can change your BGM anytime in the customize menu."
+                    // Update bubble text with animation
+                    AnimationManager.fadeOut(binding.bubbleText, duration = 150, hideAfter = false) {
+                        binding.bubbleText.text = "Great choice! You can change your BGM anytime in the customize menu."
+                        AnimationManager.fadeIn(binding.bubbleText, duration = 200)
+                    }
                 } else {
                     android.widget.Toast.makeText(this@ShopActivity, "Purchase failed!", android.widget.Toast.LENGTH_SHORT).show()
+                    AnimationManager.shake(binding.currencyCard)
                 }
             } else {
                 android.widget.Toast.makeText(this@ShopActivity, "Not enough currency! You need $cost ✷", android.widget.Toast.LENGTH_SHORT).show()
+                AnimationManager.shake(binding.currencyCard)
                 binding.bubbleText.text = "You need more coins for that! Try playing the claw machine or daily check-ins."
             }
         }
@@ -197,7 +225,9 @@ class ShopActivity : BaseActivity() {
         // Setup Blue Bao outfit purchase (outfit2)
         binding.outfitBlueBaoCard.setOnClickListener {
             SoundManager.playClickSound(this)
-            purchaseOutfit("outfit2", 1000, "Blue Bao")
+            AnimationManager.cardTapEffect(it) {
+                purchaseOutfit("outfit2", 1000, "Blue Bao")
+            }
         }
 
         // Update initial states
@@ -251,10 +281,20 @@ class ShopActivity : BaseActivity() {
     }
 
     private fun setupBackgroundPurchases() {
-        // Setup Pastel Blue Sky background purchase
-        binding.bgPastelBlueSkyCard.setOnClickListener {
+        // Setup Bamboo Clouds background purchase
+        binding.bgBambooCloudsCard.setOnClickListener {
             SoundManager.playClickSound(this)
-            purchaseBackground("pastel_blue_sky", 800, "Blue Sky")
+            AnimationManager.cardTapEffect(it) {
+                purchaseBackground("bamboo_clouds", 800, "Bamboo Clouds")
+            }
+        }
+
+        // Setup Bamboo Plum background purchase
+        binding.bgBambooPlumCard.setOnClickListener {
+            SoundManager.playClickSound(this)
+            AnimationManager.cardTapEffect(it) {
+                purchaseBackground("bamboo_plum", 1000, "Bamboo Plum")
+            }
         }
 
         // Update initial states
@@ -266,12 +306,22 @@ class ShopActivity : BaseActivity() {
             val purchasedBackgrounds = userRepository.getPurchasedBackgroundsList()
             val currency = userRepository.getCurrency()
 
-            // Update Pastel Blue Sky background state
+            // Update Bamboo Clouds background state
             updateBackgroundCardState(
-                binding.bgPastelBlueSkyCard,
-                binding.bgPastelBlueSkyPrice,
-                "pastel_blue_sky",
+                binding.bgBambooCloudsCard,
+                binding.bgBambooCloudsPrice,
+                "bamboo_clouds",
                 800,
+                purchasedBackgrounds,
+                currency
+            )
+
+            // Update Bamboo Plum background state
+            updateBackgroundCardState(
+                binding.bgBambooPlumCard,
+                binding.bgBambooPlumPrice,
+                "bamboo_plum",
+                1000,
                 purchasedBackgrounds,
                 currency
             )

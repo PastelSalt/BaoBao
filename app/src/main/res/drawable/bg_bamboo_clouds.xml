@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="400dp"
+    android:height="800dp"
+    android:viewportWidth="400"
+    android:viewportHeight="800">
+
+    <!-- Base Blue Sky Gradient -->
+    <path android:pathData="M0,0h400v800h-400z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:angle="270"
+                android:startColor="#E3F2FD"
+                android:centerColor="#BBDEFB"
+                android:endColor="#90CAF9"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+
+    <!-- Transparent Clouds (Scattered) -->
+    <path
+        android:fillAlpha="0.4"
+        android:fillColor="#FFFFFF"
+        android:pathData="M60,40a40,20 0,1 0,0 40a40,20 0,1 0,0 -40" />
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="#FAFAFA"
+        android:pathData="M90,35a30,15 0,1 0,0 30a30,15 0,1 0,0 -30" />
+    <path
+        android:fillAlpha="0.25"
+        android:fillColor="#FFFFFF"
+        android:pathData="M180,70a35,18 0,1 0,0 36a35,18 0,1 0,0 -36" />
+    <path
+        android:fillAlpha="0.4"
+        android:fillColor="#FFFFFF"
+        android:pathData="M325,100a45,22.5 0,1 0,0 45a45,22.5 0,1 0,0 -45" />
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="#F5F5F5"
+        android:pathData="M285,120a35,17.5 0,1 0,0 35a35,17.5 0,1 0,0 -35" />
+    <path
+        android:fillAlpha="0.2"
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,200a45,20 0,1 0,0 40a45,20 0,1 0,0 -40" />
+    <path
+        android:fillAlpha="0.15"
+        android:fillColor="#FAFAFA"
+        android:pathData="M350,250a30,15 0,1 0,0 30a30,15 0,1 0,0 -30" />
+    <path
+        android:fillAlpha="0.1"
+        android:fillColor="#FFFFFF"
+        android:pathData="M200,350a50,25 0,1 0,0 50a50,25 0,1 0,0 -50" />
+
+    <!-- Bamboo Stalks (Inherited from main_bamboo_background style) -->
+    <!-- Stalk Left -->
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/pale_green"
+        android:pathData="M30,0 Q35,200 25,400 T30,800 L45,800 Q40,400 50,200 T45,0 Z" />
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/green"
+        android:pathData="M45,150 Q65,140 75,160 Q60,170 45,155 Z" />
+
+    <!-- Stalk Center -->
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/pale_green"
+        android:pathData="M180,0 Q190,300 170,600 T185,800 L200,800 Q185,600 205,300 T195,0 Z" />
+
+    <!-- Stalk Right -->
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/pale_green"
+        android:pathData="M310,0 Q320,250 305,500 T315,800 L330,800 Q340,500 325,250 T335,0 Z" />
+    <path
+        android:fillAlpha="0.3"
+        android:fillColor="@color/green"
+        android:pathData="M310,550 Q285,540 275,565 Q300,575 310,555 Z" />
+
+</vector>

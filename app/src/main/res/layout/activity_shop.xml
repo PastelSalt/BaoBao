@@ -7,7 +7,7 @@
     android:background="@drawable/main_bamboo_background"
     android:fitsSystemWindows="true">
 
-    <!-- Top Bar / Header Area with bamboo styling -->
+    <!-- Top Bar / Header Area -->
     <FrameLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
                 android:text="Back"
                 android:textAllCaps="false"
                 android:textColor="@color/green"
-                app:icon="@android:drawable/ic_menu_revert"
+                app:icon="@drawable/ic_back_bamboo"
                 app:iconTint="@color/green"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.05"
-                android:text="Shop"
+                android:text="BaoBao Shop"
                 android:textColor="@color/green"
                 android:textSize="22sp"
                 android:textStyle="bold"
@@ -54,14 +54,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Currency Area with bamboo frame -->
-            <FrameLayout
+            <!-- Currency Area -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/currencyCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bamboo_button_pale_green"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
+                app:cardBackgroundColor="@color/pale_green"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/green"
+                app:strokeWidth="1dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -70,7 +72,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -91,7 +95,7 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-            </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
@@ -114,68 +118,77 @@
             android:padding="16dp">
 
             <!-- BaoBao Outfit Section -->
-            <FrameLayout
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bamboo_button_green"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="10dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_outfit_bamboo"
+                    app:tint="@color/green"
+                    android:layout_marginEnd="8dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:letterSpacing="0.03"
-                    android:text="BaoBao Outfit"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:text="BaoBao Outfits"
+                    android:textColor="@color/green"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
-            </FrameLayout>
+            </LinearLayout>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="24dp"
                 android:clipToPadding="false"
-                android:paddingHorizontal="4dp"
                 android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp">
 
-                    <!-- Classic Bao Outfit (Default) -->
-                    <FrameLayout
+                    <!-- Classic Bao Outfit -->
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/outfitClassicBaoCard"
-                        android:layout_width="wrap_content"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:background="@drawable/bamboo_status_bg"
-                        android:padding="12dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="1dp"
                         android:clickable="true"
                         android:focusable="true">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <FrameLayout
-                                android:layout_width="120dp"
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
                                 android:layout_height="140dp"
-                                android:background="@drawable/bamboo_button_pale_green"
-                                android:padding="8dp">
+                                app:cardBackgroundColor="@color/pale_green"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp">
 
                                 <ImageView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:contentDescription="Classic Bao Outfit"
                                     android:src="@drawable/mainscreen_outfit1_fullbody_hello"
                                     android:scaleType="centerCrop" />
-                            </FrameLayout>
+                            </com.google.android.material.card.MaterialCardView>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -193,43 +206,47 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="sans-serif-medium"
-                                android:text="✓ Default"
+                                android:text="Default"
                                 android:textColor="@color/green"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-                    </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <!-- Blue Bao Outfit -->
-                    <FrameLayout
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/outfitBlueBaoCard"
-                        android:layout_width="wrap_content"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:background="@drawable/bamboo_status_bg"
-                        android:padding="12dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="1dp"
                         android:clickable="true"
                         android:focusable="true">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <FrameLayout
-                                android:layout_width="120dp"
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
                                 android:layout_height="140dp"
-                                android:background="@drawable/bamboo_button_pale_green"
-                                android:padding="8dp">
+                                app:cardBackgroundColor="@color/pale_green"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp">
 
                                 <ImageView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:contentDescription="Blue Bao Outfit"
                                     android:src="@drawable/mainscreen_outfit2_fullbody_hello"
                                     android:scaleType="centerCrop" />
-                            </FrameLayout>
+                            </com.google.android.material.card.MaterialCardView>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -252,76 +269,82 @@
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-                    </FrameLayout>
-
-
-                    <!-- More outfit items can be added here -->
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </HorizontalScrollView>
 
             <!-- Main Screen Background Section -->
-            <FrameLayout
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bamboo_button_green"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="10dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_background_bamboo"
+                    app:tint="@color/green"
+                    android:layout_marginEnd="8dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:letterSpacing="0.03"
-                    android:text="Main Screen Background"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:text="Backgrounds"
+                    android:textColor="@color/green"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
-            </FrameLayout>
+            </LinearLayout>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="24dp"
                 android:clipToPadding="false"
-                android:paddingHorizontal="4dp"
                 android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp">
 
                     <!-- Default Background -->
-                    <FrameLayout
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/bgDefaultCard"
-                        android:layout_width="wrap_content"
+                        android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:background="@drawable/bamboo_status_bg"
-                        android:padding="12dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="1dp"
                         android:clickable="true"
                         android:focusable="true">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <FrameLayout
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:background="@drawable/bamboo_button_pale_green"
-                                android:padding="8dp">
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                app:cardBackgroundColor="@color/pale_green"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp">
 
                                 <ImageView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:contentDescription="Default Bamboo Background"
                                     android:src="@drawable/main_bamboo_background"
                                     android:scaleType="centerCrop" />
-                            </FrameLayout>
+                            </com.google.android.material.card.MaterialCardView>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -330,7 +353,7 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="Bamboo Forest"
                                 android:textColor="@color/black"
-                                android:textSize="14sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -339,132 +362,205 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="sans-serif-medium"
-                                android:text="✓ Default"
+                                android:text="Default"
                                 android:textColor="@color/green"
-                                android:textSize="13sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-                    </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Pastel Blue Sky Background -->
-                    <FrameLayout
-                        android:id="@+id/bgPastelBlueSkyCard"
-                        android:layout_width="wrap_content"
+                    <!-- Bamboo Clouds -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/bgBambooCloudsCard"
+                        android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:background="@drawable/bamboo_status_bg"
-                        android:padding="12dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="1dp"
                         android:clickable="true"
                         android:focusable="true">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <FrameLayout
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:background="@drawable/bamboo_button_pale_green"
-                                android:padding="8dp">
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                app:cardBackgroundColor="@color/pale_green"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp">
 
                                 <ImageView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:contentDescription="Pastel Blue Sky Background"
-                                    android:src="@drawable/bg_pastel_blue_sky"
+                                    android:src="@drawable/bg_bamboo_clouds"
                                     android:scaleType="centerCrop" />
-                            </FrameLayout>
+                            </com.google.android.material.card.MaterialCardView>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
                                 android:fontFamily="sans-serif-medium"
-                                android:text="Blue Sky"
+                                android:text="Bamboo Clouds"
                                 android:textColor="@color/black"
-                                android:textSize="14sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/bgPastelBlueSkyPrice"
+                                android:id="@+id/bgBambooCloudsPrice"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="sans-serif-medium"
                                 android:text="800 ✷"
                                 android:textColor="@color/green"
-                                android:textSize="13sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-                    </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
+                    <!-- Bamboo Plum -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/bgBambooPlumCard"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="1dp"
+                        android:clickable="true"
+                        android:focusable="true">
 
-                    <!-- More background items can be added here -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                app:cardBackgroundColor="@color/pale_green"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/bg_bamboo_plum"
+                                    android:scaleType="centerCrop" />
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="Bamboo Plum"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/bgBambooPlumPrice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="1000 ✷"
+                                android:textColor="@color/green"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </HorizontalScrollView>
 
             <!-- Background Music Section -->
-            <FrameLayout
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bamboo_button_green"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="10dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_music_bamboo"
+                    app:tint="@color/green"
+                    android:layout_marginEnd="8dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:letterSpacing="0.03"
-                    android:text="🎵 Background Music"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:text="Music Library"
+                    android:textColor="@color/green"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
-            </FrameLayout>
+            </LinearLayout>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="24dp"
                 android:clipToPadding="false"
-                android:paddingHorizontal="4dp"
                 android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp">
 
-                    <!-- BGM Item 0 - Kakushigoto (Default/Free) -->
-                    <FrameLayout
+                    <!-- BGM Item 0 - Kakushigoto -->
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/bgmKakushigotoCard"
-                        android:layout_width="wrap_content"
+                        android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:background="@drawable/bamboo_status_bg"
-                        android:padding="12dp">
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="1dp"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <FrameLayout
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:background="@drawable/bamboo_button_pale_green">
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                app:cardBackgroundColor="@color/pale_green"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:gravity="center"
-                                    android:text="🎵"
-                                    android:textSize="48sp" />
-                            </FrameLayout>
+                                    android:text="♪"
+                                    android:textColor="@color/green"
+                                    android:textSize="32sp" />
+                            </com.google.android.material.card.MaterialCardView>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -473,7 +569,7 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="Kakushigoto"
                                 android:textColor="@color/black"
-                                android:textSize="14sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -482,41 +578,49 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="sans-serif-medium"
-                                android:text="✓ Default"
+                                android:text="Default"
                                 android:textColor="@color/green"
-                                android:textSize="13sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-                    </FrameLayout>
-
+                    </com.google.android.material.card.MaterialCardView>
 
                     <!-- BGM Item 1 - Little -->
-                    <FrameLayout
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/bgmLittleCard"
-                        android:layout_width="wrap_content"
+                        android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:background="@drawable/bamboo_status_bg"
-                        android:padding="12dp">
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="1dp"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <FrameLayout
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:background="@drawable/bamboo_button_pale_green">
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                app:cardBackgroundColor="@color/pale_green"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:gravity="center"
-                                    android:text="🎶"
-                                    android:textSize="48sp" />
-                            </FrameLayout>
+                                    android:text="♪"
+                                    android:textColor="@color/green"
+                                    android:textSize="32sp" />
+                            </com.google.android.material.card.MaterialCardView>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -525,7 +629,7 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="Little"
                                 android:textColor="@color/black"
-                                android:textSize="14sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -536,38 +640,47 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="500 ✷"
                                 android:textColor="@color/green"
-                                android:textSize="13sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-                    </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <!-- BGM Item 2 - Ordinary Days -->
-                    <FrameLayout
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/bgmOrdinaryCard"
-                        android:layout_width="wrap_content"
+                        android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:background="@drawable/bamboo_status_bg"
-                        android:padding="12dp">
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="1dp"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <FrameLayout
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:background="@drawable/bamboo_button_pale_green">
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                app:cardBackgroundColor="@color/pale_green"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:gravity="center"
-                                    android:text="🎼"
-                                    android:textSize="48sp" />
-                            </FrameLayout>
+                                    android:text="♪"
+                                    android:textColor="@color/green"
+                                    android:textSize="32sp" />
+                            </com.google.android.material.card.MaterialCardView>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -576,7 +689,7 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="Ordinary Days"
                                 android:textColor="@color/black"
-                                android:textSize="14sp"
+                                android:textSize="13sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -587,17 +700,16 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="750 ✷"
                                 android:textColor="@color/green"
-                                android:textSize="13sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-                    </FrameLayout>
-
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Character Area with bamboo styling -->
+    <!-- Character Area -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/characterArea"
         android:layout_width="match_parent"
@@ -623,9 +735,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="16dp"
+                android:gravity="center_vertical"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="26dp"
                 android:text="Take your time browsing! What would you like to get today?"
                 android:textColor="@color/black"
                 android:textSize="14sp" />

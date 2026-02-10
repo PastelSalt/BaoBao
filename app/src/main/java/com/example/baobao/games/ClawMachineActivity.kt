@@ -20,15 +20,13 @@ import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.ViewTreeObserver
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.BounceInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.baobao.MainActivity
 import com.example.baobao.R
@@ -44,6 +42,8 @@ import com.example.baobao.databinding.ActivityClawMachineBinding
 import com.example.baobao.optimization.MemoryOptimizer
 import com.example.baobao.optimization.CacheManager
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.min
@@ -77,10 +77,11 @@ class ClawMachineActivity : BaseActivity() {
     private var caughtPrize: View? = null
     private var caughtPrizeValue: Int = 0
     private var isPrizeSpecial: Boolean = false // Track if caught prize is special
+    private var caughtPrizeInitialX: Float = 0f // Store initial X for animation
+    private var caughtPrizeInitialY: Float = 0f // Store initial Y for animation
 
-    // Prize currency values and labels
+    // Prize currency values
     private val prizeValues = mutableMapOf<View, Int>()
-    private val prizeLabels = mutableMapOf<View, TextView>()
     private val specialPrizes = mutableSetOf<View>() // Track special high-value prizes
 
     // Combo System
@@ -122,6 +123,12 @@ class ClawMachineActivity : BaseActivity() {
         }
     }
 
+    // Purchase Tries System
+    private var dailyPurchasesRemaining = 10
+    private val maxDailyPurchases = 10
+    private val tryCost = 50 // Currency cost per try
+    private var lastPurchaseDate = ""
+
     // Constants
     companion object {
         private const val PREFS_NAME = "BaoBaoPrefs"
@@ -131,6 +138,8 @@ class ClawMachineActivity : BaseActivity() {
         private const val KEY_TOTAL_WINS = "claw_total_wins"
         private const val KEY_TOTAL_EARNINGS = "claw_total_earnings"
         private const val KEY_HIGHEST_WIN = "claw_highest_win"
+        private const val KEY_DAILY_PURCHASES = "daily_purchases_remaining"
+        private const val KEY_LAST_PURCHASE_DATE = "last_purchase_date"
 
         private const val ANIM_DROP_DURATION = 1000L // Slightly faster
         private const val ANIM_LIFT_DURATION = 1200L // Faster
@@ -184,13 +193,22 @@ class ClawMachineActivity : BaseActivity() {
     private fun initializeGame() {
         // Load tries system
         loadTriesData()
+        loadPurchaseData()
         updateTriesDisplay()
+        updatePurchaseDisplay()
 
         // Setup UI
         binding.backButton.setOnClickListener {
             SoundManager.playClickSound(this)
             goBackWithLoading()
         }
+
+        // Setup buy tries button
+        binding.buyTriesButton.setOnClickListener {
+            SoundManager.playClickSound(this)
+            attemptPurchaseTry()
+        }
+
         val (text, index) = ConversationManager.getRandomClawMachineWithIndex()
         binding.bubbleText.text = text
         VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, index))
@@ -200,9 +218,14 @@ class ClawMachineActivity : BaseActivity() {
         setupClawControls()
 
         // Initialize prizes after layout
-        binding.gameContainer.post {
-            randomizePrizes()
-        }
+        binding.gameContainer.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                binding.gameContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                if (binding.gameContainer.width > 0 && binding.gameContainer.height > 0) {
+                    randomizePrizes()
+                }
+            }
+        })
 
         // Timer updates are started in onResume()
     }
@@ -324,6 +347,89 @@ class ClawMachineActivity : BaseActivity() {
         }
     }
 
+    // ==================== Purchase System ====================
+
+    private fun getCurrentDateString(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return dateFormat.format(Date())
+    }
+
+    private fun loadPurchaseData() {
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        lastPurchaseDate = prefs.getString(KEY_LAST_PURCHASE_DATE, "") ?: ""
+        dailyPurchasesRemaining = prefs.getInt(KEY_DAILY_PURCHASES, maxDailyPurchases)
+
+        // Check if day has changed - reset daily purchases
+        val currentDate = getCurrentDateString()
+        if (lastPurchaseDate != currentDate) {
+            dailyPurchasesRemaining = maxDailyPurchases
+            lastPurchaseDate = currentDate
+            savePurchaseData()
+        }
+    }
+
+    private fun savePurchaseData() {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().apply {
+            putInt(KEY_DAILY_PURCHASES, dailyPurchasesRemaining)
+            putString(KEY_LAST_PURCHASE_DATE, lastPurchaseDate)
+            apply()
+        }
+    }
+
+    private fun updatePurchaseDisplay() {
+        binding.buyTriesRemaining.text = "$dailyPurchasesRemaining/$maxDailyPurchases"
+
+        // Check if user can still purchase
+        lifecycleScope.launch {
+            val currentCurrency = userRepository.getCurrency()
+            val canPurchase = dailyPurchasesRemaining > 0 && currentCurrency >= tryCost
+
+            binding.buyTriesButton.alpha = if (canPurchase) 1.0f else 0.5f
+            binding.buyTriesButton.isEnabled = canPurchase
+        }
+    }
+
+    private fun attemptPurchaseTry() {
+        if (dailyPurchasesRemaining <= 0) {
+            binding.bubbleText.text = "You've used all your daily purchases! Come back tomorrow~ 🌙"
+            return
+        }
+
+        lifecycleScope.launch {
+            val currentCurrency = userRepository.getCurrency()
+
+            if (currentCurrency < tryCost) {
+                binding.bubbleText.text = "Not enough ✷! You need $tryCost ✷ to buy a try~"
+                return@launch
+            }
+
+            // Deduct currency using spendCurrency
+            val success = userRepository.spendCurrency(tryCost)
+            if (!success) {
+                binding.bubbleText.text = "Couldn't complete purchase. Try again!"
+                return@launch
+            }
+            CacheManager.invalidateCurrencyCache()
+
+            // Add try (beyond max limit for purchased tries)
+            remainingTries++
+            dailyPurchasesRemaining--
+            lastPurchaseDate = getCurrentDateString()
+
+            // Save data
+            saveTriesData()
+            savePurchaseData()
+
+            // Update UI
+            updateTriesDisplay()
+            updatePurchaseDisplay()
+
+            // Feedback
+            vibrateLight()
+            binding.bubbleText.text = "Yay! You got an extra try! 🎯 ($dailyPurchasesRemaining purchases left today)"
+        }
+    }
+
     private fun updateTriesDisplay() {
         binding.triesText.text = "$remainingTries/$maxTries"
 
@@ -396,21 +502,44 @@ class ClawMachineActivity : BaseActivity() {
         if (containerWidth <= 0) return
 
         val maxX = containerWidth.toFloat() - binding.clawGroup.width
-        clawX += moveSpeed * moveDirection
 
-        // Bounce at edges
+        // Calculate speed with smooth slowdown near edges
+        val edgeDistance = minOf(clawX, maxX - clawX)
+        val edgeThreshold = 50f * resources.displayMetrics.density
+        val speedMultiplier = if (edgeDistance < edgeThreshold) {
+            0.5f + (edgeDistance / edgeThreshold) * 0.5f // Slow down near edges
+        } else {
+            1f
+        }
+
+        clawX += moveSpeed * moveDirection * speedMultiplier
+
+        // Bounce at edges with subtle animation
         when {
             clawX >= maxX -> {
                 clawX = maxX
                 moveDirection = -1
+                // Subtle bounce effect
+                animateClawBounce()
             }
             clawX <= 0 -> {
                 clawX = 0f
                 moveDirection = 1
+                // Subtle bounce effect
+                animateClawBounce()
             }
         }
 
         binding.clawGroup.translationX = clawX
+    }
+
+    private fun animateClawBounce() {
+        // Quick subtle rotation bounce when hitting edge
+        ObjectAnimator.ofFloat(binding.claw, "rotation", 0f, 3f * -moveDirection, 0f).apply {
+            duration = 150
+            interpolator = DecelerateInterpolator()
+            start()
+        }
     }
 
     // ==================== Game Sequence ====================
@@ -426,33 +555,69 @@ class ClawMachineActivity : BaseActivity() {
     }
 
     private fun animateDrop(dropDistance: Float) {
-        currentAnimator = ValueAnimator.ofFloat(0f, dropDistance).apply {
-            duration = ANIM_DROP_DURATION
-            interpolator = LinearInterpolator()
+        // First: small anticipation movement (claw goes up slightly before dropping)
+        val anticipationDistance = -15f * resources.displayMetrics.density
 
+        val anticipation = ValueAnimator.ofFloat(0f, anticipationDistance).apply {
+            duration = 150
+            interpolator = DecelerateInterpolator()
             addUpdateListener { animator ->
                 val y = animator.animatedValue as Float
                 binding.claw.translationY = y
                 updateClawString(y)
             }
+        }
 
+        // Then: accelerating drop with slight bounce at the end
+        val drop = ValueAnimator.ofFloat(anticipationDistance, dropDistance).apply {
+            duration = ANIM_DROP_DURATION
+            interpolator = AccelerateInterpolator(1.5f)
+            addUpdateListener { animator ->
+                val y = animator.animatedValue as Float
+                binding.claw.translationY = y
+                updateClawString(y)
+            }
+        }
+
+        // Small bounce at bottom
+        val bounceUp = ValueAnimator.ofFloat(dropDistance, dropDistance - 20f).apply {
+            duration = 100
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { animator ->
+                binding.claw.translationY = animator.animatedValue as Float
+            }
+        }
+
+        val bounceDown = ValueAnimator.ofFloat(dropDistance - 20f, dropDistance).apply {
+            duration = 100
+            interpolator = AccelerateInterpolator()
+            addUpdateListener { animator ->
+                binding.claw.translationY = animator.animatedValue as Float
+            }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     checkPrizeCatch(dropDistance)
                 }
             })
+        }
 
+        // Chain animations
+        AnimatorSet().apply {
+            playSequentially(anticipation, drop, bounceUp, bounceDown)
             start()
         }
     }
 
     private fun checkPrizeCatch(dropDistance: Float) {
         val prizes = listOf(binding.prize1, binding.prize2, binding.prize3, binding.prize4)
+
+        // Calculate claw center X position (translationX is the movement offset)
         val clawCenterX = binding.clawGroup.translationX + (binding.clawGroup.width / 2)
 
         caughtPrize = prizes.firstOrNull { prize ->
             if (prize.visibility != View.VISIBLE) return@firstOrNull false
 
+            // Prize uses absolute x position
             val prizeCenterX = prize.x + (prize.width / 2)
             abs(clawCenterX - prizeCenterX) < prize.width / CATCH_TOLERANCE
         }
@@ -460,6 +625,15 @@ class ClawMachineActivity : BaseActivity() {
         val success = caughtPrize != null
         if (success) {
             vibrateSuccess() // Success haptic feedback
+
+            // Store initial prize position for animation
+            caughtPrize?.let {
+                caughtPrizeInitialX = it.x
+                caughtPrizeInitialY = it.y
+
+                // Don't snap - keep prize at its current position
+                // The lift animation will handle the movement
+            }
 
             val basePrizeValue = prizeValues[caughtPrize] ?: 50
             isPrizeSpecial = specialPrizes.contains(caughtPrize)
@@ -477,21 +651,19 @@ class ClawMachineActivity : BaseActivity() {
             }
             saveStatistics()
 
-            // Show win message with combo info
-            val comboText = if (consecutiveWins > 2) " (${consecutiveWins}x COMBO!)" else ""
-            val specialText = if (isPrizeSpecial) " ★RARE★" else ""
-            binding.bubbleText.text = "Amazing!$specialText You got $finalValue ✷!$comboText"
+            // Show win dialog animation with reward
+            val comboText = if (consecutiveWins > 2) " ${consecutiveWins}x COMBO!" else ""
+            val specialText = if (isPrizeSpecial) "★RARE★ " else ""
+            val winMessage = "${specialText}You got $finalValue ✷!$comboText"
+            showResultDialog(winMessage, true)
             VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, ConversationManager.getClawMachineWinIndex()))
-
-            // Animate prize label
-            prizeLabels[caughtPrize]?.let { label ->
-                animatePrizeLabelCatch(label)
-            }
         } else {
             consecutiveWins = 0 // Reset combo on miss
             caughtPrizeValue = 0
             isPrizeSpecial = false
-            binding.bubbleText.text = ConversationManager.getClawMachineLoss()
+
+            // Show loss dialog animation
+            showResultDialog(ConversationManager.getClawMachineLoss(), false)
             VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, ConversationManager.getClawMachineLossIndex()))
         }
 
@@ -501,22 +673,32 @@ class ClawMachineActivity : BaseActivity() {
     private fun animateLift(dropDistance: Float, hasWon: Boolean) {
         currentState = GameState.LIFTING
 
-        currentAnimator = ValueAnimator.ofFloat(dropDistance, 0f).apply {
+        // Initial grab animation - close the claw (visual feedback)
+        val grabDuration = if (hasWon) 300L else 150L
+
+        val liftAnimator = ValueAnimator.ofFloat(dropDistance, 0f).apply {
             duration = ANIM_LIFT_DURATION
-            interpolator = DecelerateInterpolator()
+            interpolator = DecelerateInterpolator(1.5f)
+            startDelay = grabDuration // Wait for grab effect
 
             addUpdateListener { animator ->
-                val y = animator.animatedValue as Float
-                binding.claw.translationY = y
-                updateClawString(y)
+                val clawY = animator.animatedValue as Float
 
-                if (hasWon) {
-                    caughtPrize?.translationY = y - dropDistance
+                binding.claw.translationY = clawY
+                updateClawString(clawY)
+
+                if (hasWon && caughtPrize != null) {
+                    val liftAmount = dropDistance - clawY
+
+                    // Only move Y - prize stays at its X position during lift
+                    // X movement happens in animateReturn
+                    caughtPrize?.y = (caughtPrizeInitialY - liftAmount).coerceAtLeast(-100f)
                 }
             }
 
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
+
                     if (hasWon) {
                         animateReturn()
                     } else {
@@ -524,28 +706,51 @@ class ClawMachineActivity : BaseActivity() {
                     }
                 }
             })
-
-            start()
         }
+
+        // If won, add a small "grab" pulse effect before lifting
+        if (hasWon) {
+            val pulseScale = ObjectAnimator.ofFloat(binding.claw, "scaleX", 1f, 1.15f, 1f).apply {
+                duration = grabDuration
+            }
+            val pulseScaleY = ObjectAnimator.ofFloat(binding.claw, "scaleY", 1f, 1.15f, 1f).apply {
+                duration = grabDuration
+            }
+
+            AnimatorSet().apply {
+                playTogether(pulseScale, pulseScaleY)
+                start()
+            }
+        }
+
+        currentAnimator = liftAnimator
+        liftAnimator.start()
     }
 
     private fun animateReturn() {
         currentState = GameState.RETURNING
 
-        val startX = binding.clawGroup.translationX
-        val initialPrizeX = caughtPrize?.translationX ?: 0f
+        val startClawX = binding.clawGroup.translationX
+        val prizeWidth = caughtPrize?.width ?: 0
+        val startPrizeX = caughtPrize?.x ?: 0f
 
-        currentAnimator = ValueAnimator.ofFloat(startX, 0f).apply {
+        // Target: prize centered under claw when claw is at translationX = 0
+        val targetPrizeX = (binding.clawGroup.width / 2f) - (prizeWidth / 2f)
+
+        currentAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = ANIM_RETURN_DURATION
-            interpolator = DecelerateInterpolator()
+            interpolator = DecelerateInterpolator(1.2f)
 
             addUpdateListener { animator ->
-                val x = animator.animatedValue as Float
-                binding.clawGroup.translationX = x
+                val progress = animator.animatedFraction
 
+                // Move claw back to start
+                val clawTranslationX = startClawX * (1f - progress)
+                binding.clawGroup.translationX = clawTranslationX
+
+                // Move prize from its current position to under the drop zone
                 caughtPrize?.let {
-                    val deltaX = x - startX
-                    it.translationX = initialPrizeX + deltaX
+                    it.x = startPrizeX + (targetPrizeX - startPrizeX) * progress
                 }
             }
 
@@ -561,23 +766,47 @@ class ClawMachineActivity : BaseActivity() {
 
     private fun animateDropInHole() {
         caughtPrize?.let { prize ->
-            val startY = prize.translationY
+            val startY = prize.y
 
-            currentAnimator = ValueAnimator.ofFloat(startY, startY + 500f).apply {
+            // Create multiple animations for a more dynamic effect
+            val dropAnim = ValueAnimator.ofFloat(startY, startY + 250f).apply {
+                duration = ANIM_DROP_HOLE_DURATION
+                interpolator = AccelerateInterpolator(2f)
+                addUpdateListener { animator ->
+                    prize.y = animator.animatedValue as Float
+                }
+            }
+
+            val fadeAnim = ObjectAnimator.ofFloat(prize, "alpha", 1f, 0f).apply {
                 duration = ANIM_DROP_HOLE_DURATION
                 interpolator = AccelerateInterpolator()
+            }
 
-                addUpdateListener { animator ->
-                    prize.translationY = animator.animatedValue as Float
-                    prize.alpha = 1f - (animator.animatedFraction * 0.5f) // Fade slightly
-                }
+            val scaleXAnim = ObjectAnimator.ofFloat(prize, "scaleX", 1f, 0.3f).apply {
+                duration = ANIM_DROP_HOLE_DURATION
+                interpolator = AccelerateInterpolator()
+            }
 
+            val scaleYAnim = ObjectAnimator.ofFloat(prize, "scaleY", 1f, 0.3f).apply {
+                duration = ANIM_DROP_HOLE_DURATION
+                interpolator = AccelerateInterpolator()
+            }
+
+            val rotationAnim = ObjectAnimator.ofFloat(prize, "rotation", 0f, 360f).apply {
+                duration = ANIM_DROP_HOLE_DURATION
+                interpolator = LinearInterpolator()
+            }
+
+            AnimatorSet().apply {
+                playTogether(dropAnim, fadeAnim, scaleXAnim, scaleYAnim, rotationAnim)
                 addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         prize.visibility = View.INVISIBLE
-                        prize.alpha = 1f // Reset alpha
+                        prize.alpha = 1f
+                        prize.scaleX = 1f
+                        prize.scaleY = 1f
+                        prize.rotation = 0f
 
-                        // Award the currency and show floating text
                         if (caughtPrizeValue > 0) {
                             showFloatingCurrency(caughtPrizeValue, isPrizeSpecial)
                             awardCurrency(caughtPrizeValue)
@@ -617,8 +846,10 @@ class ClawMachineActivity : BaseActivity() {
         val containerWidth = binding.gameContainer.width.toFloat()
         val containerHeight = binding.gameContainer.height.toFloat()
         val dropZoneWidth = binding.dropZone.width.toFloat()
-        val prizeSize = 60 * resources.displayMetrics.density // Match layout 60dp
-        val spacing = 12 * resources.displayMetrics.density
+        val density = resources.displayMetrics.density
+        val prizeSize = 60 * density // Match layout 60dp
+        val spacing = 16 * density
+        val bottomMargin = 10 * density
 
         // Prize drawable themes (fruits, vegetables, bamboo)
         val normalPrizeDrawables = listOf(
@@ -641,38 +872,79 @@ class ClawMachineActivity : BaseActivity() {
         
         val specialPrizeDrawable = R.drawable.prize_golden
 
-        // Clear old labels
-        prizeLabels.values.forEach { label ->
-            (label.parent as? ViewGroup)?.removeView(label)
-        }
-        prizeLabels.clear()
+        // Clear special prizes tracking
         specialPrizes.clear()
 
-        // Calculate available area for prizes (excluding drop zone)
-        val startX = dropZoneWidth + spacing
-        val availableWidth = containerWidth - startX - spacing
-        val totalPrizesWidth = prizes.size * prizeSize + (prizes.size - 1) * spacing
+        // Calculate safe play area (after drop zone, with margins)
+        val safeStartX = dropZoneWidth + spacing
+        val safeEndX = containerWidth - prizeSize - spacing
+        val groundY = containerHeight - prizeSize - bottomMargin // Ground level
 
-        val actualSpacing = if (totalPrizesWidth <= availableWidth) {
-            (availableWidth - (prizes.size * prizeSize)) / (prizes.size + 1)
-        } else {
-            spacing * 0.5f
+        // Ensure we have valid bounds (both width and height must be valid)
+        if (safeEndX <= safeStartX || containerHeight < prizeSize * 2) {
+            // Fallback if container is too small or not measured yet
+            return
         }
 
-        prizes.forEachIndexed { index, prize ->
-            // Position each prize
-            val posX = startX + actualSpacing + index * (prizeSize + actualSpacing)
-            val randomOffsetX = (Random.nextFloat() - 0.5f) * 20 * resources.displayMetrics.density
-            val randomOffsetY = Random.nextFloat() * 10 * resources.displayMetrics.density
+        // Stacking configuration - create 2 stacks for 4 items (2 items per stack)
+        val numStacks = 2
+        val stackGap = 4 * density // Small gap between stacked items (no overlap!)
+        val stackOffsetY = prizeSize + stackGap // Full prize height + gap
 
-            prize.x = (posX + randomOffsetX).coerceIn(startX, containerWidth - prizeSize - spacing)
-            prize.y = containerHeight - prizeSize - spacing - randomOffsetY
+        // Calculate stack center positions - evenly distribute in safe area
+        val availableWidth = safeEndX - safeStartX
+        val stackWidth = availableWidth / numStacks
+
+        val stackCenters = mutableListOf<Float>()
+        for (i in 0 until numStacks) {
+            val centerX = safeStartX + (stackWidth * i) + (stackWidth / 2)
+            stackCenters.add(centerX)
+        }
+
+        // Track stack heights
+        val stackHeights = MutableList(numStacks) { 0 }
+        val maxStackHeight = 2 // 2 items per stack
+
+        // Shuffle prizes for variety
+        val shuffledPrizes = prizes.shuffled()
+
+        // Assign each prize to a stack
+        shuffledPrizes.forEachIndexed { index, prize ->
+            // Determine which stack to use (alternate between stacks)
+            val stackIndex = index % numStacks
+            val currentStackLevel = stackHeights[stackIndex]
+
+            // Don't exceed max stack height
+            if (currentStackLevel >= maxStackHeight) return@forEachIndexed
+
+            // Calculate center X of the stack
+            val stackCenterX = stackCenters[stackIndex]
+
+            // Calculate final X position (center the prize on stack center)
+            val prizeX = (stackCenterX - (prizeSize / 2))
+                .coerceIn(safeStartX, safeEndX)
+
+            // Calculate Y position based on stack level (items stack upward from ground)
+            // No overlap - each level is fully above the previous
+            val prizeY = (groundY - (currentStackLevel * stackOffsetY))
+                .coerceAtLeast(spacing)
+
+            // Reset any existing translations and set absolute position
             prize.translationX = 0f
             prize.translationY = 0f
+            prize.x = prizeX
+            prize.y = prizeY
+            prize.rotation = 0f
             prize.visibility = View.VISIBLE
             prize.alpha = 1f
             prize.scaleX = 1f
             prize.scaleY = 1f
+
+            // Set elevation based on stack level (higher items have higher elevation)
+            prize.elevation = (6 + currentStackLevel * 2) * density
+
+            // Increment stack height
+            stackHeights[stackIndex]++
 
             // Determine if this is a special prize (15% chance)
             val isSpecial = Random.nextFloat() < SPECIAL_PRIZE_CHANCE
@@ -685,10 +957,8 @@ class ClawMachineActivity : BaseActivity() {
             }
             prize.setBackgroundResource(prizeDrawable)
             
-            // Set the emoji text inside the circle (prize is a TextView)
-            if (prize is TextView) {
-                prize.text = prizeEmojis[prizeDrawable] ?: "🎁"
-            }
+            // Set the emoji text inside the circle
+            (prize as? TextView)?.text = prizeEmojis[prizeDrawable] ?: "🎁"
 
             // Assign currency value (special prizes are 150-250, normal are 10-100)
             val randomValue = if (isSpecial) {
@@ -699,16 +969,6 @@ class ClawMachineActivity : BaseActivity() {
             }
             prizeValues[prize] = randomValue
 
-            // Create value label
-            val label = createPrizeLabel(randomValue, isSpecial)
-            binding.gameContainer.addView(label)
-            prizeLabels[prize] = label
-
-            // Position label on top of prize with better visibility
-            label.post {
-                label.x = prize.x + (prize.width - label.width) / 2
-                label.y = prize.y - label.height + 4 * resources.displayMetrics.density
-            }
 
             // Animate special prizes with glow effect
             if (isSpecial) {
@@ -717,30 +977,6 @@ class ClawMachineActivity : BaseActivity() {
         }
     }
 
-    private fun createPrizeLabel(value: Int, isSpecial: Boolean): TextView {
-        val density = resources.displayMetrics.density
-        return TextView(this).apply {
-            text = if (isSpecial) "★$value✷" else "$value✷"
-            textSize = if (isSpecial) 13f else 11f
-            setTextColor(if (isSpecial) Color.parseColor("#FFD700") else Color.WHITE)
-            setPadding((8 * density).toInt(), (4 * density).toInt(), (8 * density).toInt(), (4 * density).toInt())
-            background = ContextCompat.getDrawable(
-                this@ClawMachineActivity,
-                if (isSpecial) R.drawable.bamboo_button_green else R.drawable.bamboo_button_pale_green
-            )
-            gravity = Gravity.CENTER
-            // Use density-scaled elevation to ensure it stays on top of the 6dp prize
-            elevation = 10 * density
-            layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            )
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
-            if (isSpecial) {
-                setShadowLayer(10f, 0f, 0f, Color.parseColor("#FFD700"))
-            }
-        }
-    }
 
     private fun animateSpecialPrize(prize: View) {
         val scaleAnimator = ObjectAnimator.ofFloat(prize, "scaleX", 1f, 1.1f, 1f).apply {
@@ -757,18 +993,6 @@ class ClawMachineActivity : BaseActivity() {
         scaleYAnimator.start()
     }
 
-    private fun animatePrizeLabelCatch(label: TextView) {
-        val scaleX = ObjectAnimator.ofFloat(label, "scaleX", 1f, 1.5f, 0f).apply {
-            duration = 600
-        }
-        val scaleY = ObjectAnimator.ofFloat(label, "scaleY", 1f, 1.5f, 0f).apply {
-            duration = 600
-        }
-        AnimatorSet().apply {
-            playTogether(scaleX, scaleY)
-            start()
-        }
-    }
 
     private fun resetClaw() {
         clawX = 0f
@@ -783,6 +1007,92 @@ class ClawMachineActivity : BaseActivity() {
         VoiceManager.playVoice(this, VoiceManager.getClawMachineAudioId(this, index))
     }
 
+    private fun showResultDialog(message: String, isWin: Boolean) {
+        val density = resources.displayMetrics.density
+
+        // Create overlay container
+        val overlay = FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundColor(Color.parseColor("#66000000")) // Semi-transparent background
+            alpha = 0f
+            elevation = 200 * density
+            isClickable = true // Block touches to elements below
+        }
+
+        // Create dialog card
+        val dialogCard = FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.CENTER
+            }
+            setBackgroundResource(R.drawable.bamboo_speech_bubble)
+            elevation = 210 * density
+            setPadding((24 * density).toInt(), (20 * density).toInt(), (24 * density).toInt(), (20 * density).toInt())
+        }
+
+        // Create message text
+        val messageText = TextView(this).apply {
+            text = message
+            textSize = if (isWin) 18f else 16f
+            setTextColor(if (isWin) Color.parseColor("#4CAF50") else Color.parseColor("#757575"))
+            gravity = Gravity.CENTER
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            )
+            // Add emoji prefix
+            val emoji = if (isWin) "🎉 " else "😢 "
+            this.text = "$emoji$message"
+        }
+
+        dialogCard.addView(messageText)
+        overlay.addView(dialogCard)
+        (binding.root as ViewGroup).addView(overlay)
+
+        // Animate overlay fade in
+        val fadeIn = ObjectAnimator.ofFloat(overlay, "alpha", 0f, 1f).apply {
+            duration = 200
+        }
+
+        // Animate dialog pop in
+        dialogCard.scaleX = 0.5f
+        dialogCard.scaleY = 0.5f
+        val scaleX = ObjectAnimator.ofFloat(dialogCard, "scaleX", 0.5f, 1.1f, 1f)
+        val scaleY = ObjectAnimator.ofFloat(dialogCard, "scaleY", 0.5f, 1.1f, 1f)
+
+        val popIn = AnimatorSet().apply {
+            playTogether(fadeIn, scaleX, scaleY)
+            duration = 400
+            interpolator = OvershootInterpolator(2f)
+        }
+
+        // Auto dismiss after delay
+        popIn.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                handler.postDelayed({
+                    // Fade out and remove
+                    val fadeOut = ObjectAnimator.ofFloat(overlay, "alpha", 1f, 0f).apply {
+                        duration = 300
+                        addListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                (binding.root as ViewGroup).removeView(overlay)
+                            }
+                        })
+                    }
+                    fadeOut.start()
+                }, 1500) // Show for 1.5 seconds
+            }
+        })
+
+        popIn.start()
+    }
+
     private fun awardCurrency(amount: Int) {
         lifecycleScope.launch {
             userRepository.addCurrency(amount)
@@ -792,14 +1102,16 @@ class ClawMachineActivity : BaseActivity() {
     }
 
     private fun showFloatingCurrency(amount: Int, isSpecial: Boolean) {
+        val density = resources.displayMetrics.density
+
         val floatingText = TextView(this).apply {
             text = "+$amount ✷"
-            textSize = if (isSpecial) 26f else 22f
-            setTextColor(if (isSpecial) Color.parseColor("#5D4037") else Color.parseColor("#81C784"))
+            textSize = if (isSpecial) 28f else 24f
+            setTextColor(if (isSpecial) Color.parseColor("#FFD700") else Color.parseColor("#81C784"))
             setTypeface(typeface, android.graphics.Typeface.BOLD)
-            setShadowLayer(6f, 0f, 0f, Color.parseColor("#FFFFFF"))
+            setShadowLayer(8f, 2f, 2f, Color.parseColor("#33000000"))
             alpha = 0f
-            elevation = 20f
+            elevation = 100 * density
             layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT
@@ -810,29 +1122,34 @@ class ClawMachineActivity : BaseActivity() {
 
         (binding.root as ViewGroup).addView(floatingText)
 
-        // Animate: fade in, move up, fade out
-        val fadeIn = ObjectAnimator.ofFloat(floatingText, "alpha", 0f, 1f).apply {
-            duration = 200
+        // Pop in animation
+        val popIn = AnimatorSet().apply {
+            val scaleX = ObjectAnimator.ofFloat(floatingText, "scaleX", 0f, 1.3f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(floatingText, "scaleY", 0f, 1.3f, 1f)
+            val fadeIn = ObjectAnimator.ofFloat(floatingText, "alpha", 0f, 1f)
+            playTogether(scaleX, scaleY, fadeIn)
+            duration = 300
+            interpolator = OvershootInterpolator(2f)
         }
-        val moveUp = ObjectAnimator.ofFloat(floatingText, "translationY", 0f, -200f).apply {
-            duration = 1500
-            interpolator = DecelerateInterpolator()
+
+        // Float up animation
+        val floatUp = ObjectAnimator.ofFloat(floatingText, "translationY", 0f, -150f).apply {
+            duration = 1200
+            interpolator = DecelerateInterpolator(2f)
         }
-        val fadeOut = ObjectAnimator.ofFloat(floatingText, "alpha", 1f, 0f).apply {
-            duration = 500
-            startDelay = 1000
-        }
-        val scaleX = ObjectAnimator.ofFloat(floatingText, "scaleX", 0.5f, 1.2f, 1f).apply {
+
+        // Fade out animation
+        val fadeOut = AnimatorSet().apply {
+            val alpha = ObjectAnimator.ofFloat(floatingText, "alpha", 1f, 0f)
+            val scaleX = ObjectAnimator.ofFloat(floatingText, "scaleX", 1f, 0.8f)
+            val scaleY = ObjectAnimator.ofFloat(floatingText, "scaleY", 1f, 0.8f)
+            playTogether(alpha, scaleX, scaleY)
             duration = 400
-            interpolator = OvershootInterpolator()
-        }
-        val scaleY = ObjectAnimator.ofFloat(floatingText, "scaleY", 0.5f, 1.2f, 1f).apply {
-            duration = 400
-            interpolator = OvershootInterpolator()
+            startDelay = 800
         }
 
         AnimatorSet().apply {
-            playTogether(fadeIn, moveUp, fadeOut, scaleX, scaleY)
+            playTogether(popIn, floatUp, fadeOut)
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     (binding.root as ViewGroup).removeView(floatingText)
@@ -849,12 +1166,6 @@ class ClawMachineActivity : BaseActivity() {
         movementAnimator = null
         MemoryOptimizer.removeCallback(handler, moveRunnable)
         MemoryOptimizer.removeCallback(handler, timerUpdateRunnable)
-
-        // Clean up prize labels
-        prizeLabels.values.forEach { label ->
-            (label.parent as? ViewGroup)?.removeView(label)
-        }
-        prizeLabels.clear()
     }
 
     // ==================== Lifecycle ====================
@@ -862,6 +1173,7 @@ class ClawMachineActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         saveTriesData()
+        savePurchaseData()
         // Stop timer updates when activity is paused to save resources
         MemoryOptimizer.removeCallback(handler, timerUpdateRunnable)
         VoiceManager.pauseVoice()
@@ -869,6 +1181,9 @@ class ClawMachineActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Reload purchase data in case date changed
+        loadPurchaseData()
+        updatePurchaseDisplay()
         // Resume timer updates when activity comes back
         handler.post(timerUpdateRunnable)
     }

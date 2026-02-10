@@ -1,6 +1,6 @@
 package com.example.baobao
 
-import android.content.Intent
+import android.animation.AnimatorSet
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,19 +8,19 @@ import androidx.lifecycle.lifecycleScope
 import com.example.baobao.audio.SoundManager
 import com.example.baobao.audio.VoiceManager
 import com.example.baobao.conversation.ConversationManager
+import com.example.baobao.coreoperations.AnimationManager
 import com.example.baobao.coreoperations.BackgroundManager
 import com.example.baobao.coreoperations.BaseActivity
 import com.example.baobao.coreoperations.CharacterImageManager
 import com.example.baobao.coreoperations.ConversationController
 import com.example.baobao.coreoperations.DialogManager
 import com.example.baobao.coreoperations.NavigationHandler
+import com.example.baobao.coreoperations.TypewriterTextView
 import com.example.baobao.coreoperations.UIStateManager
 import com.example.baobao.database.AppDatabase
 import com.example.baobao.database.SessionManager
 import com.example.baobao.database.UserRepository
 import com.example.baobao.databinding.ActivityMainBinding
-import com.example.baobao.games.ClawMachineActivity
-import com.example.baobao.intervention.ResourcesActivity
 import com.example.baobao.models.PrimaryMood
 import com.example.baobao.optimization.MemoryOptimizer
 import kotlinx.coroutines.launch
@@ -39,6 +39,9 @@ class MainActivity : BaseActivity() {
     private lateinit var conversationController: ConversationController
     private lateinit var navigationHandler: NavigationHandler
     private lateinit var uiStateManager: UIStateManager
+
+    // Animation
+    private var characterIdleAnimator: AnimatorSet? = null
 
     private val handler = Handler(Looper.getMainLooper())
     private val timeUpdater = object : Runnable {
@@ -84,8 +87,10 @@ class MainActivity : BaseActivity() {
             navigationHandler.hideConversationModeUI()
             // Reset character to default greeting pose
             binding.characterImage.setImageResource(CharacterImageManager.getHelloImage())
-            // Show default greeting text
-            binding.conversationText.text = "I'm here whenever you need me! 🐼"
+            // Show time-based greeting with voice and typewriter effect
+            val (greetingText, greetingIndex) = ConversationManager.getTimeBasedGreetingWithIndex()
+            binding.conversationText.animateText(greetingText)
+            VoiceManager.playVoice(this, VoiceManager.getGreetingAudioId(this, greetingIndex))
             // Note: User will trigger next conversation by tapping BaoBao again
         }
 
@@ -113,14 +118,48 @@ class MainActivity : BaseActivity() {
         setupUI()
         uiStateManager.updateStatus()
 
+        // Start entrance animations
+        startEntranceAnimations()
+
         // Start conversation mode if mood selected
         if (selectedMood != null && shouldStartConversation) {
             startConversation(selectedMood)
         } else if (selectedMood != null) {
             conversationController.showMoodGreeting(selectedMood)
         } else {
-            binding.conversationText.text = "How can I help you today?"
+            // Show time-based greeting with voice and typewriter effect
+            val (greetingText, greetingIndex) = ConversationManager.getTimeBasedGreetingWithIndex()
+            binding.conversationText.animateText(greetingText)
+            VoiceManager.playVoice(this, VoiceManager.getGreetingAudioId(this, greetingIndex))
         }
+    }
+
+    private fun startEntranceAnimations() {
+        // Character entrance animation
+        AnimationManager.characterEntrance(binding.characterImage, 600)
+
+        // Start character idle animation after entrance
+        handler.postDelayed({
+            characterIdleAnimator = AnimationManager.startCharacterIdleAnimation(binding.characterImage)
+        }, 700)
+
+        // Navigation buttons staggered animation
+        AnimationManager.staggeredSlideIn(binding.navButtons, fromRight = false, delayBetween = 80)
+
+        // Status card slide in from right
+        AnimationManager.slideInRight(binding.statusCard, delay = 100)
+
+        // Conversation area slide up
+        AnimationManager.slideInUp(binding.conversationArea, delay = 200)
+
+        // Hint text fade in
+        AnimationManager.fadeIn(binding.hintText, delay = 400)
+
+        // Button container staggered animation
+        AnimationManager.fadeIn(binding.buttonContainer, delay = 300)
+        handler.postDelayed({
+            AnimationManager.staggeredFadeIn(binding.defaultButtonsContainer, delayBetween = 60)
+        }, 350)
     }
 
     private fun setupUI() {
@@ -133,14 +172,29 @@ class MainActivity : BaseActivity() {
         // Setup action buttons
         navigationHandler.setupActionButtons { conversationController.isConversationMode }
 
-        // Setup character interaction
+        // Setup character interaction with animation
         binding.characterImage.setOnClickListener {
             SoundManager.playClickSound(this)
+            AnimationManager.characterTapReaction(binding.characterImage)
             if (conversationController.isConversationMode) {
                 conversationController.exitConversationMode()
                 navigationHandler.hideConversationModeUI()
             }
             showMoodSelectionDialog()
+        }
+
+        // Setup tap-to-skip for typewriter animation on conversation area
+        binding.conversationArea.setOnClickListener {
+            if (binding.conversationText.isCurrentlyAnimating()) {
+                binding.conversationText.skipToEnd()
+            }
+        }
+
+        // Also allow tapping the text itself to skip
+        binding.conversationText.setOnClickListener {
+            if (binding.conversationText.isCurrentlyAnimating()) {
+                binding.conversationText.skipToEnd()
+            }
         }
 
         // Setup button toggle
@@ -165,10 +219,13 @@ class MainActivity : BaseActivity() {
     }
 
     private fun handleMoodSelection(mood: PrimaryMood) {
-        // Update character image to match the mood
-        binding.characterImage.setImageResource(
-            CharacterImageManager.getCharacterImageForMood(mood.name.lowercase())
-        )
+        // Animate character emotion change
+        AnimationManager.characterEmotionChange(binding.characterImage) {
+            // Update character image to match the mood at midpoint
+            binding.characterImage.setImageResource(
+                CharacterImageManager.getCharacterImageForMood(mood.name.lowercase())
+            )
+        }
 
         // Start conversation (this will load the proper starting node)
         startConversation(mood.name.lowercase())
@@ -185,17 +242,17 @@ class MainActivity : BaseActivity() {
         when (action) {
             "show_affirmation" -> {
                 val (text, index) = ConversationManager.getRandomAffirmationWithIndex()
-                binding.conversationText.text = text
+                binding.conversationText.animateText(text)
                 ConversationManager.playSimpleAudio(this, "affirmation", index)
             }
             "show_joke" -> {
                 val (text, index) = ConversationManager.getRandomJokeWithIndex()
-                binding.conversationText.text = text
+                binding.conversationText.animateText(text)
                 ConversationManager.playSimpleAudio(this, "joke", index)
             }
             "show_selfcare" -> {
                 val (text, index) = ConversationManager.getRandomSelfCareWithIndex()
-                binding.conversationText.text = text
+                binding.conversationText.animateText(text)
                 ConversationManager.playSimpleAudio(this, "selfcare", index)
             }
             "happy_start" -> {
@@ -241,6 +298,9 @@ class MainActivity : BaseActivity() {
         super.onResume()
         handler.post(timeUpdater)
 
+        // Resume character idle animation
+        characterIdleAnimator?.resume()
+
         // Resume or play BGM, apply outfit, and apply background
         lifecycleScope.launch {
             // Load and apply selected background
@@ -268,11 +328,17 @@ class MainActivity : BaseActivity() {
         super.onPause()
         MemoryOptimizer.removeCallback(handler, timeUpdater)
         SoundManager.pauseBGM()
+        // Pause character idle animation
+        characterIdleAnimator?.pause()
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
         MemoryOptimizer.cleanupHandler(handler)
         VoiceManager.stopVoice()
+        // Clean up animations
+        characterIdleAnimator?.cancel()
+        characterIdleAnimator = null
     }
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Background Circle -->
+    <path
+        android:fillColor="#A7D489"
+        android:pathData="M50,50m-45,0a45,45 0,1,1 90,0a45,45 0,1,1 -90,0" />
+
+    <!-- White Border -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:pathData="M50,50m-42,0a42,42 0,1,1 84,0a42,42 0,1,1 -84,0" />
+
+    <!-- Simple Claw Icon (White) -->
+    <group
+        android:translateX="25"
+        android:translateY="25">
+        <!-- Vertical Arm -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M23,5 L27,5 L27,20 L23,20 Z" />
+
+        <!-- Claw Head/Top -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M15,20 L35,20 L35,25 L15,25 Z" />
+
+        <!-- Left Prong -->
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:pathData="M17,25 Q10,35 15,45" />
+
+        <!-- Middle Prong -->
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:pathData="M25,25 L25,48" />
+
+        <!-- Right Prong -->
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:pathData="M33,25 Q40,35 35,45" />
+    </group>
+
+</vector>

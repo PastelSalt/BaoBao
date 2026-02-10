@@ -16,12 +16,12 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Standard Header with BaoBao Icon -->
+            <!-- Standard Header with Logo only -->
             <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:contentDescription="BaoBao character"
+                android:contentDescription="BaoBao logo"
                 android:src="@drawable/baobaotextlogo"
                 android:scaleType="fitCenter" />
 
@@ -30,8 +30,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
-                android:text="⚙️ Settings"
+                android:layout_marginTop="16dp"
+                android:text="Settings"
                 android:textColor="@color/green"
                 android:textSize="22sp"
                 android:textStyle="bold"
@@ -53,7 +53,7 @@
                 android:layout_width="60dp"
                 android:layout_height="3dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="16dp"
                 android:background="@color/green"
                 android:alpha="0.4" />
@@ -62,7 +62,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
@@ -75,14 +75,28 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="🎵 Audio Controls"
-                        android:textColor="@color/green"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="12dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_music_bamboo"
+                            app:tint="@color/green"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Audio Controls"
+                            android:textColor="@color/green"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                     <!-- BGM Setting -->
                     <LinearLayout
@@ -220,30 +234,28 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="16dp">
 
-                <com.google.android.material.card.MaterialCardView
+                <FrameLayout
                     android:id="@+id/speechBubble"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="2dp"
+                    android:background="@drawable/bamboo_speech_bubble"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/characterIcon"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:strokeColor="@color/green"
-                    app:strokeWidth="1dp">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:id="@+id/bubbleText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="12dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="22dp"
                         android:text="Need to adjust something? I'm here to help!"
                         android:textColor="@color/black"
                         android:textSize="14sp" />
-                </com.google.android.material.card.MaterialCardView>
+                </FrameLayout>
 
                 <ImageView
                     android:id="@+id/characterIcon"
@@ -265,10 +277,28 @@
                 android:orientation="vertical">
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/helpButton"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Help &amp; Tutorial"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bamboo_button_green"
+                    app:backgroundTint="@null"
+                    app:icon="@drawable/ic_help_bamboo"
+                    app:iconTint="@color/white"
+                    app:iconGravity="textStart"
+                    app:cornerRadius="16dp" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/signOutButton"
                     style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:layout_marginTop="12dp"
                     android:text="Sign Out"
                     android:textColor="@color/white"
                     android:textAllCaps="false"
@@ -276,6 +306,9 @@
                     android:textStyle="bold"
                     android:background="@drawable/bamboo_button_tan"
                     app:backgroundTint="@null"
+                    app:icon="@drawable/ic_logout_bamboo"
+                    app:iconTint="@color/white"
+                    app:iconGravity="textStart"
                     app:cornerRadius="16dp" />
 
                 <com.google.android.material.button.MaterialButton
