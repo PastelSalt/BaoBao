@@ -35,7 +35,7 @@
                 android:textColor="@color/green"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif-medium" />
+                android:fontFamily="@font/quicksand" />
 
             <!-- Subtitle -->
             <TextView

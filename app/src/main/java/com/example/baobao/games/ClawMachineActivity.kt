@@ -878,7 +878,7 @@ class ClawMachineActivity : BaseActivity() {
             R.drawable.prize_grape,
             R.drawable.prize_strawberry
         )
-        
+
         // Map drawables to emojis to show inside the circles
         val prizeEmojis = mapOf(
             R.drawable.prize_bamboo to "🎋",
@@ -888,7 +888,7 @@ class ClawMachineActivity : BaseActivity() {
             R.drawable.prize_strawberry to "🍓",
             R.drawable.prize_golden to "🌟"
         )
-        
+
         val specialPrizeDrawable = R.drawable.prize_golden
 
         // Clear special prizes tracking
@@ -975,7 +975,7 @@ class ClawMachineActivity : BaseActivity() {
                 normalPrizeDrawables[Random.nextInt(normalPrizeDrawables.size)]
             }
             prize.setBackgroundResource(prizeDrawable)
-            
+
             // Set the emoji text inside the circle
             (prize as? TextView)?.text = prizeEmojis[prizeDrawable] ?: "🎁"
 

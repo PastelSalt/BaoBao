@@ -35,7 +35,7 @@
                 android:textColor="@color/green"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif-medium" />
+                android:fontFamily="@font/quicksand" />
 
             <!-- Subtitle -->
             <TextView
@@ -91,7 +91,7 @@
                             android:textColor="@color/green"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:fontFamily="sans-serif-medium" />
+                            android:fontFamily="@font/quicksand" />
 
                         <!-- Bamboo decorative element -->
                         <View
@@ -172,7 +172,7 @@
                             android:textColor="@color/green"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:fontFamily="sans-serif-medium" />
+                            android:fontFamily="@font/quicksand" />
 
                         <!-- Bamboo decorative element -->
                         <View
@@ -253,7 +253,7 @@
                             android:textColor="@color/green"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:fontFamily="sans-serif-medium" />
+                            android:fontFamily="@font/quicksand" />
 
                         <!-- Bamboo decorative element -->
                         <View

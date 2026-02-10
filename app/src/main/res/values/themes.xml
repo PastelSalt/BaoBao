@@ -10,6 +10,10 @@
         <item name="colorSecondaryVariant">@color/tan</item>
         <item name="colorOnSecondary">@color/white</item>
 
+        <!-- Global font -->
+        <item name="android:fontFamily">@font/quicksand</item>
+        <item name="fontFamily">@font/quicksand</item>
+
         <!-- Background and surface colors -->
         <item name="android:windowBackground">@color/off_white</item>
         <item name="colorSurface">@color/light_cream</item>

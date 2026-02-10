@@ -18,7 +18,7 @@
         </aapt:attr>
     </path>
 
-    <!-- Transparent Clouds (Scattered) -->
+    <!-- Transparent Clouds (Denser and More Scattered) -->
     <path
         android:fillAlpha="0.4"
         android:fillColor="#FFFFFF"
@@ -51,32 +51,76 @@
         android:fillAlpha="0.1"
         android:fillColor="#FFFFFF"
         android:pathData="M200,350a50,25 0,1 0,0 50a50,25 0,1 0,0 -50" />
-
-    <!-- Bamboo Stalks (Inherited from main_bamboo_background style) -->
-    <!-- Stalk Left -->
     <path
-        android:fillAlpha="0.3"
-        android:fillColor="@color/pale_green"
+        android:fillAlpha="0.2"
+        android:fillColor="#FFFFFF"
+        android:pathData="M120,280a40,20 0,1 0,0 40a40,20 0,1 0,0 -40" />
+    <path
+        android:fillAlpha="0.15"
+        android:fillColor="#FFFFFF"
+        android:pathData="M300,450a60,30 0,1 0,0 60a60,30 0,1 0,0 -60" />
+    <path
+        android:fillAlpha="0.1"
+        android:fillColor="#FFFFFF"
+        android:pathData="M80,550a45,22 0,1 0,0 44a45,22 0,1 0,0 -44" />
+    <path
+        android:fillAlpha="0.08"
+        android:fillColor="#FFFFFF"
+        android:pathData="M250,650a55,27 0,1 0,0 54a55,27 0,1 0,0 -54" />
+    <path
+        android:fillAlpha="0.1"
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,750a40,20 0,1 0,0 40a40,20 0,1 0,0 -40" />
+
+    <!-- Bamboo Stalks (Dense Bamboo Forest effect) -->
+    <!-- Stalk 1 (Far Left) -->
+    <path
+        android:fillAlpha="0.2"
+        android:fillColor="#A5D6A7"
         android:pathData="M30,0 Q35,200 25,400 T30,800 L45,800 Q40,400 50,200 T45,0 Z" />
-    <path
-        android:fillAlpha="0.3"
-        android:fillColor="@color/green"
-        android:pathData="M45,150 Q65,140 75,160 Q60,170 45,155 Z" />
 
-    <!-- Stalk Center -->
+    <!-- Stalk 2 (Mid Left) -->
     <path
-        android:fillAlpha="0.3"
-        android:fillColor="@color/pale_green"
+        android:fillAlpha="0.25"
+        android:fillColor="#A5D6A7"
+        android:pathData="M100,0 Q90,250 110,500 T100,800 L115,800 Q125,500 105,250 T115,0 Z" />
+
+    <!-- Stalk 3 (Center) -->
+    <path
+        android:fillAlpha="0.2"
+        android:fillColor="#A5D6A7"
         android:pathData="M180,0 Q190,300 170,600 T185,800 L200,800 Q185,600 205,300 T195,0 Z" />
 
-    <!-- Stalk Right -->
+    <!-- Stalk 4 (Mid Right) -->
     <path
-        android:fillAlpha="0.3"
-        android:fillColor="@color/pale_green"
+        android:fillAlpha="0.25"
+        android:fillColor="#A5D6A7"
+        android:pathData="M260,0 Q270,350 250,700 T265,800 L280,800 Q265,700 285,350 T275,0 Z" />
+
+    <!-- Stalk 5 (Far Right) -->
+    <path
+        android:fillAlpha="0.2"
+        android:fillColor="#A5D6A7"
         android:pathData="M310,0 Q320,250 305,500 T315,800 L330,800 Q340,500 325,250 T335,0 Z" />
+
+    <!-- Stalk 6 (Outer Right) -->
     <path
-        android:fillAlpha="0.3"
-        android:fillColor="@color/green"
+        android:fillAlpha="0.15"
+        android:fillColor="#A5D6A7"
+        android:pathData="M370,0 Q360,400 380,800 L395,800 Q375,400 385,0 Z" />
+
+    <!-- Some leaves/branches for detail -->
+    <path
+        android:fillAlpha="0.2"
+        android:fillColor="#81C784"
+        android:pathData="M45,150 Q65,140 75,160 Q60,170 45,155 Z" />
+    <path
+        android:fillAlpha="0.2"
+        android:fillColor="#81C784"
         android:pathData="M310,550 Q285,540 275,565 Q300,575 310,555 Z" />
+    <path
+        android:fillAlpha="0.15"
+        android:fillColor="#81C784"
+        android:pathData="M110,300 Q135,290 145,315 Q120,325 110,305 Z" />
 
 </vector>

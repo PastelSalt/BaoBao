@@ -279,7 +279,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:lineSpacingExtra="3dp"
-                android:fontFamily="sans-serif-medium" />
+                android:fontFamily="@font/quicksand" />
         </ScrollView>
     </FrameLayout>
 
