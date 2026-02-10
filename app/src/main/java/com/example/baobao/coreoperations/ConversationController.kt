@@ -144,7 +144,7 @@ class ConversationController(
     private fun showConversationChoices(options: List<UserOption>) {
         binding.conversationChoicesContainer.removeAllViews()
         options.forEachIndexed { index, option ->
-            val button = MaterialButton(activity, null, com.google.android.material.R.attr.materialButtonOutlinedStyle)
+            val button = MaterialButton(activity)
             button.apply {
                 text = option.text
                 textSize = 15f
@@ -221,4 +221,3 @@ class ConversationController(
         }
     }
 }
-

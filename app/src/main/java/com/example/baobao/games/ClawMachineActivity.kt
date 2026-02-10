@@ -812,6 +812,7 @@ class ClawMachineActivity : BaseActivity() {
                             awardCurrency(caughtPrizeValue)
                         }
 
+                        maybeRefreshPrizesIfEmpty()
                         completeRound()
                     }
                 })
@@ -819,6 +820,24 @@ class ClawMachineActivity : BaseActivity() {
                 start()
             }
         }
+    }
+
+    private fun maybeRefreshPrizesIfEmpty() {
+        val prizes = listOf(binding.prize1, binding.prize2, binding.prize3, binding.prize4)
+        val allCollected = prizes.all { it.visibility != View.VISIBLE }
+        if (!allCollected) return
+
+        if (binding.gameContainer.width == 0 || binding.gameContainer.height == 0) {
+            binding.gameContainer.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    binding.gameContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    randomizePrizes()
+                }
+            })
+            return
+        }
+
+        randomizePrizes()
     }
 
     private fun completeRound() {
