@@ -120,3 +120,11 @@ This is also the first successful build since the cleanup entry above, so it con
 - Not run on a device or emulator. The trigger is proven by unit tests on the rules, not by tapping through the app.
 - Behaviour change: users will now see the intervention conversation after sustained negative check-ins (for example, Anxious twice in a row). Each conversation start counts as one check-in.
 - `ConversationController.saveConversationState` still stores `currentMood = "intervention"` after an intervention conversation. This predates the change and does not affect the trigger rules.
+
+## 2026-11-11 — Trim development rules in INSTRUCTIONS.md
+
+| Path | Change | Result |
+|------|--------|--------|
+| `INSTRUCTIONS.md` | Removed three development rules that were pasted in from another project by mistake: "Prefer small, focused changes that preserve existing behavior", "Follow the conventions already used by the project", and the rule about not documenting `node_modules` or `dist` in `CODEMAP.md`. | Three development rules remain: inspect before editing, run the narrowest validation, report results in `LOG.md`. No code changed; no validation needed. |
+
+Owner's direction recorded for future work: for the migration and other major changes, do not preserve the prototype's structure or conventions for their own sake. Replace them wherever a different approach is clearly better.

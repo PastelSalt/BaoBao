@@ -12,8 +12,5 @@ These instructions apply to all development work in this repository.
 ## Development rules
 
 - Inspect the relevant existing files before editing.
-- Prefer small, focused changes that preserve existing behavior.
-- Follow the conventions already used by the project.
 - Run the narrowest applicable validation command after code changes.
 - Report validation results and any known limitations in `LOG.md`.
-- Do not document generated directories such as `node_modules` or `dist` in `CODEMAP.md` unless their build behavior is specifically relevant.
