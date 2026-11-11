@@ -2,12 +2,12 @@ package com.example.baobao.coreoperations
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.baobao.R
 import com.example.baobao.audio.SoundManager
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected open fun getBgmResource(): Int = R.raw.main_bgm
+    /** Raw resource id of the screen BGM; 0 means the screen manages music itself. */
+    protected open fun getBgmResource(): Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

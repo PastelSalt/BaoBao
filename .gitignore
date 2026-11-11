@@ -1,15 +1,30 @@
+# Gradle / Android build output
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.gradle/
+/build/
+/captures/
+.externalNativeBuild/
+.cxx/
 local.properties
+
+# IDE and tooling state
+.idea/
+.kotlin/
+.vscode/
+
+# JVM crash dumps and logs
+hs_err_pid*.log
+replay_pid*.log
+*.log
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Flutter / Dart (for the planned migration, see PLAN-A-00-111126.md)
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/

@@ -3,4 +3,3 @@
     <background android:drawable="@color/white" />
     <foreground android:drawable="@drawable/applogo" />
 </adaptive-icon>
-</adaptive-icon>
