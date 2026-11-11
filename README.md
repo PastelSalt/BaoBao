@@ -20,7 +20,7 @@ BaoBao is an emotional-support companion app. A panda character checks in on how
 - **Accounts:** local sign-up, login, and guest accounts stored on the device.
 - **Mood check-in:** five moods (happy, okay, sad, anxious, tired).
 - **Conversations:** 79 dialogue nodes across five mood trees plus an intervention tree, with typewriter text and 142 voice clips.
-- **Care logic:** rules for tracking an emotional weight and switching to an intervention conversation and a helpline screen are written, but **not connected** — check-ins are never recorded, so the intervention never triggers.
+- **Care logic:** each check-in updates an emotional weight; past a threshold, BaoBao switches to an intervention conversation and a screen of helplines.
 - **Claw machine:** timed tries, random prizes, combo multiplier, purchasable extra tries.
 - **Shop and customisation:** two extra music tracks, one extra outfit, two extra backgrounds.
 - **Settings and tutorial:** volume sliders for music, effects, and voice; a step-through tutorial.
@@ -46,7 +46,13 @@ Open the repository root in Android Studio and run the `app` configuration, or u
 
 The debug APK is written to `app/build/outputs/apk/debug/`.
 
-There are no automated tests yet. Adding them is part of the migration plan.
+Run the unit tests:
+
+```bash
+./gradlew testDebugUnitTest
+```
+
+The only tests so far cover the intervention rules (`InterventionManagerTest`). Broader coverage is part of the migration plan.
 
 ## Tech stack
 
@@ -74,7 +80,6 @@ gradle/              Gradle wrapper and version catalog
 
 The prototype is not ready for release. The main gaps are listed in `PROJECT-SPECS.md` §5; the most important are:
 
-- The intervention flow (the app's main safety feature) is unreachable because mood check-ins are never recorded.
 - Passwords are stored as unsalted SHA-256 hashes, and a debug dialog on the login screen lists every account.
 - The database wipes itself on any schema change.
 - Purchases and claw-machine state are not separated per account.

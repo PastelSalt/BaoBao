@@ -44,9 +44,7 @@ BaoBao is a comfort and self-care app. It is **not** therapy, diagnosis, or a cr
 | Tired | +1 | Yes |
 | Anxious | +2 | Yes |
 
-Emotional weight is clamped to 0–10. Each check-in is meant to be appended to a mood history, and a positive mood is meant to reset the consecutive-negative counter.
-
-> **Not wired up.** The rules above exist in `InterventionManager` but nothing calls them. Choosing a mood starts a conversation without recording the check-in, so mood history stays empty and the counters stay at zero. See section 5, problem 1.
+Emotional weight is clamped to 0–10. Each check-in is appended to a mood history (newest 50 entries kept), and a positive mood resets the consecutive-negative counter. The check-in is recorded when the conversation for that mood starts.
 
 ### 2.3 Conversations
 
@@ -57,8 +55,6 @@ Emotional weight is clamped to 0–10. Each check-in is meant to be appended to 
 - Outside conversations, quick actions give a random joke, affirmation, or self-care tip (10 each), and the home screen shows a morning, afternoon, or evening greeting.
 
 ### 2.4 Intervention
-
-This is the intended behaviour. **It cannot currently happen**, because the inputs are never recorded (section 5, problem 1).
 
 Triggers at the start of a conversation when **all** of these hold:
 
@@ -113,6 +109,7 @@ Reconstructed from git history and the removed status reports.
 | b0.1 – b0.3 | `3ac2c78` … `525755d` | Conversations moved onto the main screen; `MainActivity` split into helper classes; guest accounts; shop for music, outfit (Blue Bao), and backgrounds; settings moved into a dialog; claw machine rewritten with tries, combos, and rare prizes; crash and memory-leak fixes. |
 | b0.4 – b0.4.3 | `8c8c34e` … `e5db25f` | Voice integration (142 clips), time-based greetings, tutorial, splash and loading screens, Quicksand font, status bar. |
 | Cleanup | 2026-11-11 | Repository cleaned and documented; see `LOG.md`. |
+| Intervention fix | 2026-11-11 | Mood check-ins are recorded again, so the intervention can trigger. It had been unreachable since mood selection moved into a dialog. |
 
 The removed reports repeatedly described the app as "production ready" and "100% complete". That was not accurate; section 5 lists why.
 
@@ -122,9 +119,9 @@ The removed reports repeatedly described the app as "production ready" and "100%
 |------|-------|
 | Core loop (check-in → conversation → loop) | Works |
 | Voice, typewriter text, music | Works |
-| Intervention and resources | **Broken** — built but never triggers (section 5, problem 1) |
+| Intervention and resources | Works (rules unit-tested; not yet checked on a device), United States only |
 | Claw machine, shop, customisation | Works, with the data-scoping bugs below |
-| Tests | None |
+| Tests | 12 unit tests for the intervention rules; nothing else |
 | Continuous integration | None |
 | Release configuration | None (placeholder application ID, no signing, no minification) |
 | iOS | Not possible with the current codebase |
@@ -133,31 +130,30 @@ The removed reports repeatedly described the app as "production ready" and "100%
 
 ### Safety and privacy (must fix before any release)
 
-1. **The intervention flow is unreachable.** Mood check-ins are never recorded: nothing calls `InterventionManager.calculateNewEmotionalWeight` or `calculateConsecutiveNegativeCycles`, and nothing writes `moodHistory`. Emotional weight starts at 0 and the only code that changes it lowers it. The trigger needs weight ≥ 4, so BaoBao never suggests professional help, no matter what the user selects. The recording step was lost when mood selection moved from its own screen into a dialog. The intervention tree, its eight voice clips, and the resources screen are all present but cannot be reached in normal use.
-2. **Weak password storage.** Unsalted SHA-256. Local accounts with passwords also give little real protection, because the data sits unencrypted on the device anyway.
-3. **Debug account list on the login screen.** `AuthActivity.showAllAccountsDialog` shows every username and balance.
-4. **Sensitive data in backups.** `allowBackup` is on with default rules, so mood history can leave the device in a backup.
-5. **Helplines are United States only**, and are hard-coded. Users elsewhere get numbers that do not work for them.
-6. **No disclaimer, privacy policy, or consent.** Required for a mental-health-adjacent app on both stores.
-7. **Unverified music licences.** The bundled tracks' names suggest commercial music. They cannot ship without a confirmed licence.
+1. **Weak password storage.** Unsalted SHA-256. Local accounts with passwords also give little real protection, because the data sits unencrypted on the device anyway.
+2. **Debug account list on the login screen.** `AuthActivity.showAllAccountsDialog` shows every username and balance.
+3. **Sensitive data in backups.** `allowBackup` is on with default rules, so mood history can leave the device in a backup.
+4. **Helplines are United States only**, and are hard-coded. Users elsewhere get numbers that do not work for them.
+5. **No disclaimer, privacy policy, or consent.** Required for a mental-health-adjacent app on both stores.
+6. **Unverified music licences.** The bundled tracks' names suggest commercial music. They cannot ship without a confirmed licence.
 
 ### Correctness
 
-8. **Destructive database migration.** Any schema change wipes all accounts and progress.
-9. **Purchases are not per account.** The `purchases` table has no user ID, so one account buying an item blocks another account from buying it.
-10. **Claw-machine state is not per account.** Tries, daily purchases, and statistics are device-wide.
-11. **Voice clips are resolved by name at runtime.** A missing or renamed clip fails silently.
-12. **Font mapping.** Every weight maps to Quicksand Bold, so regular-weight text is not available.
+7. **Destructive database migration.** Any schema change wipes all accounts and progress.
+8. **Purchases are not per account.** The `purchases` table has no user ID, so one account buying an item blocks another account from buying it.
+9. **Claw-machine state is not per account.** Tries, daily purchases, and statistics are device-wide.
+10. **Voice clips are resolved by name at runtime.** A missing or renamed clip fails silently.
+11. **Font mapping.** Every weight maps to Quicksand Bold, so regular-weight text is not available.
 
 ### Engineering
 
-13. No tests, no CI, no crash reporting.
-14. All dialogue, prices, and tutorial text are hard-coded in Kotlin or layouts; nothing is localisable.
-15. Logic lives in Activities and global singletons. `ClawMachineActivity` is 1,200 lines; the claw machine uses view animation and layout-dependent hit testing.
-16. `UserRepository` duplicates every method (with and without a user ID). Lists are stored as comma-separated strings and JSON-in-a-column.
-17. Large uncompressed PNG character art (up to about 0.9 MB each) and about 26 MB of music inflate the APK.
-18. No accessibility work: no content descriptions audit, fixed text sizes, no reduced-motion option, no captions toggle (though text always accompanies voice).
-19. Android only.
+12. Almost no tests (intervention rules only), no CI, no crash reporting.
+13. All dialogue, prices, and tutorial text are hard-coded in Kotlin or layouts; nothing is localisable.
+14. Logic lives in Activities and global singletons. `ClawMachineActivity` is 1,200 lines; the claw machine uses view animation and layout-dependent hit testing.
+15. `UserRepository` duplicates every method (with and without a user ID). Lists are stored as comma-separated strings and JSON-in-a-column.
+16. Large uncompressed PNG character art (up to about 0.9 MB each) and about 26 MB of music inflate the APK.
+17. No accessibility work: no content descriptions audit, fixed text sizes, no reduced-motion option, no captions toggle (though text always accompanies voice).
+18. Android only.
 
 ## 6. Roadmap
 

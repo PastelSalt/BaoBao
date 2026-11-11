@@ -79,3 +79,44 @@ Branch: `claude/fervent-cori-4u1jxv`. Starting point: commit `e5db25f` ("small u
 - No application behaviour was intentionally changed.
 - The intervention flow remains unreachable (see `PROJECT-SPECS.md` §5). Fixing it is the first functional priority.
 - The four unused Quicksand weight files in `res/font/` were kept on purpose for the migration.
+
+## 2026-11-11 — Wire mood check-ins into intervention tracking
+
+Branch: `claude/fervent-cori-4u1jxv`.
+
+### 1. Problem
+
+Selecting a mood started a conversation without recording the check-in. Mood history stayed empty, the consecutive-negative counter stayed at 0, and emotional weight could only fall, so `InterventionManager.shouldTriggerIntervention` was never true and the intervention tree and resources screen were unreachable.
+
+### 2. Edited
+
+| Path | Change |
+|------|--------|
+| `app/src/main/java/com/example/baobao/intervention/InterventionManager.kt` | Added `recordMoodCheckIn(userData, moodName, timestamp)`: appends a `{mood, timestamp, weight}` entry to the mood history (newest 50 kept; unreadable history is replaced), then applies the existing weight, consecutive-negative, and flag-reset rules. No thresholds changed. |
+| `app/src/main/java/com/example/baobao/coreoperations/ConversationController.kt` | `startConversation` records and saves the check-in before asking whether to trigger the intervention. |
+| `app/build.gradle.kts`, `gradle/libs.versions.toml` | Added test dependencies `junit` 4.13.2 and `org.json:json` 20240303. |
+
+### 3. Created
+
+| Path | Purpose |
+|------|---------|
+| `app/src/test/java/com/example/baobao/intervention/InterventionManagerTest.kt` | 12 unit tests: recording, trigger after two anxious check-ins, no trigger after one, sad/tired accumulation, cooldown, re-trigger after 24 hours, positive check-in effects, flag reset, weight bounds, history cap, corrupt history. |
+
+### 4. Documentation updated
+
+`PROJECT-SPECS.md` (sections 2.2, 2.4, 3, 4, 5 — the intervention problem removed and the list renumbered), `README.md`, `CODEMAP.md`, `PLAN-A-00-111126.md`.
+
+### 5. Validation
+
+| Check | Result |
+|-------|--------|
+| `gradle testDebugUnitTest assembleDebug` with Android SDK platform 36 and build-tools 35.0.0 | **Passed.** 12 tests, 0 failures. Debug APK built (about 64 MB). |
+
+This is also the first successful build since the cleanup entry above, so it confirms that the cleanup did not break compilation or resource linking.
+
+### 6. Known limitations
+
+- Built with the system Gradle 8.14.3, not the wrapper (which pins 9.1.0). The wrapper build was not run.
+- Not run on a device or emulator. The trigger is proven by unit tests on the rules, not by tapping through the app.
+- Behaviour change: users will now see the intervention conversation after sustained negative check-ins (for example, Anxious twice in a row). Each conversation start counts as one check-in.
+- `ConversationController.saveConversationState` still stores `currentMood = "intervention"` after an intervention conversation. This predates the change and does not affect the trigger rules.

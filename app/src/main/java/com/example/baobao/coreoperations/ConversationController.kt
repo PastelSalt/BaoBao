@@ -44,7 +44,9 @@ class ConversationController(
 
         binding.characterImage.setImageResource(CharacterImageManager.getCharacterImageForMood(mood))
         lifecycleScope.launch {
-            val userData = userRepository.getUserData()
+            // Record the check-in first so the intervention check sees this mood
+            val userData = InterventionManager.recordMoodCheckIn(userRepository.getUserData(), mood)
+            userRepository.updateUserData(userData)
             if (InterventionManager.shouldTriggerIntervention(userData)) {
                 currentMood = "intervention"
                 val updatedData = InterventionManager.markInterventionShown(userData)

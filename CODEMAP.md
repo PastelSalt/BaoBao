@@ -33,7 +33,7 @@ app/
     └── res/                    Layouts, drawables, audio, fonts (section 5)
 ```
 
-Build facts: namespace and application ID `com.example.baobao`, `minSdk` 24, `compileSdk`/`targetSdk` 36, version `1.0` (code 1), Java 11 target, release build not minified. There is no test source set.
+Build facts: namespace and application ID `com.example.baobao`, `minSdk` 24, `compileSdk`/`targetSdk` 36, version `1.0` (code 1), Java 11 target, release build not minified. Local unit tests live in `app/src/test/`; there are no instrumented tests.
 
 ## 3. Kotlin source — `app/src/main/java/com/example/baobao/`
 
@@ -103,7 +103,7 @@ Build facts: namespace and application ID `com.example.baobao`, `minSdk` 24, `co
 
 | File | Responsibility |
 |------|----------------|
-| `InterventionManager.kt` | Pure logic. Emotional weight change per mood (happy −3, okay −2, sad +1, tired +1, anxious +2; clamped 0–10). Triggers when weight ≥ 4 **and** (≥ 2 consecutive negative check-ins **or** 2 of the last 3 moods negative), with a 24-hour cooldown. **`calculateNewEmotionalWeight`, `calculateConsecutiveNegativeCycles`, and `resetInterventionIfImproved` have no callers**, so the trigger condition is never met. |
+| `InterventionManager.kt` | Pure logic. Emotional weight change per mood (happy −3, okay −2, sad +1, tired +1, anxious +2; clamped 0–10). Triggers when weight ≥ 4 **and** (≥ 2 consecutive negative check-ins **or** 2 of the last 3 moods negative), with a 24-hour cooldown. `recordMoodCheckIn` applies all of this for one check-in and appends to the mood history (newest 50 kept). |
 | `ResourcesActivity.kt` | Helpline screen. Dials 988, SAMHSA, and NAMI; texts the Crisis Text Line; opens a mentalhealth.gov page. United States only. |
 
 ### `models/`
@@ -125,6 +125,12 @@ Build facts: namespace and application ID `com.example.baobao`, `minSdk` 24, `co
 |------|----------------|
 | `TutorialManager.kt` | Tutorial step definitions and text, per-screen quick guides, completion state in SharedPreferences. |
 | `TutorialActivity.kt` | Step-through tutorial screen with next, back, and skip. |
+
+### Tests — `app/src/test/java/com/example/baobao/`
+
+| File | Covers |
+|------|--------|
+| `intervention/InterventionManagerTest.kt` | Check-in recording, trigger threshold, cooldown, flag reset, weight bounds, history cap. |
 
 ## 4. Navigation
 
@@ -193,7 +199,7 @@ Because voice clips are looked up by name, **renaming or deleting a clip fails s
 
 ## 7. Key data flows
 
-**Mood check-in → conversation.** `MainActivity` opens the mood dialog (`DialogManager`) → `ConversationController.startConversation(mood)` loads `UserData` (it does **not** record the check-in — mood history, emotional weight, and the negative counter are not updated), asks `InterventionManager.shouldTriggerIntervention` (always false in practice), and picks either the mood tree or the intervention tree from `ConversationManager` → each node is rendered with `TypewriterTextView`, voiced through `VoiceManager.playNodeVoice`, and its options become buttons → an option leads to another node, a loop point (conversation ends, path saved to `UserData`), or `show_resources_screen` (`ResourcesActivity`).
+**Mood check-in → conversation.** `MainActivity` opens the mood dialog (`DialogManager`) → `ConversationController.startConversation(mood)` loads `UserData`, records the check-in with `InterventionManager.recordMoodCheckIn` and saves it, asks `InterventionManager.shouldTriggerIntervention`, and picks either the mood tree or the intervention tree from `ConversationManager` → each node is rendered with `TypewriterTextView`, voiced through `VoiceManager.playNodeVoice`, and its options become buttons → an option leads to another node, a loop point (conversation ends, path saved to `UserData`), or `show_resources_screen` (`ResourcesActivity`).
 
 **Currency.** Earned in `ClawMachineActivity` (`UserRepository.addCurrency`), spent in `ShopActivity` and on extra claw tries (`spendCurrency`). `CacheManager` holds a short-lived copy for the main-screen status bar and is invalidated after writes.
 
@@ -215,3 +221,5 @@ Declared in `gradle/libs.versions.toml` and `app/build.gradle.kts`.
 | `androidx.room` (runtime, ktx, compiler) | 2.6.1 | Database |
 | `kotlinx-coroutines-android` | 1.7.3 | Async |
 | `androidx.lifecycle:lifecycle-runtime-ktx` | 2.7.0 | `lifecycleScope` |
+| `junit` | 4.13.2 | Unit tests |
+| `org.json:json` | 20240303 | Unit tests only: real `org.json` on the JVM, where the Android copy is a stub |

@@ -1,7 +1,9 @@
 package com.example.baobao.intervention
 
 import com.example.baobao.database.UserData
+import com.example.baobao.models.PrimaryMood
 import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * Emotional Intelligence & Care Logic
@@ -18,6 +20,9 @@ object InterventionManager {
 
     // Maximum emotional weight cap to prevent runaway accumulation
     private const val MAX_EMOTIONAL_WEIGHT = 10
+
+    // Number of mood entries kept in the stored history
+    private const val MAX_MOOD_HISTORY_ENTRIES = 50
 
     /**
      * Check if intervention should be triggered based on emotional weight and patterns
@@ -115,6 +120,50 @@ object InterventionManager {
         } else {
             0 // Reset on positive mood
         }
+    }
+
+    /**
+     * Record a mood check-in. Returns a copy of [userData] with the mood appended to the
+     * history and the emotional weight, negative counter, current mood and intervention
+     * flag updated. Call this once per check-in, before [shouldTriggerIntervention].
+     */
+    fun recordMoodCheckIn(
+        userData: UserData,
+        moodName: String,
+        timestamp: Long = System.currentTimeMillis()
+    ): UserData {
+        val mood = moodName.lowercase()
+        val updated = userData.copy(
+            currentMood = mood,
+            moodHistory = appendMoodEntry(userData.moodHistory, mood, timestamp),
+            emotionalWeight = calculateNewEmotionalWeight(userData.emotionalWeight, mood),
+            consecutiveNegativeCycles = calculateConsecutiveNegativeCycles(userData.consecutiveNegativeCycles, mood)
+        )
+        return resetInterventionIfImproved(updated, mood)
+    }
+
+    /**
+     * Append a mood entry to the JSON history, keeping only the newest [MAX_MOOD_HISTORY_ENTRIES].
+     * An unreadable history is replaced rather than left to block new entries.
+     */
+    private fun appendMoodEntry(moodHistory: String, mood: String, timestamp: Long): String {
+        val existing = try {
+            if (moodHistory.isBlank()) JSONArray() else JSONArray(moodHistory)
+        } catch (e: Exception) {
+            JSONArray()
+        }
+        val trimmed = JSONArray()
+        val startIndex = maxOf(0, existing.length() - (MAX_MOOD_HISTORY_ENTRIES - 1))
+        for (i in startIndex until existing.length()) {
+            trimmed.put(existing.get(i))
+        }
+        trimmed.put(
+            JSONObject()
+                .put("mood", mood)
+                .put("timestamp", timestamp)
+                .put("weight", PrimaryMood.fromString(mood).weight)
+        )
+        return trimmed.toString()
     }
 
     /**

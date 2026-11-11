@@ -53,5 +53,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
+    // Local unit tests. org.json is added because the android.jar copy is a stub on the JVM.
+    testImplementation(libs.junit)
+    testImplementation(libs.json)
 }
 
