@@ -1,0 +1,52 @@
+{
+  "steps": [
+    {
+      "id": "welcome",
+      "title": "Welcome to BaoBao!",
+      "body": "Hi there! I'm BaoBao, your panda companion. I'm here for the good days and the tough ones. Let me show you around.",
+      "emotion": "hello"
+    },
+    {
+      "id": "check_in",
+      "title": "Tell me how you feel",
+      "body": "Tap me whenever you want to talk. Pick how you're feeling — happy, okay, sad, anxious, or tired — and I'll meet you there.",
+      "emotion": "happy"
+    },
+    {
+      "id": "conversation",
+      "title": "We talk at your pace",
+      "body": "I'll share a thought and you choose how to reply. There are no wrong answers, and you can stop whenever you like.",
+      "emotion": "hello"
+    },
+    {
+      "id": "quick_actions",
+      "title": "Little pick-me-ups",
+      "body": "Ask me for a joke, a kind word, or a self-care idea any time. They're always free.",
+      "emotion": "happy"
+    },
+    {
+      "id": "claw_machine",
+      "title": "Play the claw machine",
+      "body": "Hold to move the claw, let go to drop it. Prizes turn into ✷ you can spend. You get five tries, and one comes back every five minutes.",
+      "emotion": "happy"
+    },
+    {
+      "id": "shop",
+      "title": "Make this space yours",
+      "body": "Spend ✷ in the shop on music, outfits, and backgrounds, then switch between them whenever you like.",
+      "emotion": "hello"
+    },
+    {
+      "id": "care",
+      "title": "When things feel heavy",
+      "body": "If you've been feeling low for a while, I may gently suggest some extra support. You can also find helplines any time under Settings → Get help.",
+      "emotion": "sad"
+    },
+    {
+      "id": "privacy",
+      "title": "Your feelings stay yours",
+      "body": "Everything you tell me stays on this device, locked away. You can delete it all whenever you want.",
+      "emotion": "hello"
+    }
+  ]
+}

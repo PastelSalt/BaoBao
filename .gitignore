@@ -1,30 +1,67 @@
-# Gradle / Android build output
-*.iml
-.gradle/
-/build/
-/captures/
-.externalNativeBuild/
-.cxx/
-local.properties
-
-# IDE and tooling state
-.idea/
-.kotlin/
-.vscode/
-
-# JVM crash dumps and logs
-hs_err_pid*.log
-replay_pid*.log
+# Miscellaneous
+*.class
 *.log
-
-# OS noise
+*.pyc
+*.swp
 .DS_Store
-Thumbs.db
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
 
-# Flutter / Dart (for the planned migration, see PLAN-A-00-111126.md)
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
 .dart_tool/
-.flutter-plugins
 .flutter-plugins-dependencies
-.packages
 .pub-cache/
 .pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Widget Preview related
+.widget_preview/
+
+# Legacy Kotlin app (legacy/android-native)
+legacy/**/.gradle/
+legacy/**/build/
+legacy/**/local.properties
+legacy/**/.kotlin/
+legacy/**/.cxx/
+
+# JVM crash dumps
+hs_err_pid*.log
+replay_pid*.log
+
+# Golden test failure output
+**/failures/
+
+# Release signing: never commit
+android/key.properties
+*.jks
+*.keystore

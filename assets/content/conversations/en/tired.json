@@ -1,0 +1,206 @@
+{
+  "id": "tired",
+  "start": "tired_start",
+  "nodes": {
+    "tired_start": {
+      "line": "You seem exhausted, friend. 😴 Whether it's physical tiredness or emotional drain, it's real and valid. What kind of tired are you feeling today?",
+      "voice": "t_tired_01",
+      "options": [
+        {
+          "text": "Physically exhausted",
+          "next": "tired_physical"
+        },
+        {
+          "text": "Emotionally drained",
+          "next": "tired_emotional"
+        },
+        {
+          "text": "Both, honestly",
+          "next": "tired_both"
+        }
+      ]
+    },
+    "tired_physical": {
+      "line": "Your body is asking for rest, and that's important. Have you been able to get good sleep? Or has rest been hard to come by? 🌙",
+      "voice": "t_tired_02",
+      "options": [
+        {
+          "text": "Haven't slept well",
+          "next": "tired_no_sleep"
+        },
+        {
+          "text": "Just been doing too much",
+          "next": "tired_too_much"
+        }
+      ]
+    },
+    "tired_emotional": {
+      "line": "Emotional exhaustion is so real. Sometimes caring, thinking, and feeling takes more energy than anything physical. You deserve rest from that too. 💙",
+      "voice": "t_tired_03",
+      "nudge": "selfCare",
+      "options": [
+        {
+          "text": "How do I rest from feelings?",
+          "next": "tired_rest_feelings"
+        },
+        {
+          "text": "I'm just overwhelmed",
+          "next": "tired_overwhelmed"
+        }
+      ]
+    },
+    "tired_both": {
+      "line": "That's a heavy combination. Mind and body both asking for gentleness. Let's not add pressure to 'fix' this right now—you just need support. How can I help? 🫂",
+      "voice": "t_tired_04",
+      "options": [
+        {
+          "text": "Just be here with me",
+          "next": "tired_be_here"
+        },
+        {
+          "text": "Suggest something gentle",
+          "next": "tired_gentle"
+        }
+      ]
+    },
+    "tired_no_sleep": {
+      "line": "Poor sleep makes everything harder. Tonight, maybe try creating a calming ritual—dim lights, gentle music, putting away screens. Small steps can help. 🌙",
+      "voice": "t_tired_05",
+      "nudge": "selfCare",
+      "options": [
+        {
+          "text": "I'll try that",
+          "next": "tired_try_sleep"
+        },
+        {
+          "text": "I've tried everything",
+          "next": "tired_tried_everything"
+        }
+      ]
+    },
+    "tired_too_much": {
+      "line": "You're allowed to do less. Really. Rest isn't earned—it's a basic need. Can you give yourself permission to slow down, even just a little? 🌿",
+      "voice": "t_tired_06",
+      "options": [
+        {
+          "text": "I'll try to rest more",
+          "next": "tired_loop"
+        },
+        {
+          "text": "I feel guilty resting",
+          "next": "tired_guilty"
+        }
+      ]
+    },
+    "tired_rest_feelings": {
+      "line": "Great question. Sometimes it means doing something that doesn't require emotional energy—a silly game, gentle music, or just zoning out. Want to try something light? 🎯",
+      "voice": "t_tired_07",
+      "nudge": "clawMachine",
+      "options": [
+        {
+          "text": "Yes, something light",
+          "next": "tired_something_light"
+        },
+        {
+          "text": "Maybe just talk",
+          "next": "tired_just_talk"
+        }
+      ]
+    },
+    "tired_overwhelmed": {
+      "line": "I'm so sorry you're carrying so much. Remember: you don't have to carry it all alone, and you don't have to carry it all at once. 💚",
+      "voice": "t_tired_08",
+      "options": [
+        {
+          "text": "Thank you for saying that",
+          "next": "tired_loop"
+        }
+      ]
+    },
+    "tired_be_here": {
+      "line": "*sits quietly with you* 🐼 You're doing enough just by being. Rest here as long as you need.",
+      "voice": "t_tired_09",
+      "options": [
+        {
+          "text": "*takes a deep breath*",
+          "next": "tired_loop",
+          "moodEffect": 1
+        }
+      ]
+    },
+    "tired_gentle": {
+      "line": "How about a self-care moment? Even something tiny—a sip of water, stretching your shoulders, or closing your eyes for ten seconds. What feels doable? 🌸",
+      "voice": "t_tired_10",
+      "nudge": "selfCare",
+      "options": [
+        {
+          "text": "I'll try something small",
+          "next": "tired_loop",
+          "moodEffect": 1
+        }
+      ]
+    },
+    "tired_try_sleep": {
+      "line": "That's wonderful. Tonight, be gentle with yourself. You deserve good rest. 💙",
+      "voice": "t_tired_11",
+      "options": [
+        {
+          "text": "Thank you",
+          "next": "tired_loop"
+        }
+      ]
+    },
+    "tired_tried_everything": {
+      "line": "Persistent sleep struggles can be really hard. If this continues, talking to a healthcare provider might help. You deserve restful nights. 🌙",
+      "voice": "t_tired_12",
+      "options": [
+        {
+          "text": "I'll consider it",
+          "next": "tired_loop"
+        }
+      ]
+    },
+    "tired_guilty": {
+      "line": "Rest isn't laziness. It's how you recharge so you can keep being amazing. You deserve care, friend. 💚",
+      "voice": "t_tired_13",
+      "options": [
+        {
+          "text": "I needed to hear that",
+          "next": "tired_loop"
+        }
+      ]
+    },
+    "tired_something_light": {
+      "line": "Perfect! The claw machine is playful and doesn't ask much of you. Or we could just hang out here. Whatever feels right. 🎯",
+      "voice": "t_tired_14",
+      "nudge": "clawMachine",
+      "options": [
+        {
+          "text": "Let's do it",
+          "next": "tired_loop"
+        }
+      ]
+    },
+    "tired_just_talk": {
+      "line": "I'm here. No pressure to say anything profound—just being together is enough. 🐼",
+      "voice": "t_tired_15",
+      "options": [
+        {
+          "text": "This helps",
+          "next": "tired_loop"
+        }
+      ]
+    },
+    "tired_loop": {
+      "line": "You've been so patient with yourself today. Rest is productive. Rest is necessary. Rest is brave. How are you feeling now? 🌙",
+      "voice": "t_tired_16",
+      "closing": true,
+      "options": [
+        {
+          "text": "Check in with my mood",
+          "next": "@end"
+        }
+      ]
+    }
+  }
+}

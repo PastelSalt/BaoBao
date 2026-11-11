@@ -1,0 +1,182 @@
+{
+  "id": "okay",
+  "start": "okay_start",
+  "nodes": {
+    "okay_start": {
+      "line": "So you're feeling... okay. And that's totally okay! 😊 Sometimes days are just kinda... there. Want to keep it chill, or are you hoping to shift the vibe?",
+      "voice": "o_okay_01",
+      "options": [
+        {
+          "text": "Keep it chill",
+          "next": "okay_chill"
+        },
+        {
+          "text": "Maybe brighten things up",
+          "next": "okay_brighten"
+        },
+        {
+          "text": "Just checking in",
+          "next": "okay_checking"
+        }
+      ]
+    },
+    "okay_chill": {
+      "line": "Perfect vibes. No pressure to be anything more than you are right now. Want to just hang out, or is there something you'd like to chat about? 🐼",
+      "voice": "o_okay_02",
+      "options": [
+        {
+          "text": "Let's just hang out",
+          "next": "okay_hang"
+        },
+        {
+          "text": "Maybe chat a bit",
+          "next": "okay_chat"
+        }
+      ]
+    },
+    "okay_brighten": {
+      "line": "I love that energy! Sometimes okay is a great launching pad for joy. Want to try something fun, or hear something uplifting? ✨",
+      "voice": "o_okay_03",
+      "options": [
+        {
+          "text": "Something fun sounds good!",
+          "next": "okay_fun"
+        },
+        {
+          "text": "Something uplifting",
+          "next": "okay_uplifting"
+        }
+      ]
+    },
+    "okay_checking": {
+      "line": "I appreciate you checking in! Even when things are just okay, it's worth acknowledging. How's your day been treating you? 🌤️",
+      "voice": "o_okay_04",
+      "options": [
+        {
+          "text": "Pretty steady",
+          "next": "okay_steady"
+        },
+        {
+          "text": "A bit of everything",
+          "next": "okay_mixed"
+        }
+      ]
+    },
+    "okay_hang": {
+      "line": "Cool! I'm always down for a chill hangout. We could try the claw machine for some casual fun, or just vibe here together. Your call! 🎯",
+      "voice": "o_okay_05",
+      "nudge": "clawMachine",
+      "options": [
+        {
+          "text": "Claw machine sounds fun",
+          "next": "okay_loop"
+        },
+        {
+          "text": "Just vibing is good",
+          "next": "okay_loop"
+        }
+      ]
+    },
+    "okay_chat": {
+      "line": "I'm all ears! What's on your mind? Big thoughts, small thoughts, random thoughts—all welcome here. 🐼",
+      "voice": "o_okay_06",
+      "options": [
+        {
+          "text": "Just thinking out loud",
+          "next": "okay_loop"
+        }
+      ]
+    },
+    "okay_fun": {
+      "line": "Fun incoming! Want to hear a silly joke, try the claw machine, or explore the shop for new vibes? 🎉",
+      "voice": "o_okay_07",
+      "nudge": "joke",
+      "options": [
+        {
+          "text": "Tell me a joke!",
+          "next": "okay_joke"
+        },
+        {
+          "text": "Claw machine!",
+          "next": "okay_loop"
+        },
+        {
+          "text": "Check out the shop",
+          "next": "okay_loop"
+        }
+      ]
+    },
+    "okay_uplifting": {
+      "line": "Here's a thought: you're doing better than you think. Even on 'okay' days, you're showing up. That matters. ✨",
+      "voice": "o_okay_08",
+      "nudge": "affirmation",
+      "options": [
+        {
+          "text": "Thanks, I needed that",
+          "next": "okay_loop"
+        },
+        {
+          "text": "Got more affirmations?",
+          "next": "okay_more_affirmations"
+        }
+      ]
+    },
+    "okay_steady": {
+      "line": "Steady is good! Not every day needs to be a rollercoaster. Sometimes steady is exactly what we need. 🌿",
+      "voice": "o_okay_09",
+      "options": [
+        {
+          "text": "You're right",
+          "next": "okay_loop"
+        }
+      ]
+    },
+    "okay_mixed": {
+      "line": "Life's like that sometimes—a mixtape of moments. The 'okay' days help us appreciate all the different notes. 🎵",
+      "voice": "o_okay_10",
+      "options": [
+        {
+          "text": "That's a nice way to think about it",
+          "next": "okay_loop"
+        }
+      ]
+    },
+    "okay_joke": {
+      "line": "Why did the panda bring a ladder to the bamboo forest? To reach new heights! 🎋😄 Want another?",
+      "voice": "o_okay_11",
+      "nudge": "joke",
+      "options": [
+        {
+          "text": "Haha, sure!",
+          "next": "okay_loop"
+        },
+        {
+          "text": "That was perfect",
+          "next": "okay_loop"
+        }
+      ]
+    },
+    "okay_more_affirmations": {
+      "line": "Always! You're worthy of good things, rest, and joy. Don't let anyone (including yourself) tell you otherwise. 💚",
+      "voice": "o_okay_12",
+      "nudge": "affirmation",
+      "options": [
+        {
+          "text": "Thank you, BaoBao",
+          "next": "okay_loop"
+        }
+      ]
+    },
+    "okay_loop": {
+      "line": "It's been nice chilling with you! Sometimes okay is exactly where we need to be. How are you feeling now? 🐼",
+      "voice": "o_okay_13",
+      "closing": true,
+      "options": [
+        {
+          "text": "Check in with my mood",
+          "next": "@end"
+        }
+      ]
+    }
+  }
+}

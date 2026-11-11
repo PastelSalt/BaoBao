@@ -1,0 +1,76 @@
+name: baobao
+description: "BaoBao - a pocket emotional-support companion."
+publish_to: 'none'
+version: 0.5.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  audio_session: ^0.2.4
+  clock: ^1.1.2
+  drift: ^2.35.4
+  flutter_riverpod: ^3.5.0
+  flutter_secure_storage: ^11.2.0
+  flutter_svg: any
+  go_router: ^18.1.4
+  intl: ^0.20.3
+  just_audio: ^0.10.6
+  local_auth: ^3.0.2
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  shared_preferences: ^2.5.6
+  sqlite3: ^3.9.1
+  url_launcher: ^6.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.17.1
+  drift_dev: ^2.35.3
+  flutter_lints: ^6.0.0
+  mocktail: ^1.0.5
+
+# Bundle SQLite3 Multiple Ciphers instead of plain SQLite so the database can be encrypted.
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/content/
+    - assets/content/conversations/en/
+    - assets/content/scripts/
+    - assets/content/tutorial/
+    - assets/audio/voice/en/
+    - assets/audio/music/
+    - assets/audio/sfx/
+    - assets/images/backgrounds/
+    - assets/images/brand/
+    - assets/images/character/classic/
+    - assets/images/character/blue_bao/
+    - assets/images/claw/
+    - assets/images/icons/
+    - assets/images/moods/
+
+  fonts:
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Quicksand-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Quicksand-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Quicksand-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Quicksand-Bold.ttf
+          weight: 700

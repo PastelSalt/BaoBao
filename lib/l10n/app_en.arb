@@ -1,0 +1,329 @@
+{
+  "@@locale": "en",
+  "appName": "BaoBao",
+  "characterLabel": "BaoBao the panda",
+  "balanceLabel": "{amount} stars",
+  "@balanceLabel": {
+    "description": "Screen-reader label for the in-app currency balance.",
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "loading": "Just a moment…",
+  "actionContinue": "Continue",
+  "actionBack": "Back",
+  "actionStart": "Let's begin",
+  "actionSkip": "Not now",
+  "actionRetry": "Try again",
+  "onboardingStep": "Step {current} of {total}",
+  "@onboardingStep": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingWelcomeTitle": "Hi, I'm BaoBao!",
+  "onboardingPromiseTitle": "Before we start",
+  "onboardingPromiseCompanion": "I'm a friendly companion for everyday feelings. I'm not a therapist or a doctor, and I can't help in an emergency.",
+  "onboardingPromiseEmergency": "If you ever feel unsafe, please contact your local emergency number or a crisis line right away. You'll always find helplines in Settings.",
+  "onboardingPromisePrivacy": "What you share with me stays on this device, encrypted. Nothing is sent anywhere, and you can delete it whenever you like.",
+  "onboardingConfirmUnderstand": "I understand BaoBao is not a substitute for professional care.",
+  "onboardingConfirmAge": "I am 13 or older.",
+  "onboardingNameTitle": "What should I call you?",
+  "onboardingNameHint": "Your name or nickname",
+  "onboardingNameHelp": "This only appears on this device. You can change it later.",
+  "onboardingLockTitle": "Keep our chats private?",
+  "onboardingLockBody": "I can ask for your fingerprint, face, or device PIN each time you open the app. You can switch this on or off later in Settings.",
+  "onboardingLockEnable": "Yes, lock the app",
+  "onboardingLockReason": "Confirm it's you to switch on the app lock",
+  "onboardingLockFailed": "That didn't work, so the lock is still off. You can try again or skip for now.",
+  "onboardingFinishing": "Getting your cozy corner ready…",
+  "onboardingFailed": "Something went wrong while setting things up. Please try again.",
+  "unlockTitle": "Welcome back",
+  "unlockBody": "Confirm it's you to open BaoBao.",
+  "unlockAction": "Unlock",
+  "unlockReason": "Unlock BaoBao",
+  "unlockFailed": "That didn't work. Please try again.",
+  "homeGreetingName": "Hi, {name}",
+  "@homeGreetingName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "startupErrorTitle": "BaoBao couldn't start",
+  "startupErrorBody": "Something went wrong while opening the app. Your data has not been deleted.",
+  "actionClose": "Close",
+  "actionCancel": "Cancel",
+  "actionSave": "Save",
+  "actionNext": "Next",
+  "moodHappy": "Happy",
+  "moodOkay": "Okay",
+  "moodSad": "Sad",
+  "moodAnxious": "Anxious",
+  "moodTired": "Tired",
+  "moodSheetTitle": "How are you feeling?",
+  "moodSheetHint": "There's no wrong answer. Pick whatever fits right now.",
+  "homeCheckIn": "How are you feeling?",
+  "homeCheckInHint": "Tap to tell BaoBao how you feel",
+  "homeLeaveChat": "End chat for now",
+  "homeLastMood": "Last check-in: {mood}",
+  "@homeLastMood": {
+    "placeholders": {
+      "mood": {
+        "type": "String"
+      }
+    }
+  },
+  "quickJoke": "Joke",
+  "quickAffirmation": "Kind word",
+  "quickSelfCare": "Self-care",
+  "navShop": "Shop",
+  "navClaw": "Claw",
+  "navClawTries": "Claw ({tries})",
+  "@navClawTries": {
+    "placeholders": {
+      "tries": {
+        "type": "int"
+      }
+    }
+  },
+  "navCustomize": "Style",
+  "nudgeJoke": "Want a joke?",
+  "nudgeAffirmation": "Want a kind word?",
+  "nudgeSelfCare": "Want a self-care idea?",
+  "nudgeClaw": "Play the claw machine",
+  "nudgeShop": "Visit the shop",
+  "slotMusic": "Music",
+  "slotOutfit": "Outfits",
+  "slotBackground": "Backgrounds",
+  "itemInUse": "In use",
+  "itemOwned": "Owned",
+  "itemUse": "Use",
+  "itemBuy": "Buy",
+  "itemPreview": "Preview {name}",
+  "@itemPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemStopPreview": "Stop preview of {name}",
+  "@itemStopPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "customizeTitle": "Your style",
+  "customizeGetMore": "Get more in the shop",
+  "shopTitle": "Shop",
+  "shopConfirmTitle": "Buy {name}?",
+  "@shopConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shopBought": "{name} is yours, and it's on now!",
+  "@shopBought": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shopNotEnough": "You need {amount} more stars. The claw machine can help!",
+  "@shopNotEnough": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "shopAlreadyOwned": "You already have {name}.",
+  "@shopAlreadyOwned": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "resourcesTitle": "Get help",
+  "resourcesIntro": "You don't have to carry this alone. These services are free, confidential, and staffed by people who want to help.",
+  "resourcesEmergencyTitle": "In an emergency",
+  "resourcesEmergencyKnown": "If you or someone else is in immediate danger, call {number} now.",
+  "@resourcesEmergencyKnown": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "resourcesEmergencyUnknown": "If you or someone else is in immediate danger, call your local emergency number now.",
+  "resourcesRegion": "Showing help for",
+  "resourcesRegionOther": "Another country",
+  "resourcesRegionOtherNote": "We don't have local numbers for your region yet. These directories list helplines around the world.",
+  "resourcesCall": "Call {number}",
+  "@resourcesCall": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "resourcesText": "Text {number}",
+  "@resourcesText": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "resourcesTextWith": "Text {word} to {number}",
+  "@resourcesTextWith": {
+    "placeholders": {
+      "word": {
+        "type": "String"
+      },
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "resourcesOpenWebsite": "Open website",
+  "resourcesCannotOpenTitle": "Couldn't open that here",
+  "resourcesCannotOpenBody": "This device couldn't start it for you. You can use these details on another phone or computer:",
+  "resourcesDisclaimer": "BaoBao is not a crisis service and is not a substitute for professional care.",
+  "countryUS": "United States",
+  "settingsTitle": "Settings",
+  "settingsGetHelp": "Get help",
+  "settingsSound": "Sound",
+  "settingsMusicVolume": "Music volume",
+  "settingsSfxVolume": "Sound effects volume",
+  "settingsVoiceVolume": "BaoBao's voice volume",
+  "settingsVoiceEnabled": "BaoBao's voice",
+  "settingsVoiceEnabledHint": "The words always appear on screen either way.",
+  "settingsAccessibility": "Accessibility",
+  "settingsReducedMotion": "Reduce motion",
+  "settingsReducedMotionHint": "Text appears at once and BaoBao stays still.",
+  "settingsClawTapMode": "Tap instead of hold in the claw machine",
+  "settingsClawTapModeHint": "Tap once to start the claw and again to drop it.",
+  "settingsProfile": "Profile",
+  "settingsRename": "Change name",
+  "settingsSwitchTo": "Switch to {name}",
+  "@settingsSwitchTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsAddProfile": "Add another profile",
+  "settingsPrivacy": "Privacy",
+  "settingsAppLock": "App lock",
+  "settingsAppLockHint": "Ask for your fingerprint, face, or device PIN when opening BaoBao.",
+  "settingsAppLockOffReason": "Confirm it's you to switch off the app lock",
+  "settingsDeleteData": "Delete my data",
+  "settingsDeleteTitle": "Delete everything?",
+  "settingsDeleteBody": "This permanently removes {name}'s check-ins, conversations, stars and items from this device. It can't be undone.",
+  "@settingsDeleteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsDeleteConfirm": "Delete",
+  "settingsAbout": "About",
+  "settingsReplayTutorial": "Replay the tour",
+  "settingsNotMedical": "What BaoBao is",
+  "settingsLicences": "Open-source licences",
+  "settingsVersion": "Version {version}",
+  "@settingsVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "tutorialSkip": "Skip tour",
+  "tutorialDone": "Got it!",
+  "clawTitle": "Claw machine",
+  "clawTries": "Tries: {count}",
+  "@clawTries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clawNextTry": "Next try in {time}",
+  "@clawNextTry": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "clawBuyTry": "+1 try ({price})",
+  "@clawBuyTry": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "clawHoldToMove": "Hold to move",
+  "clawReleaseToDrop": "Let go to drop",
+  "clawTapToStart": "Tap to start",
+  "clawTapToDrop": "Tap to drop",
+  "clawWait": "…",
+  "clawNoTries": "No tries left right now. One comes back every five minutes, or you can get an extra one.",
+  "clawBoughtTry": "Yay, an extra try!",
+  "clawDailyLimit": "That's all the extra tries for today. Come back tomorrow!",
+  "clawNotEnough": "You need {price} stars for an extra try.",
+  "@clawNotEnough": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "clawMissed": "So close!",
+  "clawRare": "★ Rare ★",
+  "clawCombo": "{streak} in a row! ×{multiplier}",
+  "@clawCombo": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      },
+      "multiplier": {
+        "type": "String"
+      }
+    }
+  },
+  "clawMachineLabel": "Claw machine with {count} prizes inside",
+  "@clawMachineLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clawStatsTitle": "Your claw stats",
+  "clawStatsPlays": "Plays",
+  "clawStatsWins": "Wins",
+  "clawStatsEarnings": "Stars won",
+  "clawStatsBest": "Best win"
+}

@@ -1,0 +1,115 @@
+{
+  "id": "intervention",
+  "start": "intervention_start",
+  "nodes": {
+    "intervention_start": {
+      "line": "Hey friend, I've noticed you've been carrying some heavy feelings lately. I want you to know—what you're going through is real, and it's okay to need more support than just our chats. 💙",
+      "voice": "int_01",
+      "options": [
+        {
+          "text": "I'm managing okay",
+          "next": "intervention_managing"
+        },
+        {
+          "text": "It has been hard",
+          "next": "intervention_hard"
+        },
+        {
+          "text": "Tell me more",
+          "next": "intervention_more"
+        }
+      ]
+    },
+    "intervention_managing": {
+      "line": "I hear you, and I believe you. You're so strong for handling what you're going through. At the same time, even the strongest people deserve extra support. Would you like to know about some resources that could help lighten the load? 🌿",
+      "voice": "int_02",
+      "options": [
+        {
+          "text": "Yes, show me resources",
+          "next": "intervention_resources"
+        },
+        {
+          "text": "Maybe later",
+          "next": "intervention_later"
+        }
+      ]
+    },
+    "intervention_hard": {
+      "line": "Thank you for trusting me enough to share that. What you're feeling matters, and you don't have to face it alone. There are people who are trained to help with exactly what you're going through—and reaching out to them isn't giving up, it's being brave. 💚",
+      "voice": "int_03",
+      "options": [
+        {
+          "text": "What kind of help?",
+          "next": "intervention_more"
+        },
+        {
+          "text": "Show me the resources",
+          "next": "intervention_resources"
+        }
+      ]
+    },
+    "intervention_more": {
+      "line": "I'm so glad you asked. Sometimes when feelings get really heavy or stick around for a while, talking to a counselor, therapist, or even a trusted helpline can make a huge difference. They have tools and understanding that go beyond what I can offer. You deserve that kind of support. 🫂",
+      "voice": "int_04",
+      "options": [
+        {
+          "text": "Okay, I'll look at resources",
+          "next": "intervention_resources"
+        },
+        {
+          "text": "I'm not ready yet",
+          "next": "intervention_not_ready"
+        }
+      ]
+    },
+    "intervention_resources": {
+      "line": "That's such a brave step. I'm proud of you. I've put together some resources that might help. Remember: reaching out is a sign of strength, not weakness. I'll be right here whenever you need me. 💙",
+      "voice": "int_05",
+      "options": [
+        {
+          "text": "View Resources",
+          "next": "@resources"
+        }
+      ]
+    },
+    "intervention_later": {
+      "line": "That's completely okay. There's no rush, and no pressure. Just know that whenever you're ready, these resources will be here for you. And I'll always be here too. You matter, and your wellbeing matters. Take care of yourself, friend. 🌸",
+      "voice": "int_06",
+      "options": [
+        {
+          "text": "Thank you, BaoBao",
+          "next": "intervention_complete"
+        },
+        {
+          "text": "Actually, show me the resources",
+          "next": "intervention_resources"
+        }
+      ]
+    },
+    "intervention_not_ready": {
+      "line": "I understand, and that's okay. This is your journey, and you get to decide the pace. Just please remember: you're not alone, even if it feels that way sometimes. Whenever you're ready to explore more support, I'll help you find it. Until then, I'm here. 💚",
+      "voice": "int_07",
+      "options": [
+        {
+          "text": "Thanks for understanding",
+          "next": "intervention_complete"
+        },
+        {
+          "text": "Wait, let me see the resources",
+          "next": "intervention_resources"
+        }
+      ]
+    },
+    "intervention_complete": {
+      "line": "You've been incredibly brave today. Remember: reaching out for help is one of the strongest things you can do. I'm always here for you, friend. How are you feeling right now? 💙",
+      "voice": "int_08",
+      "closing": true,
+      "options": [
+        {
+          "text": "Check in with my mood",
+          "next": "@end"
+        }
+      ]
+    }
+  }
+}

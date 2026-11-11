@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.47.9"
+
+jobs:
+  check:
+    name: Analyse, test, build Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Formatting
+        run: dart format --output=none --set-exit-if-changed lib test tool
+
+      - name: Generated code is up to date
+        run: |
+          dart run build_runner build
+          flutter gen-l10n
+          dart run drift_dev make-migrations
+          git diff --exit-code -- lib drift_schemas test
+
+      - name: Static analysis
+        run: flutter analyze --fatal-infos
+
+      - name: Content validation
+        run: dart run tool/validate_content.dart
+
+      - name: Tests
+        run: flutter test --coverage
+
+      - name: Domain coverage is at least 90%
+        run: dart run tool/check_coverage.dart coverage/lcov.info 90 /domain/
+
+      - name: Build Android (dev, debug)
+        run: flutter build apk --debug --flavor dev -t lib/main_dev.dart
+
+  ios:
+    name: Build iOS (unsigned)
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Build iOS
+        run: flutter build ios --debug --no-codesign -t lib/main_dev.dart

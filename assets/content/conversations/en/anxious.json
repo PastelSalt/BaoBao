@@ -1,0 +1,197 @@
+{
+  "id": "anxious",
+  "start": "anxious_start",
+  "nodes": {
+    "anxious_start": {
+      "line": "I can sense those worried feelings swirling around. 💙 Anxiety can feel overwhelming, but you don't have to face it alone. Want to talk about what's making you anxious, or would you prefer some calming strategies?",
+      "voice": "x_anxious_01",
+      "options": [
+        {
+          "text": "I want to talk about it",
+          "next": "anxious_talk"
+        },
+        {
+          "text": "I need calming strategies",
+          "next": "anxious_strategies"
+        },
+        {
+          "text": "Everything feels overwhelming",
+          "next": "anxious_overwhelming"
+        }
+      ]
+    },
+    "anxious_talk": {
+      "line": "I'm here to listen. Sometimes naming our worries helps them feel a bit less scary. What's weighing on your mind? 🌿",
+      "voice": "x_anxious_02",
+      "options": [
+        {
+          "text": "Worried about the future",
+          "next": "anxious_future"
+        },
+        {
+          "text": "Can't stop overthinking",
+          "next": "anxious_overthinking"
+        }
+      ]
+    },
+    "anxious_strategies": {
+      "line": "Let's try something gentle together. How about we take three deep breaths? In through your nose... hold... and out slowly. 🌬️ Feel even a tiny bit more grounded?",
+      "voice": "x_anxious_03",
+      "nudge": "selfCare",
+      "options": [
+        {
+          "text": "That helped a bit",
+          "next": "anxious_helped",
+          "moodEffect": 1
+        },
+        {
+          "text": "Still feeling anxious",
+          "next": "anxious_still_anxious"
+        }
+      ]
+    },
+    "anxious_overwhelming": {
+      "line": "When everything feels like too much, it's okay to focus on just one small thing. You don't have to solve everything right now. What's one tiny thing we could tackle together? 🫂",
+      "voice": "x_anxious_04",
+      "options": [
+        {
+          "text": "I'll try focusing on one thing",
+          "next": "anxious_focus"
+        },
+        {
+          "text": "I don't know where to start",
+          "next": "anxious_dont_know"
+        }
+      ]
+    },
+    "anxious_future": {
+      "line": "The future can feel so uncertain, and that's genuinely hard. But right now, in this moment, you're okay. Let's try to anchor ourselves in the present. What's one thing you can see, hear, or feel right now? 🌸",
+      "voice": "x_anxious_05",
+      "nudge": "selfCare",
+      "options": [
+        {
+          "text": "I'll try grounding myself",
+          "next": "anxious_grounding",
+          "moodEffect": 1
+        },
+        {
+          "text": "The worry won't stop",
+          "next": "anxious_wont_stop"
+        }
+      ]
+    },
+    "anxious_overthinking": {
+      "line": "Your mind is working so hard trying to keep you safe, but sometimes our thoughts run wild. It's okay to tell your brain: 'Thank you for the thoughts, but I'm okay right now.' Want to try a gentle distraction? 🎯",
+      "voice": "x_anxious_06",
+      "nudge": "clawMachine",
+      "options": [
+        {
+          "text": "Yes, a distraction sounds good",
+          "next": "anxious_distraction"
+        },
+        {
+          "text": "I want to keep talking",
+          "next": "anxious_keep_talking"
+        }
+      ]
+    },
+    "anxious_helped": {
+      "line": "That's wonderful! Even small shifts matter. You're doing great by being here and trying. 💚",
+      "voice": "x_anxious_07",
+      "options": [
+        {
+          "text": "Thank you, BaoBao",
+          "next": "anxious_loop"
+        }
+      ]
+    },
+    "anxious_still_anxious": {
+      "line": "That's okay. Anxiety doesn't always go away with one breath, and that's completely normal. You're still here, still trying, and that takes courage. I'm proud of you. 💙",
+      "voice": "x_anxious_08",
+      "nudge": "selfCare",
+      "options": [
+        {
+          "text": "I'll keep trying",
+          "next": "anxious_loop"
+        }
+      ]
+    },
+    "anxious_focus": {
+      "line": "That's brave. One thing at a time. You've got this. 🌟",
+      "voice": "x_anxious_09",
+      "options": [
+        {
+          "text": "Thanks for the encouragement",
+          "next": "anxious_loop"
+        }
+      ]
+    },
+    "anxious_dont_know": {
+      "line": "Not knowing is okay too. How about we just... be here together for a moment? No fixing, no solving. Just being. 🐼",
+      "voice": "x_anxious_10",
+      "options": [
+        {
+          "text": "That sounds nice",
+          "next": "anxious_loop"
+        }
+      ]
+    },
+    "anxious_grounding": {
+      "line": "You're doing amazing. Grounding yourself in the present is a powerful skill. 🌿",
+      "voice": "x_anxious_11",
+      "options": [
+        {
+          "text": "I feel a bit better",
+          "next": "anxious_loop",
+          "moodEffect": 1
+        }
+      ]
+    },
+    "anxious_wont_stop": {
+      "line": "I hear you. Persistent worry is exhausting. Remember, it's okay to seek more support if you need it. You deserve help navigating these feelings. 💙",
+      "voice": "x_anxious_12",
+      "options": [
+        {
+          "text": "I'll keep that in mind",
+          "next": "anxious_loop"
+        }
+      ]
+    },
+    "anxious_distraction": {
+      "line": "Sometimes our minds need a little break. Want to try the claw machine? It's playful and might give your thoughts a rest. 🎯",
+      "voice": "x_anxious_13",
+      "nudge": "clawMachine",
+      "options": [
+        {
+          "text": "Sounds fun!",
+          "next": "anxious_loop"
+        },
+        {
+          "text": "Maybe later",
+          "next": "anxious_loop"
+        }
+      ]
+    },
+    "anxious_keep_talking": {
+      "line": "I'm here for as long as you need. Your feelings matter, and I'm listening. 💚",
+      "voice": "x_anxious_14",
+      "options": [
+        {
+          "text": "Thank you",
+          "next": "anxious_loop"
+        }
+      ]
+    },
+    "anxious_loop": {
+      "line": "You've been so brave today, facing these anxious feelings head-on. Remember: you're stronger than your worries. How's your heart feeling now? 💙",
+      "voice": "x_anxious_15",
+      "closing": true,
+      "options": [
+        {
+          "text": "Check in with my mood",
+          "next": "@end"
+        }
+      ]
+    }
+  }
+}

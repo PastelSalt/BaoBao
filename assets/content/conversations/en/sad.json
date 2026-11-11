@@ -1,0 +1,233 @@
+{
+  "id": "sad",
+  "start": "sad_start",
+  "nodes": {
+    "sad_start": {
+      "line": "I'm here with you, friend. 💙 Sadness is heavy, but you don't have to carry it alone. Want to talk about what's weighing on you, or would you prefer some gentle company?",
+      "voice": "s_sad_01",
+      "options": [
+        {
+          "text": "I want to talk about it",
+          "next": "sad_talk"
+        },
+        {
+          "text": "Just want to feel less alone",
+          "next": "sad_company"
+        },
+        {
+          "text": "I don't know what I need",
+          "next": "sad_unsure"
+        }
+      ]
+    },
+    "sad_talk": {
+      "line": "I'm listening, and there's no rush. Your feelings are valid, whatever they are. Sometimes just putting words to the hurt can help a little. What's on your mind?",
+      "voice": "s_sad_02",
+      "options": [
+        {
+          "text": "Something happened that hurt",
+          "next": "sad_hurt"
+        },
+        {
+          "text": "I'm just feeling down",
+          "next": "sad_general_down"
+        }
+      ]
+    },
+    "sad_company": {
+      "line": "You're not alone. I'm right here, and I'm not going anywhere. 🐼 Sometimes we don't need words—just knowing someone cares is enough. Want to sit together quietly, or would a small distraction help?",
+      "voice": "s_sad_03",
+      "options": [
+        {
+          "text": "Just sit with me",
+          "next": "sad_sit_together"
+        },
+        {
+          "text": "A gentle distraction might help",
+          "next": "sad_distraction"
+        }
+      ]
+    },
+    "sad_unsure": {
+      "line": "That's okay. Not knowing is okay too. Sometimes feelings are just... cloudy. We can figure it out together, one tiny step at a time. No pressure. 🌤️",
+      "voice": "s_sad_04",
+      "options": [
+        {
+          "text": "Maybe I need comfort",
+          "next": "sad_comfort"
+        },
+        {
+          "text": "Maybe I need a break from thinking",
+          "next": "sad_distraction"
+        }
+      ]
+    },
+    "sad_hurt": {
+      "line": "I'm so sorry you're hurting. Pain is real, and what you're feeling matters. You didn't deserve to be hurt. 💙 Would you like some words of comfort, or do you need something else right now?",
+      "voice": "s_sad_05",
+      "options": [
+        {
+          "text": "Yes, some comfort please",
+          "next": "sad_comfort"
+        },
+        {
+          "text": "Maybe help me feel better?",
+          "next": "sad_feel_better"
+        }
+      ]
+    },
+    "sad_general_down": {
+      "line": "Sometimes sadness doesn't have a specific reason, and that's valid too. You're allowed to feel down even if you can't pinpoint why. Your feelings are real and important. 💙",
+      "voice": "s_sad_06",
+      "options": [
+        {
+          "text": "Thank you for understanding",
+          "next": "sad_comfort"
+        },
+        {
+          "text": "How can I feel a bit better?",
+          "next": "sad_feel_better"
+        }
+      ]
+    },
+    "sad_sit_together": {
+      "line": "*sits quietly beside you* 🐼💙 You're doing great just by being here. Take all the time you need. I'm here whenever you're ready.",
+      "voice": "s_sad_07",
+      "options": [
+        {
+          "text": "*takes a deep breath*",
+          "next": "sad_deep_breath"
+        },
+        {
+          "text": "This helps, thank you",
+          "next": "sad_loop"
+        }
+      ]
+    },
+    "sad_distraction": {
+      "line": "Sometimes a little break from the heavy feelings can help. Would you like a self-care suggestion, or maybe try something playful like the claw machine? Whatever feels right for you. 🌸",
+      "voice": "s_sad_08",
+      "nudge": "selfCare",
+      "options": [
+        {
+          "text": "Yes, self-care sounds good",
+          "next": "sad_self_care"
+        },
+        {
+          "text": "Maybe something playful",
+          "next": "sad_playful"
+        }
+      ]
+    },
+    "sad_comfort": {
+      "line": "You are enough, exactly as you are. This sadness is temporary, even if it doesn't feel like it right now. You've survived every hard day before this, and you'll make it through this one too. I believe in you. 💙✨",
+      "voice": "s_sad_09",
+      "options": [
+        {
+          "text": "I needed to hear that",
+          "next": "sad_loop"
+        },
+        {
+          "text": "Can you help me feel better?",
+          "next": "sad_feel_better"
+        }
+      ]
+    },
+    "sad_feel_better": {
+      "line": "Let's take this gently. Small steps are still steps. How about we try a tiny act of kindness for yourself? Maybe a sip of water, a deep breath, or even just acknowledging that you're doing your best? 🌿",
+      "voice": "s_sad_10",
+      "options": [
+        {
+          "text": "I'll try that",
+          "next": "sad_trying",
+          "moodEffect": 1
+        },
+        {
+          "text": "I want to do something else",
+          "next": "sad_self_care"
+        }
+      ]
+    },
+    "sad_deep_breath": {
+      "line": "That's it. Breathing is healing. You're here, you're present, and that takes strength. I'm proud of you for taking this moment for yourself. 🌬️💙",
+      "voice": "s_sad_11",
+      "options": [
+        {
+          "text": "I feel a little calmer",
+          "next": "sad_loop",
+          "moodEffect": 1
+        },
+        {
+          "text": "Still struggling",
+          "next": "sad_still_struggling"
+        }
+      ]
+    },
+    "sad_self_care": {
+      "line": "Here's a gentle thought: Your feelings are a signal, not a flaw. Maybe do something small that nourishes you—a warm drink, a favorite song, or just wrapping yourself in something cozy. You deserve tenderness, especially from yourself. 🫖",
+      "voice": "s_sad_12",
+      "nudge": "selfCare",
+      "options": [
+        {
+          "text": "That's a good idea",
+          "next": "sad_loop",
+          "moodEffect": 1
+        },
+        {
+          "text": "I'll think about it",
+          "next": "sad_loop"
+        }
+      ]
+    },
+    "sad_playful": {
+      "line": "Sometimes a little play can lighten the heaviness, even just for a moment. The claw machine has some adorable prizes waiting! No pressure though—only if it feels right. 🎯",
+      "voice": "s_sad_13",
+      "nudge": "clawMachine",
+      "options": [
+        {
+          "text": "Okay, let's try it",
+          "next": "sad_loop"
+        },
+        {
+          "text": "Not right now",
+          "next": "sad_loop"
+        }
+      ]
+    },
+    "sad_trying": {
+      "line": "That's beautiful. Every small act of self-compassion matters. You're taking care of yourself, and that's something to be proud of. 💚",
+      "voice": "s_sad_14",
+      "options": [
+        {
+          "text": "Thank you, BaoBao",
+          "next": "sad_loop"
+        }
+      ]
+    },
+    "sad_still_struggling": {
+      "line": "That's okay. Healing isn't linear, and some days are just harder. You don't have to be okay right now. I'm still here, and I'm not going anywhere. You matter. 💙",
+      "voice": "s_sad_15",
+      "options": [
+        {
+          "text": "I needed to hear that",
+          "next": "sad_loop"
+        },
+        {
+          "text": "Thank you for staying",
+          "next": "sad_loop"
+        }
+      ]
+    },
+    "sad_loop": {
+      "line": "You've been so brave today, sharing these feelings with me. Remember, it's okay to not be okay. I'm here whenever you need me. 💙 How's your heart feeling now?",
+      "voice": "s_sad_16",
+      "closing": true,
+      "options": [
+        {
+          "text": "Check in with my mood",
+          "next": "@end"
+        }
+      ]
+    }
+  }
+}

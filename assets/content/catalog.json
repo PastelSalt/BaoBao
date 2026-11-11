@@ -1,0 +1,67 @@
+{
+  "startingBalance": 3000,
+  "items": [
+    {
+      "id": "kakushigoto",
+      "slot": "music",
+      "name": { "en": "Kakushigoto" },
+      "price": 0,
+      "default": true,
+      "asset": "assets/audio/music/kakushigoto.mp3",
+      "licence": "unverified"
+    },
+    {
+      "id": "little",
+      "slot": "music",
+      "name": { "en": "Little" },
+      "price": 500,
+      "asset": "assets/audio/music/little.mp3",
+      "licence": "unverified"
+    },
+    {
+      "id": "ordinary_days",
+      "slot": "music",
+      "name": { "en": "Ordinary Days" },
+      "price": 750,
+      "asset": "assets/audio/music/ordinary_days.mp3",
+      "licence": "unverified"
+    },
+    {
+      "id": "classic",
+      "slot": "outfit",
+      "name": { "en": "Classic Bao" },
+      "price": 0,
+      "default": true,
+      "asset": "assets/images/character/classic"
+    },
+    {
+      "id": "blue_bao",
+      "slot": "outfit",
+      "name": { "en": "Blue Bao" },
+      "price": 1000,
+      "asset": "assets/images/character/blue_bao"
+    },
+    {
+      "id": "bamboo",
+      "slot": "background",
+      "name": { "en": "Bamboo Grove" },
+      "price": 0,
+      "default": true,
+      "asset": "assets/images/backgrounds/bamboo.svg"
+    },
+    {
+      "id": "bamboo_clouds",
+      "slot": "background",
+      "name": { "en": "Bamboo Clouds" },
+      "price": 800,
+      "asset": "assets/images/backgrounds/bamboo_clouds.svg"
+    },
+    {
+      "id": "bamboo_plum",
+      "slot": "background",
+      "name": { "en": "Bamboo Plum" },
+      "price": 1000,
+      "asset": "assets/images/backgrounds/bamboo_plum.svg"
+    }
+  ]
+}

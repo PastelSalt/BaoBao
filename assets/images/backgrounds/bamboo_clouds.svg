@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800">
+  <path d="M0,0h400v800h-400z" fill="none"/>
+  <path d="M60,40a40,20 0,1 0,0 40a40,20 0,1 0,0 -40" fill="#ffffff" fill-opacity="0.4"/>
+  <path d="M90,35a30,15 0,1 0,0 30a30,15 0,1 0,0 -30" fill="#fafafa" fill-opacity="0.3"/>
+  <path d="M180,70a35,18 0,1 0,0 36a35,18 0,1 0,0 -36" fill="#ffffff" fill-opacity="0.25"/>
+  <path d="M325,100a45,22.5 0,1 0,0 45a45,22.5 0,1 0,0 -45" fill="#ffffff" fill-opacity="0.4"/>
+  <path d="M285,120a35,17.5 0,1 0,0 35a35,17.5 0,1 0,0 -35" fill="#f5f5f5" fill-opacity="0.3"/>
+  <path d="M40,200a45,20 0,1 0,0 40a45,20 0,1 0,0 -40" fill="#ffffff" fill-opacity="0.2"/>
+  <path d="M350,250a30,15 0,1 0,0 30a30,15 0,1 0,0 -30" fill="#fafafa" fill-opacity="0.15"/>
+  <path d="M200,350a50,25 0,1 0,0 50a50,25 0,1 0,0 -50" fill="#ffffff" fill-opacity="0.1"/>
+  <path d="M120,280a40,20 0,1 0,0 40a40,20 0,1 0,0 -40" fill="#ffffff" fill-opacity="0.2"/>
+  <path d="M300,450a60,30 0,1 0,0 60a60,30 0,1 0,0 -60" fill="#ffffff" fill-opacity="0.15"/>
+  <path d="M80,550a45,22 0,1 0,0 44a45,22 0,1 0,0 -44" fill="#ffffff" fill-opacity="0.1"/>
+  <path d="M250,650a55,27 0,1 0,0 54a55,27 0,1 0,0 -54" fill="#ffffff" fill-opacity="0.08"/>
+  <path d="M50,750a40,20 0,1 0,0 40a40,20 0,1 0,0 -40" fill="#ffffff" fill-opacity="0.1"/>
+  <path d="M30,0 Q35,200 25,400 T30,800 L45,800 Q40,400 50,200 T45,0 Z" fill="#a5d6a7" fill-opacity="0.2"/>
+  <path d="M100,0 Q90,250 110,500 T100,800 L115,800 Q125,500 105,250 T115,0 Z" fill="#a5d6a7" fill-opacity="0.25"/>
+  <path d="M180,0 Q190,300 170,600 T185,800 L200,800 Q185,600 205,300 T195,0 Z" fill="#a5d6a7" fill-opacity="0.2"/>
+  <path d="M260,0 Q270,350 250,700 T265,800 L280,800 Q265,700 285,350 T275,0 Z" fill="#a5d6a7" fill-opacity="0.25"/>
+  <path d="M310,0 Q320,250 305,500 T315,800 L330,800 Q340,500 325,250 T335,0 Z" fill="#a5d6a7" fill-opacity="0.2"/>
+  <path d="M370,0 Q360,400 380,800 L395,800 Q375,400 385,0 Z" fill="#a5d6a7" fill-opacity="0.15"/>
+  <path d="M45,150 Q65,140 75,160 Q60,170 45,155 Z" fill="#81c784" fill-opacity="0.2"/>
+  <path d="M310,550 Q285,540 275,565 Q300,575 310,555 Z" fill="#81c784" fill-opacity="0.2"/>
+  <path d="M110,300 Q135,290 145,315 Q120,325 110,305 Z" fill="#81c784" fill-opacity="0.15"/>
+</svg>

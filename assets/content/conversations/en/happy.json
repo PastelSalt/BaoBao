@@ -1,0 +1,165 @@
+{
+  "id": "happy",
+  "start": "happy_start",
+  "nodes": {
+    "happy_start": {
+      "line": "That's wonderful to hear! Your happiness is contagious! 🌟 What's been making you smile lately?",
+      "voice": "h_happy_01",
+      "options": [
+        {
+          "text": "Something good happened today!",
+          "next": "happy_good_thing"
+        },
+        {
+          "text": "Just feeling good overall!",
+          "next": "happy_overall"
+        },
+        {
+          "text": "I accomplished something!",
+          "next": "happy_achievement"
+        }
+      ]
+    },
+    "happy_good_thing": {
+      "line": "Ooh, I love good surprises! 🎉 Life has a way of sprinkling little gifts when we least expect them. Want to tell me more, or should we celebrate in another way?",
+      "voice": "h_happy_02",
+      "nudge": "joke",
+      "options": [
+        {
+          "text": "Let's celebrate! Tell me a joke!",
+          "next": "happy_celebrate_joke"
+        },
+        {
+          "text": "I want to savor this feeling",
+          "next": "happy_savor"
+        }
+      ]
+    },
+    "happy_overall": {
+      "line": "Sometimes the best days are the ones where everything just... works! Like all the puzzle pieces fit perfectly. 🧩 How do you want to keep this good energy going?",
+      "voice": "h_happy_03",
+      "options": [
+        {
+          "text": "Maybe do something fun?",
+          "next": "happy_fun_activity"
+        },
+        {
+          "text": "Just enjoy the moment",
+          "next": "happy_savor"
+        }
+      ]
+    },
+    "happy_achievement": {
+      "line": "Look at you go! 🌟 Every step forward is worth celebrating, big or small. You put in the effort, and it showed! How does it feel?",
+      "voice": "h_happy_04",
+      "nudge": "affirmation",
+      "options": [
+        {
+          "text": "Feels amazing!",
+          "next": "happy_feels_amazing"
+        },
+        {
+          "text": "Proud and relieved!",
+          "next": "happy_proud"
+        }
+      ]
+    },
+    "happy_celebrate_joke": {
+      "line": "Why did the panda like the bamboo restaurant? Because it had great stalks! 🎋😄 Okay okay, I know, my jokes are panda-monium! Want to keep the good vibes rolling?",
+      "voice": "h_happy_05",
+      "options": [
+        {
+          "text": "Yes! What else can we do?",
+          "next": "happy_whats_next"
+        },
+        {
+          "text": "I'm good for now, thank you!",
+          "next": "happy_loop"
+        }
+      ]
+    },
+    "happy_savor": {
+      "line": "That's beautiful. Sometimes we just need to pause and let the good feelings wash over us like warm sunshine. ☀️ You deserve these moments, friend.",
+      "voice": "h_happy_06",
+      "options": [
+        {
+          "text": "Thank you, BaoBao",
+          "next": "happy_loop"
+        },
+        {
+          "text": "What should I do next?",
+          "next": "happy_whats_next"
+        }
+      ]
+    },
+    "happy_fun_activity": {
+      "line": "Now you're speaking my language! 🐼 How about trying the claw machine? We just got some adorable new prizes! Or we could do something else—your choice!",
+      "voice": "h_happy_07",
+      "nudge": "clawMachine",
+      "options": [
+        {
+          "text": "Let's play the claw machine!",
+          "next": "happy_loop"
+        },
+        {
+          "text": "Maybe later, just want to chill",
+          "next": "happy_loop"
+        }
+      ]
+    },
+    "happy_feels_amazing": {
+      "line": "Yes! Soak in that feeling! This is what growth looks like, and you're absolutely crushing it! 💪✨",
+      "voice": "h_happy_08",
+      "options": [
+        {
+          "text": "You're the best, BaoBao!",
+          "next": "happy_loop"
+        },
+        {
+          "text": "What else should I try?",
+          "next": "happy_whats_next"
+        }
+      ]
+    },
+    "happy_proud": {
+      "line": "And you should be! That mixture of pride and relief means you challenged yourself and came out on top. That takes courage! 🌈",
+      "voice": "h_happy_09",
+      "options": [
+        {
+          "text": "Thanks for being here",
+          "next": "happy_loop"
+        },
+        {
+          "text": "Let's do something fun!",
+          "next": "happy_whats_next"
+        }
+      ]
+    },
+    "happy_whats_next": {
+      "line": "Well, we could explore the shop for some fun customizations, play a game, or just hang out! The world is our bamboo forest! 🎋",
+      "voice": "h_happy_10",
+      "nudge": "shop",
+      "options": [
+        {
+          "text": "Sounds perfect!",
+          "next": "happy_loop"
+        },
+        {
+          "text": "Let me think about it",
+          "next": "happy_loop"
+        }
+      ]
+    },
+    "happy_loop": {
+      "line": "You've brought such good energy today! I'm so glad we got to share this happy moment together. 💚 How's your heart feeling now?",
+      "voice": "h_happy_11",
+      "closing": true,
+      "options": [
+        {
+          "text": "Check in with my mood",
+          "next": "@end"
+        }
+      ]
+    }
+  }
+}

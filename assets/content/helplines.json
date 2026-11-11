@@ -1,0 +1,73 @@
+{
+  "_note": "Every entry must be checked by a person against the organisation's own website before release. Set verifiedOn to the ISO date of that check. Release builds must not ship entries with verifiedOn null.",
+  "fallback": {
+    "lines": [
+      {
+        "id": "find_a_helpline",
+        "name": { "en": "Find A Helpline" },
+        "description": { "en": "Free, confidential helplines in your country, searchable by topic." },
+        "actions": [{ "type": "web", "value": "https://findahelpline.com" }],
+        "verifiedOn": null
+      },
+      {
+        "id": "iasp",
+        "name": { "en": "International Association for Suicide Prevention" },
+        "description": { "en": "A directory of crisis centres around the world." },
+        "actions": [{ "type": "web", "value": "https://www.iasp.info/crisiscentres-helplines/" }],
+        "verifiedOn": null
+      },
+      {
+        "id": "befrienders",
+        "name": { "en": "Befrienders Worldwide" },
+        "description": { "en": "Volunteer-run emotional support centres in many countries." },
+        "actions": [{ "type": "web", "value": "https://befrienders.org" }],
+        "verifiedOn": null
+      }
+    ]
+  },
+  "countries": {
+    "US": {
+      "emergencyNumber": "911",
+      "lines": [
+        {
+          "id": "us_988",
+          "name": { "en": "988 Suicide & Crisis Lifeline" },
+          "description": { "en": "Free, confidential support for anyone in distress, any time." },
+          "actions": [
+            { "type": "call", "value": "988" },
+            { "type": "sms", "value": "988" }
+          ],
+          "verifiedOn": null
+        },
+        {
+          "id": "us_crisis_text_line",
+          "name": { "en": "Crisis Text Line" },
+          "description": { "en": "Text with a trained crisis counsellor, any time." },
+          "actions": [{ "type": "sms", "value": "741741", "body": "HOME" }],
+          "verifiedOn": null
+        },
+        {
+          "id": "us_samhsa",
+          "name": { "en": "SAMHSA National Helpline" },
+          "description": { "en": "Treatment referral and information for mental health and substance use." },
+          "actions": [{ "type": "call", "value": "18006624357" }],
+          "verifiedOn": null
+        },
+        {
+          "id": "us_nami",
+          "name": { "en": "NAMI HelpLine" },
+          "description": { "en": "Information, resources, and peer support for mental health concerns." },
+          "actions": [{ "type": "call", "value": "18009506264" }],
+          "verifiedOn": null
+        },
+        {
+          "id": "us_find_help",
+          "name": { "en": "SAMHSA: Find Help" },
+          "description": { "en": "Find treatment and support services near you." },
+          "actions": [{ "type": "web", "value": "https://www.samhsa.gov/find-help" }],
+          "verifiedOn": null
+        }
+      ]
+    }
+  }
+}
