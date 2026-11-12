@@ -106,6 +106,7 @@ class ClawController extends ChangeNotifier {
         _sinceFinished = Duration.zero;
         final result = game.result ?? const ClawResult.miss();
         shownResult = result;
+        unawaited(_audio.effect(result.won ? AudioDirector.winAsset : AudioDirector.missAsset));
         _say(result.won ? ClawLine.win : ClawLine.miss);
         unawaited(_repository.recordResult(profileId, result, _clock.now()));
       } else {

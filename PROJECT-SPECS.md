@@ -1,6 +1,6 @@
 # PROJECT-SPECS
 
-What BaoBao is for, what has been built, what is wrong with it, and where it is going. For the code index see `CODEMAP.md`; for the step-by-step migration see `PLAN-A-00-111126.md`.
+What BaoBao is for, what it does, what has been done, and what is left. For the code index see `CODEMAP.md`; for the plan and its status see `PLAN-A-00-111126.md`.
 
 Last updated: 2026-11-11.
 
@@ -12,29 +12,35 @@ BaoBao is a comfort and self-care app. It is **not** therapy, diagnosis, or a cr
 
 ### Objectives
 
-1. **Emotional check-in.** Make it effortless to say how you feel (five moods) and feel heard.
+1. **Emotional check-in.** Make it effortless to say how you feel and feel heard.
 2. **Supportive conversation.** Respond with warm, choice-driven, voiced dialogue instead of free-text chat, so every line is authored and safe.
 3. **Care escalation.** Notice sustained low mood and point to real help, without alarm and without nagging.
-4. **Gentle engagement.** Give reasons to come back that are kind rather than compulsive: a mini-game, a currency, and cosmetic rewards.
-5. **A consistent character.** One personality, one voice, one visual style (soft bamboo-green, rounded, Quicksand type).
+4. **Gentle engagement.** Give reasons to come back that are kind rather than compulsive.
+5. **A consistent character.** One personality, one voice, one visual style.
 
 ### Design principles
 
 - Every line BaoBao says is pre-written. No generated text.
-- The user is always in control: they choose when to talk and can leave a conversation at any loop point.
-- Rewards are cosmetic only. Nothing supportive is locked behind currency.
-- Data stays on the device unless the user explicitly opts in to something else.
+- The person is always in control: they choose when to talk and can end a chat at any point.
+- Rewards are cosmetic only. Nothing supportive is locked behind stars.
+- Data stays on the device, encrypted. The app makes no network requests.
+- Help is always one tap away in Settings, whether or not BaoBao has suggested it.
 
-## 2. Feature specification (as built)
+## 2. Feature specification
 
-### 2.1 Accounts
+### 2.1 Profiles and privacy
 
-- Sign-up and login with username and password, stored locally.
-- Guest account: one tap, auto-named `guest_<timestamp>`, no password.
-- Session persists across launches; logout is in the settings dialog.
-- New accounts start with 3000 ✷ (the in-app currency).
+- Local profiles with a display name. No accounts, passwords, or email.
+- Several profiles can share a device; each has its own stars, items, moods, and claw-machine state.
+- Optional app lock using the device's fingerprint, face, or PIN. It re-locks after 60 seconds away. Turning it on or off needs the device to confirm.
+- "Delete my data" removes a profile and everything belonging to it. Deleting the last profile returns to the welcome screen.
+- A new profile starts with 3000 stars, the default music, outfit, and background, and five claw-machine tries.
 
-### 2.2 Mood check-in and emotional weight
+### 2.2 Onboarding
+
+Welcome → disclaimer, privacy summary, and two confirmations (understands BaoBao is not professional care; is 13 or older) → name → app lock (only on devices with a screen lock). Nothing is saved until the last step. A short tour follows once.
+
+### 2.3 Mood check-in and emotional weight
 
 | Mood | Weight change | Counts as negative |
 |------|---------------|--------------------|
@@ -44,139 +50,131 @@ BaoBao is a comfort and self-care app. It is **not** therapy, diagnosis, or a cr
 | Tired | +1 | Yes |
 | Anxious | +2 | Yes |
 
-Emotional weight is clamped to 0–10. Each check-in is appended to a mood history (newest 50 entries kept), and a positive mood resets the consecutive-negative counter. The check-in is recorded when the conversation for that mood starts.
+Weight is kept between 0 and 10. A positive check-in resets the count of consecutive negative check-ins. A conversation reply can carry a mood effect; a positive effect lowers the weight.
 
-### 2.3 Conversations
+### 2.4 Conversations
 
-- Six trees: happy (11 nodes), okay (13), sad (16), anxious (15), tired (16), intervention (8) — 79 nodes.
-- A node has BaoBao's line, a list of user options, an optional feature nudge (joke, claw machine, shop, and so on), and an optional loop-point flag that ends the conversation.
-- Options can carry a mood effect that adjusts emotional weight. Only eight options do, and all eight lower it.
-- Text appears with a typewriter effect; each node has a matching voice clip.
-- Outside conversations, quick actions give a random joke, affirmation, or self-care tip (10 each), and the home screen shows a morning, afternoon, or evening greeting.
+- Six trees: happy (11 nodes), okay (13), sad (16), anxious (15), tired (16), intervention (8).
+- A node has BaoBao's line, a voice clip, replies, and optionally a feature suggestion (joke, kind word, self-care idea, claw machine, shop).
+- A reply leads to another node, ends the conversation, or opens the help screen.
+- Text appears with a typewriter effect; a tap completes it. With reduced motion it appears at once.
+- "End chat for now" is always available. BaoBao says goodbye and the place reached is saved.
+- Outside conversations: a greeting by time of day (morning 05:00–11:59, afternoon 12:00–17:59, evening otherwise), and quick actions for a joke, kind word, or self-care idea (10 of each, never the same twice in a row).
 
-### 2.4 Intervention
+### 2.5 Intervention
 
-Triggers at the start of a conversation when **all** of these hold:
+After recording a check-in, the intervention conversation replaces the mood's own when **all** of these hold:
 
-- emotional weight ≥ 4;
-- at least 2 consecutive negative check-ins, **or** at least 2 of the last 3 check-ins negative;
-- no intervention in the last 24 hours.
+- emotional weight is 4 or more;
+- there have been at least 2 negative check-ins in a row, **or** at least 2 of the last 3 check-ins were negative;
+- no intervention started in the last 24 hours.
 
-When triggered, the intervention tree replaces the mood tree. It can lead to the resources screen: Crisis Text Line (texts HELLO to 741741), 988 Suicide & Crisis Lifeline, SAMHSA helpline, NAMI helpline, and a link to mentalhealth.gov. The flag clears when a positive check-in brings the weight under the threshold.
+Example: Anxious twice in a row triggers it on the second check-in.
 
-### 2.5 Claw machine
+### 2.6 Get help
+
+- Shows the emergency number and helplines for the person's region, followed by worldwide directories.
+- The region comes from the device and can be changed on the screen. An unknown region shows only the worldwide directories, never another country's numbers.
+- Each helpline offers call, text, or website actions. If the device cannot perform one, the number or address is shown to use elsewhere.
+- Currently included: United States (988, Crisis Text Line, SAMHSA, NAMI) and three international directories.
+
+### 2.7 Claw machine
 
 | Rule | Value |
 |------|-------|
-| Free tries | 5 maximum, one refills every 5 minutes |
-| Extra tries | 50 ✷ each, up to 10 purchases per day |
-| Normal prize | 10–100 ✷ |
-| Rare prize | 150–250 ✷, 15% chance per prize slot |
-| Combo multiplier | 1.0× for 1–2 wins in a row, 1.2× for 3–4, 1.5× for 5–6, 2.0× for 7 or more; resets on a miss |
-| Control | Hold to move the claw, release to drop |
+| Free tries | 5 maximum; one returns every 5 minutes |
+| Extra tries | 50 stars each, up to 10 per day; can exceed the free maximum |
+| Normal prize | 10–100 stars |
+| Rare prize | 150–250 stars; 15% chance per prize |
+| Win streak multiplier | ×1.0 for 1–2 wins in a row, ×1.2 for 3–4, ×1.5 for 5–6, ×2.0 for 7 or more; resets on a miss |
+| Control | Hold to move, let go to drop. Or, as a setting, tap to start and tap to drop |
 
-Statistics kept: plays, wins, total earnings, highest single win.
+Four prizes are in the machine; it refills when empty. Plays, wins, stars won, and best win are tracked.
 
-### 2.6 Shop and customisation
+### 2.8 Shop and style
 
 | Item | Type | Price |
 |------|------|-------|
-| Kakushigoto | Music | Free (default) |
-| Little | Music | 500 ✷ |
-| Ordinary Days | Music | 750 ✷ |
-| Default outfit | Outfit | Free (default) |
-| Blue Bao | Outfit | 1000 ✷ |
-| Default bamboo | Background | Free (default) |
-| Bamboo Clouds | Background | 800 ✷ |
-| Bamboo Plum | Background | 1000 ✷ |
+| Bamboo Morning | Music | Free (default) |
+| Paper Lanterns | Music | 500 |
+| Quiet Rain | Music | 750 |
+| Classic Bao | Outfit | Free (default) |
+| Blue Bao | Outfit | 1000 |
+| Bamboo Grove | Background | Free (default) |
+| Bamboo Clouds | Background | 800 |
+| Bamboo Plum | Background | 1000 |
 
-Owned items are selected in the customise dialog on the home screen.
+Buying asks for confirmation, then equips the item. Music can be previewed before buying. Owned items are switched from the "Style" sheet on home.
 
-### 2.7 Settings and tutorial
+### 2.9 Settings
 
-- Separate volume sliders for music, effects, and voice.
-- Step-through tutorial shown on first run, replayable from settings.
+Get help; music, effects, and voice volume; voice on/off; reduce motion; tap-instead-of-hold; profile name, switching, and adding; app lock; delete my data; replay the tour; open-source licences.
 
-## 3. History — what was done
+## 3. History
 
-Reconstructed from git history and the removed status reports.
+| Stage | When | What happened |
+|-------|------|---------------|
+| Kotlin prototype | Up to `e5db25f` (b0.4.3) | Native Android app: accounts, mood selection, conversation trees, intervention logic, claw machine, shop, voice, tutorial. |
+| Cleanup | 2026-11-11 | 71 redundant reports, crash dumps, IDE state, dead code, and unused assets removed; documentation baseline written. |
+| Intervention fix | 2026-11-11 | Found that the prototype never recorded mood check-ins, so the intervention could not trigger. Fixed and tested in Kotlin. |
+| Flutter rebuild | 2026-11-11 | App rebuilt in Flutter for Android and iOS (plan phases 0–5), with most of phase 6. Kotlin app removed. Music replaced with original generated tracks. Claw machine redrawn in code. |
 
-| Stage | Commit(s) | What happened |
-|-------|-----------|---------------|
-| Start | `9c0b54e` | Android Studio project created (Kotlin, with an unused C++ template). |
-| Early prototype | `ce3ec38` | Bamboo-frame UI and a first, unreliable claw machine. |
-| Logic build-out | `29398e3`, `78dc93f` | "Module 1–4" work: Room database and accounts, mood selection and tracking, the conversation engine and five mood trees, intervention logic and resources screen. |
-| b0.1 – b0.3 | `3ac2c78` … `525755d` | Conversations moved onto the main screen; `MainActivity` split into helper classes; guest accounts; shop for music, outfit (Blue Bao), and backgrounds; settings moved into a dialog; claw machine rewritten with tries, combos, and rare prizes; crash and memory-leak fixes. |
-| b0.4 – b0.4.3 | `8c8c34e` … `e5db25f` | Voice integration (142 clips), time-based greetings, tutorial, splash and loading screens, Quicksand font, status bar. |
-| Cleanup | 2026-11-11 | Repository cleaned and documented; see `LOG.md`. |
-| Intervention fix | 2026-11-11 | Mood check-ins are recorded again, so the intervention can trigger. It had been unreachable since mood selection moved into a dialog. |
-
-The removed reports repeatedly described the app as "production ready" and "100% complete". That was not accurate; section 5 lists why.
+The Kotlin source remains in git history up to commit `855d69f`.
 
 ## 4. Current state
 
 | Area | State |
 |------|-------|
-| Core loop (check-in → conversation → loop) | Works |
-| Voice, typewriter text, music | Works |
-| Intervention and resources | Works (rules unit-tested; not yet checked on a device), United States only |
-| Claw machine, shop, customisation | Works, with the data-scoping bugs below |
-| Tests | 12 unit tests for the intervention rules; nothing else |
-| Continuous integration | None |
-| Release configuration | None (placeholder application ID, no signing, no minification) |
-| iOS | Not possible with the current codebase |
+| All features in section 2 | Implemented and covered by automated tests |
+| Tests | 223 passing; `domain/` line coverage 95.9% |
+| Android | Debug and release builds succeed. Not yet run on a device |
+| iOS | Project configured. Never built |
+| CI | Workflow written. Has not run on GitHub yet |
+| Release | Not ready. See section 5 |
 
-## 5. Known problems
+### Problems from the prototype and how they were resolved
 
-### Safety and privacy (must fix before any release)
+| Prototype problem | Resolution |
+|-------------------|------------|
+| Intervention unreachable | Check-in and intervention decision are one tested transaction |
+| Unsalted password hashes; debug account list | No passwords or accounts; optional device lock |
+| Mood data in backups | Database encrypted; Android backups off |
+| Database wiped on schema change | Versioned schema with snapshots; no destructive fallback |
+| Purchases and claw state shared between accounts | Every table scoped to a profile; tested |
+| Voice clips resolved by name at runtime | References validated both ways in CI |
+| Every font weight mapped to bold | Five weights registered correctly |
+| Unlicensed music | Replaced with original generated tracks |
+| Hard-coded dialogue, prices, helplines | Content in validated JSON |
+| Hard-coded interface text | ARB localisation files |
+| Logic in Activities and singletons | Layered features with pure-Dart rules |
+| No tests | 223 tests, goldens, coverage gate |
+| White text on pale green buttons | Dark ink text; contrast tested to WCAG AA |
+| Android only | Flutter project for Android and iOS |
 
-1. **Weak password storage.** Unsalted SHA-256. Local accounts with passwords also give little real protection, because the data sits unencrypted on the device anyway.
-2. **Debug account list on the login screen.** `AuthActivity.showAllAccountsDialog` shows every username and balance.
-3. **Sensitive data in backups.** `allowBackup` is on with default rules, so mood history can leave the device in a backup.
-4. **Helplines are United States only**, and are hard-coded. Users elsewhere get numbers that do not work for them.
-5. **No disclaimer, privacy policy, or consent.** Required for a mental-health-adjacent app on both stores.
-6. **Unverified music licences.** The bundled tracks' names suggest commercial music. They cannot ship without a confirmed licence.
+## 5. What is left
 
-### Correctness
+### Must be done by a person before any release
 
-7. **Destructive database migration.** Any schema change wipes all accounts and progress.
-8. **Purchases are not per account.** The `purchases` table has no user ID, so one account buying an item blocks another account from buying it.
-9. **Claw-machine state is not per account.** Tries, daily purchases, and statistics are device-wide.
-10. **Voice clips are resolved by name at runtime.** A missing or renamed clip fails silently.
-11. **Font mapping.** Every weight maps to Quicksand Bold, so regular-weight text is not available.
+1. **Run it on real devices**, Android and iOS. Nothing here has been seen running. Check audio (music ducking under voice, pausing on calls), the biometric prompt, dialling and texting, the splash screen, and performance.
+2. **Verify every helpline** against its organisation's website and set `verifiedOn`. The release content check fails until this is done.
+3. **Listen to the generated music and effects.** They were made by a script and checked only for length and level.
+4. **Have the wording reviewed** by someone clinically qualified, especially the intervention tree and the disclaimer.
+5. **Legal review** of `docs/PRIVACY.md`, then publish it at a public URL.
+6. **Build and sign iOS**; create the Android upload key (`docs/RELEASE.md`).
+7. **Store work:** data safety form, privacy labels, content ratings, listings, and each store's health-app policy.
 
-### Engineering
+### Engineering still open
 
-12. Almost no tests (intervention rules only), no CI, no crash reporting.
-13. All dialogue, prices, and tutorial text are hard-coded in Kotlin or layouts; nothing is localisable.
-14. Logic lives in Activities and global singletons. `ClawMachineActivity` is 1,200 lines; the claw machine uses view animation and layout-dependent hit testing.
-15. `UserRepository` duplicates every method (with and without a user ID). Lists are stored as comma-separated strings and JSON-in-a-column.
-16. Large uncompressed PNG character art (up to about 0.9 MB each) and about 26 MB of music inflate the APK.
-17. No accessibility work: no content descriptions audit, fixed text sizes, no reduced-motion option, no captions toggle (though text always accompanies voice).
-18. Android only.
+8. Crash reporting (opt-in, with all personal data stripped). Not added: it needs an account and key to be chosen.
+9. Screen-reader pass with TalkBack and VoiceOver. Semantics are in place and tested in code, but not by ear.
+10. Performance measurement on a mid-range device.
+11. Exclude the database from iCloud backup on iOS.
+12. iOS `dev` and `prod` schemes (Android has both flavours).
+13. Device-level integration tests. Current flow tests run the whole app in the test environment, not on a device.
+14. Helplines for more countries, and a second language.
 
-## 6. Roadmap
+### Nice to have
 
-Detail, acceptance criteria, and sequencing are in `PLAN-A-00-111126.md`.
-
-| Phase | Outcome |
-|-------|---------|
-| 0. Foundations | Flutter project scaffolded beside the Kotlin app; CI, linting, and decisions on open questions. |
-| 1. Content and assets | Dialogue, shop catalogue, tutorial, and helplines moved out of code into validated data files; assets optimised. |
-| 2. Core domain | Mood, intervention, economy, and conversation engines as pure, fully tested Dart. |
-| 3. Data layer | Typed local database with real migrations, per-profile scoping, and encrypted sensitive data. |
-| 4. App shell | Navigation, theme, audio services, onboarding with disclaimer and consent. |
-| 5. Features | Home and conversation, resources, shop and customisation, settings, tutorial, claw machine. |
-| 6. Production hardening | Accessibility, localisation, crash reporting, performance, privacy and store compliance. |
-| 7. Release | Beta on both stores, staged rollout, Kotlin app removed. |
-| Later | More outfits, backgrounds, and games; mood history view; reminders; optional cloud backup. |
-
-### Open decisions
-
-These need an owner's answer before or during Phase 0. The plan states a recommended default for each.
-
-1. Keep username/password accounts, or switch to local profiles with an optional device lock?
-2. Which countries are in scope at launch (drives helplines and languages)?
-3. Is there a licence for the current music, or should it be replaced?
-4. Final application ID and store name.
-5. Is any cloud feature (backup, sync) in scope for the first release?
+15. Character art for anxious and okay moods (they reuse the sad and hello poses).
+16. Richer animated backgrounds.
+17. Mood history view, optional check-in reminder, a breathing exercise, more items.

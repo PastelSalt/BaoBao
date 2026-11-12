@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:baobao/core/audio/audio_director.dart';
 import 'package:baobao/core/content/app_content.dart';
 import 'package:baobao/core/database/app_database.dart';
@@ -7,6 +9,7 @@ import 'package:baobao/features/conversation/data/conversation_repository.dart';
 import 'package:baobao/features/economy/data/economy_repository.dart';
 import 'package:baobao/features/economy/domain/catalog.dart';
 import 'package:baobao/features/mood/data/mood_repository.dart';
+import 'package:baobao/features/mood/domain/mood.dart';
 import 'package:baobao/features/profiles/data/profile_repository.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +30,9 @@ final audioDirectorProvider = Provider<AudioDirector>((ref) {
   ref.onDispose(director.dispose);
   return director;
 });
+
+/// The source of chance, for picking lines. Tests override this with a seed.
+final randomProvider = Provider<Random>((ref) => Random());
 
 /// The source of "now". Tests override this to control time.
 final clockProvider = Provider<Clock>((ref) => const Clock());
@@ -78,6 +84,19 @@ final selectionsProvider = StreamProvider<Map<ItemSlot, CatalogItem>>((ref) {
     return Stream.value({for (final slot in ItemSlot.values) slot: catalog.defaultFor(slot)});
   }
   return ref.watch(economyRepositoryProvider).watchSelections(id);
+});
+
+/// The latest mood the active profile checked in with, if any.
+final latestMoodProvider = StreamProvider<Mood?>((ref) {
+  final id = ref.watch(activeProfileIdProvider);
+  if (id == null) return const Stream.empty();
+  return ref.watch(moodRepositoryProvider).watchLatestMood(id);
+});
+
+final ownedItemsProvider = StreamProvider<Set<String>>((ref) {
+  final id = ref.watch(activeProfileIdProvider);
+  if (id == null) return const Stream.empty();
+  return ref.watch(economyRepositoryProvider).watchOwned(id);
 });
 
 /// Whether animation should be kept to a minimum, from the in-app setting.

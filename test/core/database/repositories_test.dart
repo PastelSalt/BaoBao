@@ -40,10 +40,10 @@ void main() {
 
       expect(profile.displayName, 'Mei');
       expect(await economy.balance(profile.id), 3000);
-      expect(await economy.owned(profile.id), {'kakushigoto', 'classic', 'bamboo'});
+      expect(await economy.owned(profile.id), {'bamboo_morning', 'classic', 'bamboo'});
       final selections = await economy.watchSelections(profile.id).first;
       expect(selections.map((slot, item) => MapEntry(slot, item.id)), {
-        ItemSlot.music: 'kakushigoto',
+        ItemSlot.music: 'bamboo_morning',
         ItemSlot.outfit: 'classic',
         ItemSlot.background: 'bamboo',
       });
@@ -87,7 +87,7 @@ void main() {
       final a = await profiles.create('A', now);
       final b = await profiles.create('B', now);
       await moods.recordCheckIn(a.id, Mood.sad, now);
-      await economy.purchase(a.id, catalog.byId('little')!, now);
+      await economy.purchase(a.id, catalog.byId('paper_lanterns')!, now);
 
       await profiles.delete(a.id);
 
@@ -120,7 +120,7 @@ void main() {
     });
 
     test('buying something twice is refused and charges nothing', () async {
-      final item = catalog.byId('little')!;
+      final item = catalog.byId('paper_lanterns')!;
       await economy.purchase(id, item, now);
       expect(await economy.purchase(id, item, now), isA<AlreadyOwned>());
       expect(await economy.balance(id), 2500);
@@ -132,10 +132,10 @@ void main() {
       }
       expect(await economy.balance(id), 200);
 
-      final decision = await economy.purchase(id, catalog.byId('little')!, now);
+      final decision = await economy.purchase(id, catalog.byId('paper_lanterns')!, now);
       expect((decision as InsufficientFunds).shortBy, 300);
       expect(await economy.balance(id), 200);
-      expect(await economy.owned(id), isNot(contains('little')));
+      expect(await economy.owned(id), isNot(contains('paper_lanterns')));
     });
 
     test('the balance can never go negative, even by a direct write', () async {
@@ -159,13 +159,13 @@ void main() {
       await (db.update(db.selections)..where((s) => s.slot.equals('music'))).write(
         const SelectionsCompanion(itemId: Value('removed_track')),
       );
-      expect((await economy.watchSelections(id).first)[ItemSlot.music]!.id, 'kakushigoto');
+      expect((await economy.watchSelections(id).first)[ItemSlot.music]!.id, 'bamboo_morning');
     });
 
     test('the balance stream emits after a purchase', () async {
       final balances = economy.watchBalance(id);
       expect(await balances.first, 3000);
-      await economy.purchase(id, catalog.byId('little')!, now);
+      await economy.purchase(id, catalog.byId('paper_lanterns')!, now);
       expect(await balances.first, 2500);
     });
   });

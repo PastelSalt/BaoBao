@@ -47,7 +47,7 @@ final homeControllerProvider = NotifierProvider<HomeController, HomeState>(HomeC
 /// Runs everything BaoBao says on the home screen: greetings, quick
 /// pick-me-ups, and mood conversations including the intervention.
 class HomeController extends Notifier<HomeState> {
-  final _random = Random();
+  Random get _random => ref.read(randomProvider);
 
   @override
   HomeState build() {

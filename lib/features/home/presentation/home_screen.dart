@@ -47,6 +47,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Decode every pose up front so BaoBao never blinks out when the mood changes.
+    final outfit =
+        ref.read(selectionsProvider).value?[ItemSlot.outfit] ??
+        ref.read(catalogProvider).defaultFor(ItemSlot.outfit);
+    for (final pose in CharacterPose.values) {
+      unawaited(
+        precacheImage(
+          AssetImage(CharacterView.assetFor(outfit.asset, pose)),
+          context,
+          onError: (_, _) {},
+        ),
+      );
+    }
+  }
+
   HomeController get _controller => ref.read(homeControllerProvider.notifier);
 
   /// Runs [action], ignoring further taps until it finishes.

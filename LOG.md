@@ -128,3 +128,108 @@ This is also the first successful build since the cleanup entry above, so it con
 | `INSTRUCTIONS.md` | Removed three development rules that were pasted in from another project by mistake: "Prefer small, focused changes that preserve existing behavior", "Follow the conventions already used by the project", and the rule about not documenting `node_modules` or `dist` in `CODEMAP.md`. | Three development rules remain: inspect before editing, run the narrowest validation, report results in `LOG.md`. No code changed; no validation needed. |
 
 Owner's direction recorded for future work: for the migration and other major changes, do not preserve the prototype's structure or conventions for their own sake. Replace them wherever a different approach is clearly better.
+
+## 2026-11-11 to 2026-11-12 — Flutter rebuild (plan phases 0–6) and removal of the Kotlin app
+
+Branch: `claude/fervent-cori-4u1jxv`. Commits `855d69f` (phases 0–5) and the one that adds this entry.
+
+### 1. Environment
+
+| Action | Result |
+|--------|--------|
+| Installed Flutter 3.47.9 (Dart 3.13.7) and used the Android SDK from the previous entry (added platform 35 on demand). | Working toolchain for tests and Android builds. No macOS, so no iOS builds. |
+
+### 2. Phase 0 — foundations
+
+| Paths | Change |
+|-------|--------|
+| `legacy/android-native/` | Kotlin app moved here, then deleted in step 8. |
+| `pubspec.yaml`, `android/`, `ios/`, `lib/`, `test/` | Flutter project created with application ID `com.moekoworks.baobao`. |
+| `analysis_options.yaml` | Strict analyzer modes and extra lints. |
+| `android/app/build.gradle.kts`, `AndroidManifest.xml`, `MainActivity.kt`, `res/xml/data_extraction_rules.xml` | `dev` and `prod` flavours; release signing from `android/key.properties` with a debug-key fallback; shrinking on; backups off; biometric permission; `FlutterFragmentActivity`; intent queries for helpline links. |
+| `ios/Runner/Info.plist` | Display name, Face ID usage text, URL scheme queries. |
+| `.github/workflows/ci.yml`, `tool/check_coverage.dart` | CI pipeline and the domain coverage gate. |
+| `.gitignore` | Flutter entries; signing files; generated build folders. |
+
+### 3. Phase 1 — content and assets
+
+| Paths | Change |
+|-------|--------|
+| `assets/content/conversations/en/*.json`, `assets/content/scripts/en.json` | Extracted from `ConversationManager.kt` and `VoiceManager.kt` by a one-off script (since deleted): 79 nodes, 10 script pools. |
+| `assets/content/catalog.json`, `helplines.json`, `tutorial/en.json` | Written by hand. Helplines are marked unverified. Crisis Text Line keyword set to HOME. |
+| `assets/audio/voice/en/` | 142 clips repackaged from `.aac` to `.m4a` without re-encoding. |
+| `assets/audio/music/`, `assets/audio/sfx/`, `tool/make_audio.py` | The five bundled tracks and the click were replaced by original audio synthesised by this script; win and miss effects added. Music went from about 25 MB to about 4 MB. Catalogue items renamed Bamboo Morning, Paper Lanterns, Quiet Rain. |
+| `assets/images/` | Art converted to WebP (11 MB to 1.9 MB); the three backgrounds converted to SVG. |
+| `assets/fonts/` | Quicksand, five weights, registered at their real weights. |
+| `lib/core/content/`, `tool/validate_content.dart` | Loader, models, graph validator, asset audit, command-line check. |
+
+### 4. Phases 2 and 3 — rules and data
+
+| Paths | Change |
+|-------|--------|
+| `lib/features/*/domain/` | Mood tracking, intervention policy, conversation session, catalogue and purchase rules, claw tries, claw game. Pure Dart. |
+| `lib/core/database/`, `build.yaml`, `drift_schemas/` | Ten-table drift schema, encrypted open with key management, schema version 1 snapshot. |
+| `lib/features/*/data/` | Repositories for profiles, mood, economy, claw machine, conversation progress. |
+
+### 5. Phase 4 — app shell
+
+| Paths | Change |
+|-------|--------|
+| `lib/bootstrap.dart`, `lib/app/` | Startup, routing with guards, theme, lifecycle handling, per-screen music. |
+| `lib/core/audio/`, `core/security/`, `core/settings/`, `core/links/`, `core/widgets/` | Audio director, app lock, settings, link opener, shared widgets. |
+| `lib/l10n/app_en.arb`, `l10n.yaml` | All interface text. |
+| `lib/features/onboarding/`, `features/app_lock/` | Onboarding with consent; unlock screen. |
+
+### 6. Phase 5 — features
+
+| Paths | Change |
+|-------|--------|
+| `lib/features/home/`, `features/mood/presentation/` | Home screen, conversation controller, check-in sheet. |
+| `lib/features/intervention/presentation/` | Region-aware help screen. |
+| `lib/features/shop/`, `features/customization/` | Shop and style sheet. |
+| `lib/features/settings/`, `features/tutorial/` | Settings and tour. |
+| `lib/features/claw_machine/application/`, `presentation/` | Controller, drawn machine, screen. |
+
+### 7. Phase 6 — hardening done in this pass
+
+Semantics labels and roles, keyboard focus ring on buttons, layouts that scroll rather than overflow at 2× text, reduced motion, tap-instead-of-hold, contrast tests, image pre-caching on home, launcher icons and splash generated from the existing artwork, `docs/PRIVACY.md` (draft), `docs/RELEASE.md`.
+
+### 8. Removed
+
+| Paths | Reason |
+|-------|--------|
+| `legacy/android-native/` (the whole Kotlin app) | Replaced by the Flutter app. In git history up to `855d69f`. |
+| `docs/legacy/` | Content ported into assets and code. |
+| `tool/extract_content.py`, `tool/convert_assets.py` | One-off scripts whose input was the Kotlin app. |
+| `assets/images/icons/`, `assets/images/claw/`, `assets/images/brand/studio.webp` | Converted legacy vectors and a logo that nothing uses. |
+| Dependencies `drift_flutter`, `mocktail`, `cupertino_icons`, `flutter_launcher_icons`, `flutter_native_splash` | Unused, or resolved to versions too old to build. Splash and icons were generated once and committed. |
+
+### 9. Documentation
+
+`README.md`, `CODEMAP.md`, and `PROJECT-SPECS.md` rewritten for the Flutter app. `PLAN-A-00-111126.md` gained a status section with decisions and deviations.
+
+### 10. Validation
+
+| Check | Result |
+|-------|--------|
+| `flutter test` | **Passed.** 223 tests, run twice in a row. |
+| `flutter analyze --fatal-infos` | **Passed.** No issues. |
+| `dart format --set-exit-if-changed lib test tool` | **Passed.** |
+| `dart run tool/validate_content.dart` | **Passed.** Eight release blockers reported, all unverified helplines. |
+| `dart run tool/check_coverage.dart coverage/lcov.info 90 /domain/` | **Passed.** 95.9%. |
+| `flutter build apk --debug --flavor dev -t lib/main_dev.dart` | **Passed.** |
+| `flutter build apk --release --flavor prod -t lib/main.dart --split-per-abi` | **Passed.** About 50 MB per architecture, signed with the debug key (no release keystore exists yet). |
+| Legacy `gradle assembleDebug` from `legacy/android-native/` | **Not run** before deletion. |
+| iOS build | **Not run.** No macOS available. |
+| Running the app on a device or emulator | **Not done.** |
+| CI on GitHub | **Not run yet.** |
+
+### 11. Known limitations
+
+- The app has never been seen running. Everything is verified through tests and builds only.
+- Maven Central rate-limited this environment repeatedly (HTTP 429). Android builds needed retries; this is not a project fault.
+- Golden images were generated on Linux and may differ slightly on other systems.
+- Flow tests must not close or write to the database through `tester.runAsync` while screens are listening; it never completes. `Harness.dispose` and the shop tests are written around this.
+- Generated audio was checked for duration and level, not by ear.
+- Helplines are unverified, so `validate_content.dart --release` fails by design.
+- `appVersion` in `settings_screen.dart` duplicates the version in `pubspec.yaml`.

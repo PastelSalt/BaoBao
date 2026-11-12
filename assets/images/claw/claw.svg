@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60">
-  <path d="M25,0 h10 v15 h-10z" fill="#8b5e3c"/>
-  <path d="M25,15 Q10,15 10,40 Q10,55 25,55 L25,50 Q15,50 15,40 Q15,20 25,20 Z" fill="#a1887f"/>
-  <path d="M35,15 Q50,15 50,40 Q50,55 35,55 L35,50 Q45,50 45,40 Q45,20 35,20 Z" fill="#a1887f"/>
-  <path d="M25,12 h10 v2 h-10z M10,35 h5 v2 h-5z M45,35 h5 v2 h-5z" fill="#5d4037"/>
-</svg>

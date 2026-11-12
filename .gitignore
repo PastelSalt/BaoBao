@@ -47,13 +47,6 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
-# Legacy Kotlin app (legacy/android-native)
-legacy/**/.gradle/
-legacy/**/build/
-legacy/**/local.properties
-legacy/**/.kotlin/
-legacy/**/.cxx/
-
 # JVM crash dumps
 hs_err_pid*.log
 replay_pid*.log
@@ -65,3 +58,5 @@ replay_pid*.log
 android/key.properties
 *.jks
 *.keystore
+android/.kotlin/
+android/build/

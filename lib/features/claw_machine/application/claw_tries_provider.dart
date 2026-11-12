@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:baobao/core/providers.dart';
 import 'package:baobao/features/claw_machine/domain/claw_tries.dart';
-import 'package:baobao/features/mood/domain/mood.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// The active profile's tries as of now. Re-evaluated every second so the
@@ -31,17 +30,4 @@ final clawTriesProvider = StreamProvider<ClawTries>((ref) {
     unawaited(controller.close());
   });
   return controller.stream;
-});
-
-/// The latest mood the active profile checked in with, if any.
-final latestMoodProvider = StreamProvider<Mood?>((ref) {
-  final id = ref.watch(activeProfileIdProvider);
-  if (id == null) return const Stream.empty();
-  return ref.watch(moodRepositoryProvider).watchLatestMood(id);
-});
-
-final ownedItemsProvider = StreamProvider<Set<String>>((ref) {
-  final id = ref.watch(activeProfileIdProvider);
-  if (id == null) return const Stream.empty();
-  return ref.watch(economyRepositoryProvider).watchOwned(id);
 });

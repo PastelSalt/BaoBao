@@ -52,9 +52,9 @@ void main() {
       expect(
         {for (final i in content.catalog.items) i.id: i.price},
         {
-          'kakushigoto': 0,
-          'little': 500,
-          'ordinary_days': 750,
+          'bamboo_morning': 0,
+          'paper_lanterns': 500,
+          'quiet_rain': 750,
           'classic': 0,
           'blue_bao': 1000,
           'bamboo': 0,
@@ -74,10 +74,17 @@ void main() {
   });
 
   group('audit', () {
-    test('flags unverified helplines and unlicensed media as release blockers', () {
+    test('flags unverified helplines as release blockers', () {
       final blockers = auditContent(content, assets).releaseBlockers;
       expect(blockers, contains(contains('Helpline "us_988" has not been verified')));
-      expect(blockers, contains(contains('"kakushigoto" has no confirmed licence')));
+    });
+
+    test('all bundled music is original, so nothing is blocked on a licence', () {
+      final blockers = auditContent(content, assets).releaseBlockers;
+      expect(blockers.where((b) => b.contains('licence')), isEmpty);
+      for (final item in content.catalog.inSlot(ItemSlot.music)) {
+        expect(item.licence, 'original');
+      }
     });
 
     test('reports missing and unused voice clips', () {

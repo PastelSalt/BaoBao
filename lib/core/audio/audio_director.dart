@@ -38,7 +38,9 @@ class AudioDirector {
   /// How much of its volume music keeps while BaoBao is speaking.
   static const duckFactor = 0.35;
 
-  static const clickAsset = 'assets/audio/sfx/click.mp3';
+  static const clickAsset = 'assets/audio/sfx/click.m4a';
+  static const winAsset = 'assets/audio/sfx/win.m4a';
+  static const missAsset = 'assets/audio/sfx/miss.m4a';
 
   final AudioChannel _music;
   final AudioChannel _voice;
@@ -98,6 +100,12 @@ class AudioDirector {
   Future<void> click() => _guard(() async {
     if (_levels.sfx <= 0 || _suspended) return;
     await _sfx.play(clickAsset);
+  });
+
+  /// A short sound effect, such as the claw machine's win chime.
+  Future<void> effect(String asset) => _guard(() async {
+    if (_levels.sfx <= 0 || _suspended) return;
+    await _sfx.play(asset);
   });
 
   Future<void> updateLevels(AudioLevels levels) => _guard(() async {

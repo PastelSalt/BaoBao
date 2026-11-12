@@ -2,34 +2,42 @@
   "startingBalance": 3000,
   "items": [
     {
-      "id": "kakushigoto",
+      "id": "bamboo_morning",
       "slot": "music",
-      "name": { "en": "Kakushigoto" },
+      "name": {
+        "en": "Bamboo Morning"
+      },
       "price": 0,
       "default": true,
-      "asset": "assets/audio/music/kakushigoto.mp3",
-      "licence": "unverified"
+      "asset": "assets/audio/music/bamboo_morning.m4a",
+      "licence": "original"
     },
     {
-      "id": "little",
+      "id": "paper_lanterns",
       "slot": "music",
-      "name": { "en": "Little" },
+      "name": {
+        "en": "Paper Lanterns"
+      },
       "price": 500,
-      "asset": "assets/audio/music/little.mp3",
-      "licence": "unverified"
+      "asset": "assets/audio/music/paper_lanterns.m4a",
+      "licence": "original"
     },
     {
-      "id": "ordinary_days",
+      "id": "quiet_rain",
       "slot": "music",
-      "name": { "en": "Ordinary Days" },
+      "name": {
+        "en": "Quiet Rain"
+      },
       "price": 750,
-      "asset": "assets/audio/music/ordinary_days.mp3",
-      "licence": "unverified"
+      "asset": "assets/audio/music/quiet_rain.m4a",
+      "licence": "original"
     },
     {
       "id": "classic",
       "slot": "outfit",
-      "name": { "en": "Classic Bao" },
+      "name": {
+        "en": "Classic Bao"
+      },
       "price": 0,
       "default": true,
       "asset": "assets/images/character/classic"
@@ -37,14 +45,18 @@
     {
       "id": "blue_bao",
       "slot": "outfit",
-      "name": { "en": "Blue Bao" },
+      "name": {
+        "en": "Blue Bao"
+      },
       "price": 1000,
       "asset": "assets/images/character/blue_bao"
     },
     {
       "id": "bamboo",
       "slot": "background",
-      "name": { "en": "Bamboo Grove" },
+      "name": {
+        "en": "Bamboo Grove"
+      },
       "price": 0,
       "default": true,
       "asset": "assets/images/backgrounds/bamboo.svg"
@@ -52,14 +64,18 @@
     {
       "id": "bamboo_clouds",
       "slot": "background",
-      "name": { "en": "Bamboo Clouds" },
+      "name": {
+        "en": "Bamboo Clouds"
+      },
       "price": 800,
       "asset": "assets/images/backgrounds/bamboo_clouds.svg"
     },
     {
       "id": "bamboo_plum",
       "slot": "background",
-      "name": { "en": "Bamboo Plum" },
+      "name": {
+        "en": "Bamboo Plum"
+      },
       "price": 1000,
       "asset": "assets/images/backgrounds/bamboo_plum.svg"
     }

@@ -1,6 +1,6 @@
 # CODEMAP
 
-Index of the repository as it exists now. Planned work lives in `PLAN-A-00-111126.md`, not here. Update this file whenever structure, responsibilities, navigation, dependencies, or data flow change (`INSTRUCTIONS.md`).
+Index of the repository as it exists now. Planned work lives in `PLAN-A-00-111126.md`, not here. Update this file whenever structure, responsibilities, routes, dependencies, or data flow change (`INSTRUCTIONS.md`).
 
 Last verified against the tree: 2026-11-11.
 
@@ -8,218 +8,184 @@ Last verified against the tree: 2026-11-11.
 
 | Path | What it is |
 |------|------------|
-| `README.md` | Project overview, setup, build commands. |
-| `INSTRUCTIONS.md` | Repository rules for contributors and agents. |
-| `PROJECT-SPECS.md` | Objectives, current state, known issues, roadmap. |
-| `PLAN-A-00-111126.md` | Flutter migration and production-readiness plan. |
-| `LOG.md` | Change log of actions taken in the repo. |
-| `CODEMAP.md` | This file. |
-| `docs/legacy/` | Four older reference docs (audio naming, conversation logic, dialog design, outfit system). May be stale; see its `README.md`. |
-| `app/` | The only Gradle module: the Android application. |
-| `build.gradle.kts`, `settings.gradle.kts`, `gradle.properties` | Root Gradle configuration. One module, `:app`. |
-| `gradle/libs.versions.toml` | Version catalog for plugins and libraries. |
-| `gradle/wrapper/`, `gradlew`, `gradlew.bat` | Gradle wrapper. |
-| `.gitignore` | Ignores build output, IDE state (`.idea/`, `.kotlin/`), JVM crash logs, and Flutter tool output. |
+| `README.md`, `INSTRUCTIONS.md`, `PROJECT-SPECS.md`, `PLAN-A-00-111126.md`, `LOG.md`, `CODEMAP.md` | Project documentation. |
+| `docs/RELEASE.md`, `docs/PRIVACY.md` | Release guide; draft privacy policy. |
+| `pubspec.yaml`, `pubspec.lock` | Dependencies, assets, fonts. The `hooks` section selects the encrypted SQLite build. |
+| `analysis_options.yaml` | Lint rules (strict casts, inference, raw types; package imports only). |
+| `build.yaml` | drift code-generation options and schema snapshot locations. |
+| `l10n.yaml` | Localisation generator settings. |
+| `lib/` | App source (section 2). |
+| `test/` | Tests (section 6). |
+| `assets/` | Content, audio, images, fonts (section 5). |
+| `tool/` | `validate_content.dart` (content check), `check_coverage.dart` (coverage gate), `make_audio.py` (music and effects generator). |
+| `drift_schemas/` | Snapshot of each database schema version, for migration tests. |
+| `android/`, `ios/` | Platform projects. |
+| `.github/workflows/ci.yml` | CI: format, generated-code freshness, analysis, content validation, tests, domain coverage ≥ 90%, Android build; unsigned iOS build on macOS. |
 
-## 2. App module
+## 2. Source — `lib/`
 
-```
-app/
-├── build.gradle.kts            Module build: SDK levels, ViewBinding, dependencies
-├── proguard-rules.pro          Empty apart from template comments (minify is off)
-└── src/main/
-    ├── AndroidManifest.xml     Activities, VIBRATE permission, launcher
-    ├── java/com/example/baobao/  Kotlin source (section 3)
-    └── res/                    Layouts, drawables, audio, fonts (section 5)
-```
+60 hand-written Dart files, about 6,900 lines. Feature-first: each feature folder may contain `domain/` (pure Dart rules, no Flutter imports), `data/` (database access), `application/` (controllers and providers), and `presentation/` (widgets).
 
-Build facts: namespace and application ID `com.example.baobao`, `minSdk` 24, `compileSdk`/`targetSdk` 36, version `1.0` (code 1), Java 11 target, release build not minified. Local unit tests live in `app/src/test/`; there are no instrumented tests.
-
-## 3. Kotlin source — `app/src/main/java/com/example/baobao/`
-
-32 files, about 8,600 lines. All UI is Activity + ViewBinding; there are no ViewModels or dependency injection. Shared state lives in Kotlin `object` singletons.
-
-### Root package — screens
+### Entry and app shell
 
 | File | Responsibility |
 |------|----------------|
-| `AuthActivity.kt` | Login, sign-up, and guest entry. Shows a random BaoBao line with voice. Routes to the tutorial on first run, otherwise the main screen. Contains a **debug dialog that lists all accounts**. |
-| `MainActivity.kt` | Home screen. Wires up the four helper classes from `coreoperations`, shows the time-based greeting, starts conversations, applies the selected outfit, background, and music. |
-| `ShopActivity.kt` | Shop for music, outfit, and backgrounds. Prices are hard-coded here. |
+| `main.dart`, `main_dev.dart` | Entry points for the `prod` and `dev` flavours. Both call `bootstrap`. |
+| `bootstrap.dart` | Startup: loads preferences and content, creates or reads the database key, opens the encrypted database, configures audio, checks the remembered profile still exists, locks the app if the lock is on. Shows `StartupErrorApp` with a retry if anything fails. |
+| `app/app.dart` | `BaoBaoApp`: theme, localisation, router. Pauses sound and tracks time away when backgrounded. Chooses the music for the screen on top (`_syncMusic`). Pushes settings changes to the audio director. |
+| `app/router.dart` | Routes, the `guard` redirect rule, and `musicFor` (which track each route plays). |
+| `app/theme/app_colors.dart` | Palette and a WCAG contrast calculation. |
+| `app/theme/app_theme.dart` | Material theme and Quicksand typography. |
 
-### `additionals/` — transitional screens
-
-| File | Responsibility |
-|------|----------------|
-| `SecondSplashActivity.kt` | Launcher activity. Builds its layout in code, shows the studio logo, then goes to `AuthActivity` or `MainActivity` depending on session state. |
-| `LoadingActivity.kt` | Animated loading card shown between screens. `startWithTarget(activity, target, delay)` is the app's de facto navigation call. |
-
-### `audio/`
+### `core/` — shared infrastructure
 
 | File | Responsibility |
 |------|----------------|
-| `SoundManager.kt` | Singleton. One looping `MediaPlayer` for background music, one for the click effect. Reads volumes from SharedPreferences. |
-| `VoiceManager.kt` | Singleton. Plays one voice clip at a time. Resolves clips **by name at runtime** (`resources.getIdentifier`), so voice files have no compile-time references. Holds the node-ID → clip-number maps for each mood. |
+| `providers.dart` | Riverpod providers: database, content, audio director, clock, repositories, and the active profile's streams (profile, balance, selections, owned items, latest mood). |
+| `settings/app_settings.dart` | `AppSettings` and `SettingsController`: volumes, voice, reduced motion, claw tap mode, consent version, active profile, app lock, tutorial seen, help country. Stored in shared_preferences. |
+| `content/app_content.dart` | `AppContent.load`: reads all content JSON through an `AssetReader`, so it works from the asset bundle and from disk. |
+| `content/content_models.dart` | `VoicedLine`, `LinePool` (no immediate repeats), `ScriptLibrary`, `Helpline*`, `TutorialStep`, `DayPart`. |
+| `content/content_validator.dart` | Graph checks for a conversation tree: targets exist, every node reachable, every node can reach an ending. |
+| `content/content_audit.dart` | Cross-checks content against asset files. Separates errors from release blockers (unverified helplines, unlicensed media). |
+| `database/tables.dart` | drift table definitions (section 4). |
+| `database/app_database.dart` | `AppDatabase`, schema version, foreign keys on, and `adjustBalance` (the only way a wallet changes; always writes a ledger entry). |
+| `database/database_opener.dart` | Key creation, encrypted open, refusal to run without a cipher, and moving aside a file that cannot be read with the key. |
+| `audio/audio_channel.dart` | `AudioChannel` interface, `JustAudioChannel`, `SilentChannel`. Only the music channel claims audio focus. |
+| `audio/audio_director.dart` | Coordinates music, voice, and effects: ducking under voice, one voice line at a time, silence in the background, failures swallowed and reported. |
+| `security/app_lock.dart` | `DeviceAuthenticator` (local_auth) and `AppLockController` (locks after 60 seconds away). |
+| `security/secure_key_store.dart` | Database key in Android Keystore / iOS Keychain. |
+| `links/link_opener.dart` | Opens `tel:`, `sms:`, and web links through url_launcher. |
+| `widgets/` | `BambooFrame`, `BambooButton`, `BambooDialog`, `SpeechBubble`, `TypewriterText`, `CharacterView`, `AppBackground`, `LoadingOverlay`, `ScreenScaffold`, `StarAmount`, and `reduceMotion`. |
 
-### `conversation/`
+### `features/`
 
-| File | Responsibility |
-|------|----------------|
-| `ConversationNode.kt` | `ConversationNode` (id, mood, line, options, loop-point flag, feature nudge) and `UserOption` (text, next node, mood effect). |
-| `ConversationManager.kt` | Singleton holding **all dialogue content in code**: ten simple script pools (sign-up, login, shop, settings, claw machine, self-care, affirmations, jokes, goodbye, greetings) and six node trees. Node counts: happy 11, okay 13, sad 16, anxious 15, tired 16, intervention 8 (79 total). |
+| Feature | Files | Responsibility |
+|---------|-------|----------------|
+| `onboarding` | `presentation/onboarding_screen.dart` | Welcome, disclaimer and age confirmation, name, optional app lock. Saves nothing until the last step. |
+| `app_lock` | `presentation/unlock_screen.dart` | Shown instead of the app while locked. |
+| `home` | `application/home_controller.dart`, `presentation/home_screen.dart` | What BaoBao says and does: greeting, quick actions, check-in, conversation, leaving a chat. The screen shows status, speech bubble, character, and either replies or the idle buttons. |
+| `mood` | `domain/mood.dart`, `emotional_state.dart`, `mood_tracker.dart`; `data/mood_repository.dart`; `presentation/mood_sheet.dart` | Moods and their weights; how check-ins and choices change the emotional state; recording a check-in and deciding on intervention in one transaction; the "How are you feeling?" sheet. |
+| `intervention` | `domain/intervention_policy.dart`, `presentation/resources_screen.dart` | When to intervene (threshold, pattern, cooldown); the helpline screen with region picker and a fallback when a link cannot be opened. |
+| `conversation` | `domain/conversation_models.dart`, `conversation_session.dart`; `data/conversation_repository.dart` | Tree, node, and option models; an immutable session that advances on each choice; saving where a conversation got to. |
+| `economy` | `domain/catalog.dart`, `purchase_rules.dart`; `data/economy_repository.dart` | Catalogue and slots; whether a purchase is allowed; atomic purchase, ownership, and equipping. |
+| `shop` | `presentation/shop_screen.dart` | Buying with confirmation, music preview. |
+| `customization` | `presentation/customize_sheet.dart`, `item_card.dart` | Switching between owned items from home, with the change visible behind the sheet. |
+| `claw_machine` | `domain/claw_game.dart`, `claw_tries.dart`; `data/claw_repository.dart`; `application/claw_controller.dart`, `claw_tries_provider.dart`; `presentation/claw_machine_painter.dart`, `claw_machine_screen.dart` | The game state machine and prize rules; try refills and daily purchases; persistence and payouts; the controller that ties a round to tries, voice, and payout; the drawn machine; the screen. |
+| `profiles` | `data/profile_repository.dart` | Create (with starting balance, defaults, full tries), rename, delete with cascade. |
+| `settings` | `presentation/settings_screen.dart` | Sound, accessibility, profiles, privacy, about. Holds `appVersion`. |
+| `tutorial` | `presentation/tutorial_screen.dart` | The tour, driven by content. |
 
-### `coreoperations/` — main-screen helpers and shared UI
+### `l10n/`
 
-| File | Responsibility |
-|------|----------------|
-| `BaseActivity.kt` | Base for screens with music. Plays `getBgmResource()` on resume, pauses on pause. Default is `0` (no music); `ShopActivity` and `ClawMachineActivity` override it, `MainActivity` manages its own track. |
-| `ConversationController.kt` | Runs a conversation on the main screen: picks the start node (or the intervention tree if `InterventionManager` says so), renders choices, applies mood effects, saves the path, returns at loop points. |
-| `NavigationHandler.kt` | Main-screen buttons: shop, claw machine, settings, customise, and the idle "quick action" buttons (joke, affirmation, self-care, check-in). |
-| `DialogManager.kt` | Builds the settings, customise, and mood-selection dialogs. Settings also hosts logout and tutorial replay. |
-| `UIStateManager.kt` | Main-screen status bar: currency, mood, claw-machine tries and timer. Maps music keys to raw resources. |
-| `CharacterImageManager.kt` | Singleton mapping outfit × emotion to a character drawable. |
-| `BackgroundManager.kt` | Singleton mapping background ID to a drawable. |
-| `AnimationManager.kt` | Singleton library of view animations (entrances, button press, dialog, character emotion change). |
-| `TypewriterTextView.kt` | Custom `TextView` that reveals text character by character. Used in `activity_main.xml`. |
+`app_en.arb` is the source of all interface text. `app_localizations*.dart` are generated.
 
-### `database/` — Room and session
+## 3. Routes
 
-| File | Responsibility |
-|------|----------------|
-| `AppDatabase.kt` | Room database `baobao_database`, version 5, entities `UserData` and `Purchase`. Uses `fallbackToDestructiveMigration()` — **a schema change deletes all user data**. |
-| `UserData.kt` | Table `user_data`: credentials, currency (starts at 3000), owned and selected music/theme/outfit/background (comma-separated strings), mood history (JSON string), emotional weight, intervention state, conversation path. |
-| `Purchase.kt` | Table `purchases`: item type, ID, name, cost, date. **Has no user ID column.** |
-| `UserDao.kt` | Queries for both tables. |
-| `UserRepository.kt` | Auth (SHA-256 hash compare), guest accounts, currency, purchases, selections. Every operation exists twice: once taking a `userId`, once reading it from `SessionManager`. |
-| `SessionManager.kt` | Singleton. Current user ID, username, and guest flag in SharedPreferences file `BaoBaoSession`. |
+| Path | Screen | Music |
+|------|--------|-------|
+| `/` | `HomeScreen` | The selected track |
+| `/onboarding` | `OnboardingScreen` | The default track |
+| `/unlock` | `UnlockScreen` | None |
+| `/shop` | `ShopScreen` | Shop track, or a previewed track |
+| `/claw` | `ClawMachineScreen` | Claw machine track |
+| `/settings` | `SettingsScreen` | The selected track |
+| `/resources` | `ResourcesScreen` | The selected track |
+| `/tutorial` | `TutorialScreen` | The selected track |
 
-### `games/`
+Guard order: not onboarded → `/onboarding`; locked → `/unlock`; otherwise onboarding and unlock redirect to `/`. The mood check-in and style picker are bottom sheets on home, not routes.
 
-| File | Responsibility |
-|------|----------------|
-| `ClawMachineActivity.kt` | The whole mini-game in one 1,200-line Activity: state machine (idle → moving → dropping → lifting → returning → completed), prize randomisation, hit test, combo multiplier, tries and refill timer, daily try purchases, statistics, haptics, result dialog. |
+## 4. Data storage
 
-### `intervention/`
+### Encrypted database (`baobao.sqlite` in the app support directory)
 
-| File | Responsibility |
-|------|----------------|
-| `InterventionManager.kt` | Pure logic. Emotional weight change per mood (happy −3, okay −2, sad +1, tired +1, anxious +2; clamped 0–10). Triggers when weight ≥ 4 **and** (≥ 2 consecutive negative check-ins **or** 2 of the last 3 moods negative), with a 24-hour cooldown. `recordMoodCheckIn` applies all of this for one check-in and appends to the mood history (newest 50 kept). |
-| `ResourcesActivity.kt` | Helpline screen. Dials 988, SAMHSA, and NAMI; texts the Crisis Text Line; opens a mentalhealth.gov page. United States only. |
+Schema version 1. Every table except `profiles` has `profile_id` with `ON DELETE CASCADE`.
 
-### `models/`
+| Table | Holds |
+|-------|-------|
+| `profiles` | Name, created and last-active times. |
+| `wallets` | Star balance; a `CHECK` keeps it at zero or above. |
+| `ledger_entries` | Every balance change with a reason (`welcome`, `purchase:<id>`, `claw:try`, `claw:win`). |
+| `mood_entries` | One row per check-in. |
+| `emotional_states` | Weight, consecutive negative count, last intervention time. |
+| `owned_items` | Catalogue items owned. |
+| `selections` | The equipped item per slot. |
+| `conversation_progress` | Tree, last node, and path of the most recent conversation. |
+| `claw_states` | Tries, next refill time, purchases today and for which day. |
+| `claw_stats` | Plays, wins, earnings, best win. |
 
-| File | Responsibility |
-|------|----------------|
-| `MoodEntry.kt` | `MoodEntry` (mood, timestamp, weight) and the `PrimaryMood` enum. |
+### Other storage
 
-### `optimization/`
+| Store | Contents |
+|-------|----------|
+| shared_preferences | Volumes, voice enabled, reduced motion, claw tap mode, consent version, active profile ID, app lock enabled, tutorial seen, help country. Nothing sensitive. |
+| Platform keystore | The database key (`baobao.db.key.v1`). |
 
-| File | Responsibility |
-|------|----------------|
-| `CacheManager.kt` | In-memory cache of currency and claw tries valid for 2 seconds. Used by `UIStateManager` and `ClawMachineActivity`. |
-| `MemoryOptimizer.kt` | Helpers for safely posting to and cleaning up `Handler`s. |
+Android backups are disabled in the manifest and in `data_extraction_rules.xml`.
 
-### `tutorial/`
+## 5. Assets
 
-| File | Responsibility |
-|------|----------------|
-| `TutorialManager.kt` | Tutorial step definitions and text, per-screen quick guides, completion state in SharedPreferences. |
-| `TutorialActivity.kt` | Step-through tutorial screen with next, back, and skip. |
+| Path | Contents |
+|------|----------|
+| `assets/content/conversations/en/*.json` | Six conversation trees. Option targets are node IDs, `@end`, or `@resources`. |
+| `assets/content/scripts/en.json` | Line pools (welcome, welcome back, shop, settings, self-care, affirmations, jokes, goodbye), time-of-day greetings, claw-machine lines. |
+| `assets/content/catalog.json` | Starting balance and all items with slot, price, asset, and licence. |
+| `assets/content/helplines.json` | Helplines by country plus a worldwide fallback. Each has `verifiedOn`, currently null. |
+| `assets/content/tutorial/en.json` | Tour steps. |
+| `assets/audio/voice/en/*.m4a` | 142 voice clips, named by the `voice` field in content. |
+| `assets/audio/music/*.m4a` | Five generated tracks: three home tracks, shop, claw machine. |
+| `assets/audio/sfx/*.m4a` | Click, win, miss. |
+| `assets/images/character/<outfit>/{hello,happy,sad,tired}.webp` | Character art per outfit. |
+| `assets/images/moods/*.webp` | Mood faces for the check-in sheet. |
+| `assets/images/backgrounds/*.svg` | Home backgrounds. |
+| `assets/images/brand/` | App icon source, loading art, wordmark, BaoBao mark. |
+| `assets/fonts/Quicksand-*.ttf` | Five weights, 300–700. |
 
-### Tests — `app/src/test/java/com/example/baobao/`
+Adding a language means adding `conversations/<code>/`, `scripts/<code>.json`, `tutorial/<code>.json`, `audio/voice/<code>/`, an ARB file, the asset folders in `pubspec.yaml`, and the code in `AppContent.supportedLanguages`.
 
-| File | Covers |
-|------|--------|
-| `intervention/InterventionManagerTest.kt` | Check-in recording, trigger threshold, cooldown, flag reset, weight bounds, history cap. |
+## 6. Tests — `test/`
 
-## 4. Navigation
+223 tests. `flutter test` runs them all.
 
-```
-SecondSplashActivity (launcher)
-  ├─ not logged in ─▶ AuthActivity ─▶ LoadingActivity ─▶ TutorialActivity (first run) ─▶ MainActivity
-  └─ logged in ────▶ MainActivity
+| Area | Files | Covers |
+|------|-------|--------|
+| Domain | `features/*/…_test.dart` for mood, intervention, conversation, economy, claw game, claw tries | Rules, at 95.9% line coverage of `domain/` folders. |
+| Content | `core/content/content_test.dart` | The shipped content: structure, voice references both ways, catalogue assets, helpline lookup, prices. |
+| Database | `core/database/repositories_test.dart`, `database_opener_test.dart` | Per-profile isolation, atomic purchases, cascade delete, encryption on disk, unreadable file handling. |
+| Core | `core/audio`, `core/settings`, `core/security`, `app/router_guard_test.dart`, `app/theme_test.dart` | Audio coordination, settings persistence, lock timing, routing rules, colour contrast. |
+| Widgets | `core/widgets/*` | Typewriter, button semantics and focus, shared widget goldens at 1× and 2× text. |
+| Flows | `features/onboarding`, `home`, `intervention`, `shop`, `settings`, `claw_machine` | Whole-app journeys through the real router, database, and content with recorded audio and a fixed clock. |
+| Goldens | `app/key_screens_golden_test.dart`, `features/claw_machine/claw_painter_golden_test.dart` | Home, conversation, shop, settings, and resources at 1× and 2× text; the drawn claw machine. |
+| Support | `support/app_harness.dart`, `support/test_database.dart` | `Harness` (in-memory database, real content, fake audio, fixed clock), `pumpApp`, `settle`, font loading. |
 
-MainActivity
-  ├─ tap BaoBao / check-in ─▶ mood dialog ─▶ conversation (in place)
-  │                                         └─ intervention tree ─▶ ResourcesActivity
-  ├─ shop button ───────────▶ LoadingActivity ─▶ ShopActivity
-  ├─ claw button ───────────▶ LoadingActivity ─▶ ClawMachineActivity
-  ├─ settings dialog ───────▶ TutorialActivity (replay) / AuthActivity (logout)
-  └─ customise dialog ──────▶ ShopActivity (via LoadingActivity)
-```
-
-All activities are declared in `AndroidManifest.xml`. Only the splash is exported. Splash, claw machine, and tutorial are locked to portrait.
-
-## 5. Resources — `app/src/main/res/`
-
-| Folder | Contents |
-|--------|----------|
-| `layout/` | One layout per screen (`activity_auth`, `_main`, `_shop`, `_claw_machine`, `_loading`, `_resources`, `_tutorial`) and three dialogs (`dialog_settings`, `_customize`, `_mood_selection`). All are consumed through ViewBinding, so there are no `R.layout` references in code. |
-| `drawable/` | Character art as PNG (`mainscreen_outfit{1,2}_fullbody_{happy,hello,sad,tired}`, five `*face_default` mood icons, logos, loading art) and XML shapes for the bamboo UI, backgrounds, icons, and prizes. |
-| `raw/` | 142 voice clips (`.aac`) and 6 music/effect files (`.mp3`). See the table below. |
-| `anim/` | 12 view animations used by the activity and dialog transition styles in `themes.xml`. |
-| `font/` | Quicksand in five weights. `quicksand.xml` currently maps **every** weight to `quicksand_bold.ttf`; the other four weight files are unused at the moment and kept for the migration. |
-| `mipmap-*/` | Launcher icons (adaptive icon uses `@drawable/applogo` on white). |
-| `values/`, `values-night/` | Colours, the single `app_name` string, themes and animation styles. Almost all user-facing text is hard-coded in layouts and Kotlin, not in `strings.xml`. |
-| `xml/` | Default backup and data-extraction rules. |
-
-### Audio naming (`raw/`)
-
-| Prefix | Count | Used for |
-|--------|-------|----------|
-| `a_` | 5 | Sign-up lines |
-| `b_` | 5 | Login lines |
-| `c_` | 5 | Shop lines |
-| `d_` | 5 | Settings lines |
-| `e_` | 10 | Self-care lines |
-| `f_` | 10 | Affirmations |
-| `g_` | 10 | Jokes |
-| `g_greetings_` | 3 | Morning, afternoon, evening greeting |
-| `h_` | 5 | Claw-machine lines |
-| `i_` | 5 | Goodbye lines |
-| `h_happy_` | 11 | Happy tree nodes |
-| `o_okay_` | 13 | Okay tree nodes |
-| `s_sad_` | 16 | Sad tree nodes |
-| `x_anxious_` | 15 | Anxious tree nodes |
-| `t_tired_` | 16 | Tired tree nodes |
-| `int_` | 8 | Intervention tree nodes |
-| `main_bgm_kakushigoto`, `main_bgm_little`, `main_bgm_ordinary_days` | 3 | Main-screen music (default plus two shop unlocks) |
-| `shop_bgm`, `clawmachine_bgm`, `click_sfx` | 3 | Screen music and the click effect |
-
-Because voice clips are looked up by name, **renaming or deleting a clip fails silently at runtime** rather than at build time.
-
-## 6. Data storage
-
-| Store | Keys / tables | Scope |
-|-------|---------------|-------|
-| Room `baobao_database` | `user_data`, `purchases` | `user_data` is per account. `purchases` is shared by all accounts on the device. |
-| SharedPreferences `BaoBaoSession` | current user ID, username, logged-in flag, guest flag | Device |
-| SharedPreferences `BaoBaoPrefs` | `bgm_volume`, `sfx_volume`, `voice_volume`, `voice_enabled`; claw machine tries, refill time, daily purchases, statistics | Device (not per account) |
-| SharedPreferences `BaoBaoTutorialPrefs` | completion flag, current step, learned features | Device |
+Database work needs real time, so flow tests call `settle` after actions. Do not close the database or write to it through `tester.runAsync` while screens are listening: it never completes.
 
 ## 7. Key data flows
 
-**Mood check-in → conversation.** `MainActivity` opens the mood dialog (`DialogManager`) → `ConversationController.startConversation(mood)` loads `UserData`, records the check-in with `InterventionManager.recordMoodCheckIn` and saves it, asks `InterventionManager.shouldTriggerIntervention`, and picks either the mood tree or the intervention tree from `ConversationManager` → each node is rendered with `TypewriterTextView`, voiced through `VoiceManager.playNodeVoice`, and its options become buttons → an option leads to another node, a loop point (conversation ends, path saved to `UserData`), or `show_resources_screen` (`ResourcesActivity`).
+**Check-in → conversation.** `HomeScreen` shows `showMoodSheet` → `HomeController.checkIn` → `MoodRepository.recordCheckIn` inserts the entry, applies `MoodTracker.checkIn`, asks `InterventionPolicy.shouldIntervene`, stamps the intervention time if needed, all in one transaction → the controller starts a `ConversationSession` on the mood's tree or the intervention tree → each node's line goes to `TypewriterText` and its clip to `AudioDirector.speak` → `choose` applies any mood effect and advances; `@end` saves progress and says goodbye; `@resources` opens `ResourcesScreen` and leaves the conversation in place.
 
-**Currency.** Earned in `ClawMachineActivity` (`UserRepository.addCurrency`), spent in `ShopActivity` and on extra claw tries (`spendCurrency`). `CacheManager` holds a short-lived copy for the main-screen status bar and is invalidated after writes.
+**Stars.** `ProfileRepository.create` grants the starting balance. `ClawRepository.recordResult` pays out wins. `EconomyRepository.purchase` and `ClawRepository.buyTry` spend. All go through `AppDatabase.adjustBalance` inside the same transaction as what the stars buy.
 
-**Customisation.** `ShopActivity` records ownership in `UserData` → the customise dialog (`DialogManager`) writes the selection → `MainActivity` re-applies it through `CharacterImageManager`, `BackgroundManager`, and `SoundManager`.
+**Style.** `ShopScreen` buys and equips; `showCustomizeSheet` switches between owned items. Both write `selections`; `selectionsProvider` updates the home background, outfit, and (through `BaoBaoApp._syncMusic`) the music.
+
+**Claw round.** Button press → `ClawController.press` spends a try, then `ClawGame.startMoving` → release → `drop` → the screen's ticker calls `advance` → at the bottom `ClawGame` decides the catch → when the round finishes the controller records the result, plays the effect and line, and after a pause calls `nextRound`.
 
 ## 8. Dependencies
 
-Declared in `gradle/libs.versions.toml` and `app/build.gradle.kts`.
+Exact versions are in `pubspec.lock`.
 
-| Dependency | Version | Use |
-|------------|---------|-----|
-| Android Gradle Plugin | 8.9.1 | Build |
-| Kotlin | 2.0.21 | Language |
-| KSP | 2.0.21-1.0.28 | Room annotation processing |
-| `androidx.core:core-ktx` | 1.17.0 | Core extensions |
-| `androidx.appcompat` | 1.7.1 | Activities |
-| `com.google.android.material` | 1.13.0 | Material components |
-| `androidx.constraintlayout` | 2.2.1 | Layouts |
-| `androidx.room` (runtime, ktx, compiler) | 2.6.1 | Database |
-| `kotlinx-coroutines-android` | 1.7.3 | Async |
-| `androidx.lifecycle:lifecycle-runtime-ktx` | 2.7.0 | `lifecycleScope` |
-| `junit` | 4.13.2 | Unit tests |
-| `org.json:json` | 20240303 | Unit tests only: real `org.json` on the JVM, where the Android copy is a stub |
+| Package | Use |
+|---------|-----|
+| `flutter_riverpod` | State and dependency injection |
+| `go_router` | Navigation |
+| `drift`, `sqlite3` | Database (built with SQLite3 Multiple Ciphers via `hooks` in `pubspec.yaml`) |
+| `flutter_secure_storage` | Database key |
+| `shared_preferences` | Settings |
+| `path_provider`, `path` | Database location |
+| `just_audio`, `audio_session` | Audio |
+| `local_auth` | App lock |
+| `url_launcher` | Helpline links |
+| `flutter_svg` | Backgrounds |
+| `intl`, `flutter_localizations` | Localisation |
+| `clock` | Injectable time |
+| `drift_dev`, `build_runner` (dev) | Database code generation |
+| `flutter_lints` (dev) | Lint base |

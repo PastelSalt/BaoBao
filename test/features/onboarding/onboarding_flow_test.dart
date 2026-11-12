@@ -164,7 +164,7 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
       expect(find.bySemanticsLabel(RegExp('^Good morning')), findsOneWidget);
       expect(harness.voice.log, ['play assets/audio/voice/en/g_greetings_01.m4a']);
-      expect(harness.music.log, ['play assets/audio/music/kakushigoto.mp3 loop']);
+      expect(harness.music.log, ['play assets/audio/music/bamboo_morning.m4a loop']);
       await harness.dispose(tester);
     });
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:baobao/core/content/content_models.dart';
 import 'package:baobao/core/providers.dart';
@@ -53,7 +52,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   void initState() {
     super.initState();
     final content = ref.read(contentProvider);
-    _welcome = content.scripts.welcome.pick(Random());
+    _welcome = content.scripts.welcome.pick(ref.read(randomProvider));
     final voice = _welcome.voice;
     if (voice != null) {
       unawaited(ref.read(audioDirectorProvider).speak(content.voiceAsset(voice)));

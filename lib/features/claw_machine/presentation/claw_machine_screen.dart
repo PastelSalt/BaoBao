@@ -19,7 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// The music that plays in the claw machine.
-const clawMusicAsset = 'assets/audio/music/claw_machine.mp3';
+const clawMusicAsset = 'assets/audio/music/claw_machine.m4a';
 
 final _clawStatsProvider = StreamProvider<ClawStat>((ref) {
   final id = ref.watch(activeProfileIdProvider);

@@ -162,7 +162,7 @@ void main() {
   });
 
   test('each screen gets its own music, and the lock screen is silent', () {
-    const chosen = 'assets/audio/music/little.mp3';
+    const chosen = 'assets/audio/music/paper_lanterns.m4a';
     expect(musicFor(Routes.home, selectedMusic: chosen), chosen);
     expect(musicFor(Routes.settings, selectedMusic: chosen), chosen);
     expect(musicFor(Routes.shop, selectedMusic: chosen), shopMusicAsset);

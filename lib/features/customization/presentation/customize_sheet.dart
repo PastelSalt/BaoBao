@@ -2,7 +2,6 @@ import 'package:baobao/app/router.dart';
 import 'package:baobao/app/theme/app_colors.dart';
 import 'package:baobao/core/providers.dart';
 import 'package:baobao/core/widgets/bamboo_button.dart';
-import 'package:baobao/features/claw_machine/application/claw_tries_provider.dart';
 import 'package:baobao/features/customization/presentation/item_card.dart';
 import 'package:baobao/features/economy/domain/catalog.dart';
 import 'package:baobao/l10n/app_localizations.dart';

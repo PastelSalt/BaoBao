@@ -52,7 +52,7 @@ void main() {
     // Leaving returns to the chosen home track.
     await tester.pageBack();
     await settle(tester);
-    expect(harness.music.log.last, 'play assets/audio/music/kakushigoto.mp3 loop');
+    expect(harness.music.log.last, 'play assets/audio/music/bamboo_morning.m4a loop');
     await harness.dispose(tester);
   });
 
@@ -89,7 +89,7 @@ void main() {
   ) async {
     final harness = await open(tester, spend: 2900);
 
-    await tester.tap(onCard('Little', 'Buy'));
+    await tester.tap(onCard('Paper Lanterns', 'Buy'));
     await settle(tester);
     await tester.tap(find.descendant(of: find.byType(Dialog), matching: find.text('Buy')));
     await settle(tester);
@@ -105,11 +105,11 @@ void main() {
   testWidgets('music can be previewed and the shop track returns afterwards', (tester) async {
     final harness = await open(tester);
 
-    await tester.tap(find.byTooltip('Preview Little'));
+    await tester.tap(find.byTooltip('Preview Paper Lanterns'));
     await tester.pump();
-    expect(harness.music.log.last, 'play assets/audio/music/little.mp3 loop');
+    expect(harness.music.log.last, 'play assets/audio/music/paper_lanterns.m4a loop');
 
-    await tester.tap(find.byTooltip('Stop preview of Little'));
+    await tester.tap(find.byTooltip('Stop preview of Paper Lanterns'));
     await tester.pump();
     expect(harness.music.log.last, 'play $shopMusicAsset loop');
     await harness.dispose(tester);

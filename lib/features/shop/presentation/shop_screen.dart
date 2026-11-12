@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:baobao/app/theme/app_colors.dart';
 import 'package:baobao/core/content/content_models.dart';
@@ -9,7 +8,6 @@ import 'package:baobao/core/widgets/bamboo_dialog.dart';
 import 'package:baobao/core/widgets/bamboo_frame.dart';
 import 'package:baobao/core/widgets/screen_scaffold.dart';
 import 'package:baobao/core/widgets/star_amount.dart';
-import 'package:baobao/features/claw_machine/application/claw_tries_provider.dart';
 import 'package:baobao/features/customization/presentation/item_card.dart';
 import 'package:baobao/features/economy/domain/catalog.dart';
 import 'package:baobao/features/economy/domain/purchase_rules.dart';
@@ -18,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// The music that plays in the shop, unless a track is being previewed.
-const shopMusicAsset = 'assets/audio/music/shop.mp3';
+const shopMusicAsset = 'assets/audio/music/shop.m4a';
 
 /// Where ✷ are spent on music, outfits and backgrounds.
 class ShopScreen extends ConsumerStatefulWidget {
@@ -36,7 +34,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
   void initState() {
     super.initState();
     final content = ref.read(contentProvider);
-    _line = content.scripts.shop.pick(Random());
+    _line = content.scripts.shop.pick(ref.read(randomProvider));
     final voice = _line.voice;
     if (voice != null) {
       unawaited(ref.read(audioDirectorProvider).speak(content.voiceAsset(voice)));

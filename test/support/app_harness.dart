@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:baobao/app/app.dart';
 import 'package:baobao/app/theme/app_theme.dart';
@@ -45,12 +46,8 @@ class Harness {
   /// 10:00 on a fixed day, so greetings are predictable.
   static final defaultNow = DateTime(2026, 11, 11, 10);
 
-  static AppContent? _content;
-
-  /// Call from `setUpAll`: reads content from disk once, using real I/O.
-  static Future<void> loadContent() async {
-    _content ??= await AppContent.load((path) => File(path).readAsString());
-  }
+  /// Kept for call sites; content is now read fresh for every harness.
+  static Future<void> loadContent() async {}
 
   /// [lockAvailable] null means the device has no screen lock at all.
   static Future<Harness> create({
@@ -66,6 +63,9 @@ class Harness {
       ...prefs,
     });
     final preferences = await SharedPreferences.getInstance();
+    // Read synchronously so this also works under a widget test's fake clock.
+    // Fresh per harness: line pools remember their last pick.
+    final content = await AppContent.load((path) async => File(path).readAsStringSync());
     final database = memoryDatabase();
     final music = FakeChannel(), voice = FakeChannel(), sfx = FakeChannel();
     final auth = lockAvailable == null ? null : FakeAuthenticator(succeeds: lockAvailable);
@@ -73,7 +73,8 @@ class Harness {
     final container = ProviderContainer(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(preferences),
-        contentProvider.overrideWithValue(_content!),
+        contentProvider.overrideWithValue(content),
+        randomProvider.overrideWithValue(Random(7)),
         databaseProvider.overrideWithValue(database),
         clockProvider.overrideWithValue(Clock.fixed(now ?? defaultNow)),
         audioDirectorProvider.overrideWithValue(
@@ -83,7 +84,7 @@ class Harness {
         if (links != null) linkOpenerProvider.overrideWithValue(links),
       ],
     );
-    return Harness._(container, database, _content!, music, voice, sfx, auth);
+    return Harness._(container, database, content, music, voice, sfx, auth);
   }
 
   /// Wraps [child] with providers, theme and localisation.
