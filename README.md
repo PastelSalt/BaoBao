@@ -14,6 +14,7 @@ BaoBao is a comfort app. It is **not** therapy, diagnosis, or a crisis service.
 | `PROJECT-SPECS.md` | What BaoBao is for, what it does, what is left to do. |
 | `CODEMAP.md` | Index of the code: structure, responsibilities, data flow. |
 | `PLAN-A-00-111126.md` | The migration and production-readiness plan, with current status. |
+| `PLAN-A-01-111826.md` | Plan for fixing the app's visual and layout problems and finishing its look and feel. |
 | `LOG.md` | Chronological record of every change made to the repo. |
 | `docs/RELEASE.md` | How to build and sign a release, and store-listing status. |
 | `docs/PRIVACY.md` | Draft privacy policy. |

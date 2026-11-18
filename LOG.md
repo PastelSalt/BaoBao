@@ -233,3 +233,13 @@ Semantics labels and roles, keyboard focus ring on buttons, layouts that scroll 
 - Generated audio was checked for duration and level, not by ear.
 - Helplines are unverified, so `validate_content.dart --release` fails by design.
 - `appVersion` in `settings_screen.dart` duplicates the version in `pubspec.yaml`.
+
+## 2026-11-18 — Visual refinement plan
+
+| Action | Paths | Result |
+|--------|-------|--------|
+| Reviewed the current reference screenshots at 1× and 2× text, rendered the three background SVGs, and checked the manifest, theme, and content for orientation, dark mode, system bars, emoji, and line-length handling. | `test/app/goldens/`, `assets/images/backgrounds/`, `android/app/src/main/AndroidManifest.xml`, `assets/content/` | Found 22 problems, three of them layout faults visible at 2× text (cut-off speech bubble, squeezed region label, mid-word wrapping in the shop), two blank backgrounds, a non-adaptive launcher icon, and 27 emoji that older Android versions cannot draw. |
+| Created `PLAN-A-01-111826.md`. | `PLAN-A-01-111826.md` | Seven phases (R0–R6), about 22–32 working days. |
+| Added the plan to the documentation table and linked it from the previous plan. | `README.md`, `PLAN-A-00-111126.md` | Done. |
+
+Validation: documentation only; no code changed and no tests were run. Limitation: the findings come from rendered test images and code, not from a device; the plan's first phase exists to close that gap. A throwaway test used to render the backgrounds was deleted afterwards.
