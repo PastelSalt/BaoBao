@@ -2,7 +2,7 @@
 
 Index of the repository as it exists now. Planned work lives in `PLAN-A-00-111126.md`, not here. Update this file whenever structure, responsibilities, routes, dependencies, or data flow change (`INSTRUCTIONS.md`).
 
-Last verified against the tree: 2026-11-11.
+Last verified against the tree: 2026-11-18.
 
 ## 1. Top level
 
@@ -17,14 +17,15 @@ Last verified against the tree: 2026-11-11.
 | `lib/` | App source (section 2). |
 | `test/` | Tests (section 6). |
 | `assets/` | Content, audio, images, fonts (section 5). |
-| `tool/` | `validate_content.dart` (content check), `check_coverage.dart` (coverage gate), `make_audio.py` (music and effects generator). |
+| `tool/` | `validate_content.dart` (content check), `check_coverage.dart` (coverage gate), `review_sheets.py` (tiles layout-matrix pictures for review), and generators for assets: `make_audio.py` (music and effects), `make_backgrounds.py` (home backgrounds, day and night), `make_icons.py` (launcher icons and splash), `make_ui_icons.py` (interface icons), `make_emoji_font.py` (emoji font subset and character coverage check). Run each from the repository root. |
+| `integration_test/`, `test_driver/` | Walks the app on a device or emulator and saves a screenshot at each stop (`flutter drive`). Runs in CI on three Android API levels; cannot run without an emulator. |
 | `drift_schemas/` | Snapshot of each database schema version, for migration tests. |
 | `android/`, `ios/` | Platform projects. |
 | `.github/workflows/ci.yml` | CI: format, generated-code freshness, analysis, content validation, tests, domain coverage ≥ 90%, Android build; unsigned iOS build on macOS. |
 
 ## 2. Source — `lib/`
 
-60 hand-written Dart files, about 6,900 lines. Feature-first: each feature folder may contain `domain/` (pure Dart rules, no Flutter imports), `data/` (database access), `application/` (controllers and providers), and `presentation/` (widgets).
+73 hand-written Dart files, about 8,800 lines. Feature-first: each feature folder may contain `domain/` (pure Dart rules, no Flutter imports), `data/` (database access), `application/` (controllers and providers), and `presentation/` (widgets).
 
 ### Entry and app shell
 
@@ -34,8 +35,12 @@ Last verified against the tree: 2026-11-11.
 | `bootstrap.dart` | Startup: loads preferences and content, creates or reads the database key, opens the encrypted database, configures audio, checks the remembered profile still exists, locks the app if the lock is on. Shows `StartupErrorApp` with a retry if anything fails. |
 | `app/app.dart` | `BaoBaoApp`: theme, localisation, router. Pauses sound and tracks time away when backgrounded. Chooses the music for the screen on top (`_syncMusic`). Pushes settings changes to the audio director. |
 | `app/router.dart` | Routes, the `guard` redirect rule, and `musicFor` (which track each route plays). |
-| `app/theme/app_colors.dart` | Palette and a WCAG contrast calculation. |
-| `app/theme/app_theme.dart` | Material theme and Quicksand typography. |
+| `app/theme/tokens.dart` | Spacing scale (`Space`), corner radii (`Corners`), shared sizes (`Sizes`). |
+| `app/theme/app_palette.dart` | `AppPalette`: every interface colour by role, in a light and a dark set, read with `context.palette`. |
+| `app/theme/app_theme.dart` | Builds the light and dark themes from the palette; the six-size type scale in Quicksand with the bundled emoji font as fallback. |
+| `app/theme/app_colors.dart` | Brand swatches for illustrations and the drawn claw machine, plus the WCAG contrast calculation. |
+| `app/theme/page_transitions.dart` | The one fade-and-rise screen transition, off under reduced motion. |
+| `app/system_chrome.dart` | Edge-to-edge drawing, status and navigation bar icon colours, portrait lock on phones (tablets rotate). |
 
 ### `core/` — shared infrastructure
 
@@ -55,7 +60,7 @@ Last verified against the tree: 2026-11-11.
 | `security/app_lock.dart` | `DeviceAuthenticator` (local_auth) and `AppLockController` (locks after 60 seconds away). |
 | `security/secure_key_store.dart` | Database key in Android Keystore / iOS Keychain. |
 | `links/link_opener.dart` | Opens `tel:`, `sms:`, and web links through url_launcher. |
-| `widgets/` | `BambooFrame`, `BambooButton`, `BambooDialog`, `SpeechBubble`, `TypewriterText`, `CharacterView`, `AppBackground`, `LoadingOverlay`, `ScreenScaffold`, `StarAmount`, and `reduceMotion`. |
+| `widgets/` | `AppButton` (primary, secondary, quiet), `Panel`, `BambooFrame` (kept for dialogs and the primary button), `BambooDialog`, `AppIcon` and `Glyph`, `SpeechBubble` (scrolls inside itself, fades when more is below), `TypewriterText`, `BaoStage` (BaoBao and what BaoBao says), `CharacterView`, `AppBackground` (day and night), `LoadingOverlay`, `ScreenScaffold`, `StarAmount`, `Entrance`, and `reduceMotion`. |
 
 ### `features/`
 
@@ -136,15 +141,17 @@ Android backups are disabled in the manifest and in `data_extraction_rules.xml`.
 | `assets/audio/sfx/*.m4a` | Click, win, miss. |
 | `assets/images/character/<outfit>/{hello,happy,sad,tired}.webp` | Character art per outfit. |
 | `assets/images/moods/*.webp` | Mood faces for the check-in sheet. |
-| `assets/images/backgrounds/*.svg` | Home backgrounds. |
+| `assets/images/backgrounds/*.svg` | Three home backgrounds, each with a `_night` version, drawn by `tool/make_backgrounds.py`. |
+| `assets/images/icons/*.svg` | Thirty interface icons, one style, drawn by `tool/make_ui_icons.py` and tinted by `AppIcon`. |
 | `assets/images/brand/` | App icon source, loading art, wordmark, BaoBao mark. |
 | `assets/fonts/Quicksand-*.ttf` | Five weights, 300–700. |
+| `assets/fonts/BaoBaoEmoji.ttf` | The emoji the dialogue uses, subset from Noto Color Emoji, so none show as empty boxes on older Android. |
 
 Adding a language means adding `conversations/<code>/`, `scripts/<code>.json`, `tutorial/<code>.json`, `audio/voice/<code>/`, an ARB file, the asset folders in `pubspec.yaml`, and the code in `AppContent.supportedLanguages`.
 
 ## 6. Tests — `test/`
 
-223 tests. `flutter test` runs them all.
+426 tests. `flutter test` runs them all (about two minutes).
 
 | Area | Files | Covers |
 |------|-------|--------|
@@ -155,6 +162,7 @@ Adding a language means adding `conversations/<code>/`, `scripts/<code>.json`, `
 | Widgets | `core/widgets/*` | Typewriter, button semantics and focus, shared widget goldens at 1× and 2× text. |
 | Flows | `features/onboarding`, `home`, `intervention`, `shop`, `settings`, `claw_machine` | Whole-app journeys through the real router, database, and content with recorded audio and a fixed clock. |
 | Goldens | `app/key_screens_golden_test.dart`, `features/claw_machine/claw_painter_golden_test.dart` | Home, conversation, shop, settings, and resources at 1× and 2× text; the drawn claw machine. |
+| Layout matrix | `layout/layout_matrix_test.dart`, `layout/scenarios.dart`, `support/layout_checks.dart` | Fifteen screen states at four screen sizes and three text scales: fails on overflow, a word broken in the middle, text off the side, or the speech bubble or character cut off. `REVIEW=1` also saves pictures for `tool/review_sheets.py`. |
 | Support | `support/app_harness.dart`, `support/test_database.dart` | `Harness` (in-memory database, real content, fake audio, fixed clock), `pumpApp`, `settle`, font loading. |
 
 Database work needs real time, so flow tests call `settle` after actions. Do not close the database or write to it through `tester.runAsync` while screens are listening: it never completes.

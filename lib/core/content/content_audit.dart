@@ -1,5 +1,6 @@
 import 'package:baobao/core/content/app_content.dart';
 import 'package:baobao/core/content/content_validator.dart';
+import 'package:baobao/core/widgets/app_background.dart';
 import 'package:baobao/features/economy/domain/catalog.dart';
 
 /// The result of checking shipped content against the files on disk.
@@ -60,6 +61,12 @@ ContentAudit auditContent(AppContent content, Set<String> assetPaths) {
         ? assetPaths.any((path) => path.startsWith('${item.asset}/'))
         : assetPaths.contains(item.asset);
     if (!exists) errors.add('Catalogue item "${item.id}" refers to missing asset "${item.asset}"');
+    if (item.slot == ItemSlot.background) {
+      final night = backgroundAssetFor(item.asset, dark: true);
+      if (!assetPaths.contains(night)) {
+        errors.add('Background "${item.id}" has no night version at "$night"');
+      }
+    }
     if (item.licence == 'unverified') {
       blockers.add('Catalogue item "${item.id}" has no confirmed licence');
     }

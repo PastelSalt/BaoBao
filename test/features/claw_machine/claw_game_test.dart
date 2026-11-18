@@ -188,4 +188,45 @@ void main() {
       expect(game.phase, ClawPhase.moving);
     });
   });
+
+  group('looks', () {
+    test('rare prizes are golden stars and ordinary ones are not', () {
+      final prizes = [for (var s = 0; s < 100; s++) ...ClawGame.generatePrizes(Random(s))];
+      for (final prize in prizes) {
+        expect(prize.kind == PrizeKind.goldenStar, prize.rare);
+      }
+      expect(prizes.where((p) => !p.rare).map((p) => p.kind).toSet(), {
+        PrizeKind.apple,
+        PrizeKind.carrot,
+        PrizeKind.grape,
+        PrizeKind.strawberry,
+        PrizeKind.bamboo,
+      });
+    });
+
+    test('the drawn depth eases in and out but starts and ends where the rules do', () {
+      final game = gameWith([])
+        ..startMoving()
+        ..drop();
+      expect(game.visualDepth, 0);
+      game.tick(ClawGame.dropDuration ~/ 2);
+      expect(game.visualDepth, lessThan(game.depth), reason: 'slow at first');
+      game.tick(ClawGame.dropDuration);
+      expect(game.visualDepth, 1);
+    });
+
+    test('the celebration runs for 1.2 seconds after a round ends', () {
+      final game = gameWith([Prize(x: 0.5, value: 10, rare: false)])
+        ..startMoving()
+        ..drop();
+      runUntil(game, ClawPhase.finished);
+      expect(game.celebration, 0);
+      game.tick(const Duration(milliseconds: 600));
+      expect(game.celebration, closeTo(0.5, 0.01));
+      game.tick(const Duration(seconds: 5));
+      expect(game.celebration, 1);
+      game.nextRound();
+      expect(game.celebration, 0);
+    });
+  });
 }

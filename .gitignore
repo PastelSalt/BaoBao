@@ -60,3 +60,4 @@ android/key.properties
 *.keystore
 android/.kotlin/
 android/build/
+build/review/

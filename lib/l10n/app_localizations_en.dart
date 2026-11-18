@@ -488,7 +488,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clawMissed => 'So close!';
 
   @override
-  String get clawRare => '★ Rare ★';
+  String get clawRare => 'Rare prize!';
 
   @override
   String clawCombo(int streak, String multiplier) {
@@ -514,4 +514,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clawStatsBest => 'Best win';
+
+  @override
+  String get navCheer => 'Cheer up';
+
+  @override
+  String get cheerTitle => 'What would help?';
+
+  @override
+  String get cheerJoke => 'Tell me a joke';
+
+  @override
+  String get cheerAffirmation => 'Say something kind';
+
+  @override
+  String get cheerSelfCare => 'Give me a self-care idea';
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsThemeSystem => 'Match my phone';
+
+  @override
+  String get settingsThemeLight => 'Light';
+
+  @override
+  String get settingsThemeDark => 'Dark';
+
+  @override
+  String get settingsThemeLabel => 'Theme';
+
+  @override
+  String get itemStop => 'Stop';
+
+  @override
+  String get itemPreviewShort => 'Listen';
 }

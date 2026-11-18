@@ -16,6 +16,7 @@ class TypewriterText extends ConsumerStatefulWidget {
     this.textAlign = TextAlign.center,
     this.perCharacter = const Duration(milliseconds: 28),
     this.onFinished,
+    this.follow,
   });
 
   final String text;
@@ -26,6 +27,10 @@ class TypewriterText extends ConsumerStatefulWidget {
   /// Called once each time a line has been fully revealed.
   final VoidCallback? onFinished;
 
+  /// If the text sits inside a scrolling bubble, scrolls it along as the text
+  /// appears, so the newest words are always in view.
+  final ScrollController? follow;
+
   @override
   ConsumerState<TypewriterText> createState() => _TypewriterTextState();
 }
@@ -35,7 +40,8 @@ class _TypewriterTextState extends ConsumerState<TypewriterText>
   late final AnimationController _controller = AnimationController(vsync: this)
     ..addStatusListener((status) {
       if (status == AnimationStatus.completed) _announceFinished();
-    });
+    })
+    ..addListener(_followText);
 
   // Grapheme clusters, so an emoji is never shown half-drawn.
   late List<String> _characters = widget.text.characters.toList();
@@ -43,6 +49,12 @@ class _TypewriterTextState extends ConsumerState<TypewriterText>
 
   /// Whether [TypewriterText.onFinished] has been called for the current line.
   bool _announced = false;
+
+  void _followText() {
+    final scroll = widget.follow;
+    if (scroll == null || !scroll.hasClients || !_controller.isAnimating) return;
+    scroll.jumpTo(scroll.position.maxScrollExtent * _controller.value);
+  }
 
   void _announceFinished() {
     if (_announced || !mounted) return;
@@ -116,7 +128,7 @@ class _TypewriterTextState extends ConsumerState<TypewriterText>
                   TextSpan(text: _characters.take(shown).join()),
                   TextSpan(
                     text: _characters.skip(shown).join(),
-                    style: const TextStyle(color: Color(0x00000000)),
+                    style: const TextStyle(color: Colors.transparent),
                   ),
                 ],
               ),

@@ -27,19 +27,19 @@
     {
       "id": "claw_machine",
       "title": "Play the claw machine",
-      "body": "Hold to move the claw, let go to drop it. Prizes turn into ✷ you can spend. You get five tries, and one comes back every five minutes.",
+      "body": "Hold to move the claw, let go to drop it. Prizes turn into stars you can spend. You get five tries, and one comes back every five minutes.",
       "emotion": "happy"
     },
     {
       "id": "shop",
       "title": "Make this space yours",
-      "body": "Spend ✷ in the shop on music, outfits, and backgrounds, then switch between them whenever you like.",
+      "body": "Spend stars in the shop on music, outfits, and backgrounds, then switch between them whenever you like.",
       "emotion": "hello"
     },
     {
       "id": "care",
       "title": "When things feel heavy",
-      "body": "If you've been feeling low for a while, I may gently suggest some extra support. You can also find helplines any time under Settings → Get help.",
+      "body": "If you've been feeling low for a while, I may gently suggest some extra support. You can also find helplines any time in Settings, under Get help.",
       "emotion": "sad"
     },
     {

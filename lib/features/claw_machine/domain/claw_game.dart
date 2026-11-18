@@ -1,8 +1,17 @@
 import 'dart:math';
 
+/// What a prize looks like. Rare prizes are always the golden star.
+enum PrizeKind { apple, carrot, grape, strawberry, bamboo, goldenStar }
+
 /// A prize sitting in the machine. Positions are fractions of the play-area width.
 class Prize {
-  Prize({required this.x, required this.value, required this.rare, this.width = defaultWidth});
+  Prize({
+    required this.x,
+    required this.value,
+    required this.rare,
+    this.width = defaultWidth,
+    PrizeKind? kind,
+  }) : kind = kind ?? (rare ? PrizeKind.goldenStar : PrizeKind.apple);
 
   static const defaultWidth = 0.16;
 
@@ -13,6 +22,7 @@ class Prize {
   /// Base payout in ✷ before any combo multiplier.
   final int value;
   final bool rare;
+  final PrizeKind kind;
   bool taken = false;
 }
 
@@ -108,6 +118,21 @@ class ClawGame {
   /// Set once the catch is decided (at the bottom of the drop).
   ClawResult? result;
 
+  /// How long the round has been over, for celebration effects.
+  Duration finishedFor = Duration.zero;
+
+  /// 0 to 1 over the first 1.2 seconds after a round ends.
+  double get celebration => (finishedFor.inMilliseconds / 1200).clamp(0.0, 1.0);
+
+  /// The claw's depth as drawn: it speeds up as it drops and slows as it
+  /// comes to rest, instead of moving at one steady speed. The rules use
+  /// [depth]; only the picture uses this.
+  double get visualDepth => switch (phase) {
+    ClawPhase.dropping => Curves01.easeIn(depth),
+    ClawPhase.lifting => 1 - Curves01.easeInOut(1 - depth),
+    _ => depth,
+  };
+
   static double multiplierFor(int streak) => switch (streak) {
     <= 2 => 1.0,
     <= 4 => 1.2,
@@ -123,10 +148,18 @@ class ClawGame {
         () {
           final rare = random.nextDouble() < rareChance;
           final jitter = (random.nextDouble() - 0.5) * (slot - Prize.defaultWidth);
+          const ordinary = [
+            PrizeKind.apple,
+            PrizeKind.carrot,
+            PrizeKind.grape,
+            PrizeKind.strawberry,
+            PrizeKind.bamboo,
+          ];
           return Prize(
             x: minX + slot * (i + 0.5) + jitter,
             value: rare ? 150 + random.nextInt(101) : 10 + random.nextInt(91),
             rare: rare,
+            kind: rare ? PrizeKind.goldenStar : ordinary[random.nextInt(ordinary.length)],
           );
         }(),
     ];
@@ -148,8 +181,10 @@ class ClawGame {
   void tick(Duration dt) {
     final seconds = dt.inMicroseconds / Duration.microsecondsPerSecond;
     switch (phase) {
-      case ClawPhase.idle || ClawPhase.finished:
+      case ClawPhase.idle:
         return;
+      case ClawPhase.finished:
+        finishedFor += dt;
       case ClawPhase.moving:
         _sweep(seconds);
       case ClawPhase.dropping:
@@ -191,6 +226,7 @@ class ClawGame {
     _direction = 1;
     result = null;
     held = null;
+    finishedFor = Duration.zero;
     if (prizes.every((prize) => prize.taken)) prizes = generatePrizes(_random);
   }
 
@@ -246,4 +282,11 @@ class ClawGame {
     _phaseElapsed += dt;
     return (_phaseElapsed.inMicroseconds / total.inMicroseconds).clamp(0.0, 1.0);
   }
+}
+
+/// Easing curves on 0 to 1, kept here so the game model needs no Flutter import.
+abstract final class Curves01 {
+  static double easeIn(double t) => t * t;
+
+  static double easeInOut(double t) => t < 0.5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t);
 }

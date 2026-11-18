@@ -1,5 +1,8 @@
+import 'package:baobao/app/theme/app_palette.dart';
+import 'package:baobao/app/theme/tokens.dart';
 import 'package:baobao/core/security/app_lock.dart';
-import 'package:baobao/core/widgets/bamboo_button.dart';
+import 'package:baobao/core/widgets/app_button.dart';
+import 'package:baobao/core/widgets/app_icon.dart';
 import 'package:baobao/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,45 +43,53 @@ class _UnlockScreenState extends ConsumerState<UnlockScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final p = context.palette;
     return Scaffold(
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  'assets/images/brand/baobao.webp',
-                  width: 160,
-                  height: 160,
-                  excludeFromSemantics: true,
-                ),
-                const SizedBox(height: 24),
-                Semantics(
-                  header: true,
-                  child: Text(l10n.unlockTitle, style: theme.textTheme.headlineSmall),
-                ),
-                const SizedBox(height: 8),
-                Text(l10n.unlockBody, textAlign: TextAlign.center),
-                const SizedBox(height: 24),
-                if (_failed) ...[
+            padding: const EdgeInsets.all(Space.xxl),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/images/brand/baobao.webp',
+                    width: 144,
+                    height: 144,
+                    excludeFromSemantics: true,
+                  ),
+                  const SizedBox(height: Space.xl),
                   Semantics(
-                    liveRegion: true,
+                    header: true,
                     child: Text(
-                      l10n.unlockFailed,
+                      l10n.unlockTitle,
+                      style: theme.textTheme.headlineSmall,
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: Space.s),
+                  Text(l10n.unlockBody, textAlign: TextAlign.center),
+                  const SizedBox(height: Space.xl),
+                  if (_failed) ...[
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        l10n.unlockFailed,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium?.copyWith(color: p.alert),
+                      ),
+                    ),
+                    const SizedBox(height: Space.l),
+                  ],
+                  AppButton(
+                    label: l10n.unlockAction,
+                    icon: Glyph.unlock,
+                    onPressed: _busy ? null : _unlock,
+                  ),
                 ],
-                BambooButton(
-                  label: l10n.unlockAction,
-                  icon: Icons.lock_open_rounded,
-                  onPressed: _busy ? null : _unlock,
-                ),
-              ],
+              ),
             ),
           ),
         ),

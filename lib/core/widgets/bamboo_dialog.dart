@@ -1,3 +1,4 @@
+import 'package:baobao/app/theme/tokens.dart';
 import 'package:baobao/core/widgets/bamboo_frame.dart';
 import 'package:flutter/material.dart';
 
@@ -34,12 +35,12 @@ class BambooDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      insetPadding: const EdgeInsets.symmetric(horizontal: Space.xl, vertical: Space.xxl),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
         child: BambooFrame(
           radius: 28,
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+          padding: const EdgeInsets.fromLTRB(Space.l, Space.l, Space.l, Space.m),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -52,14 +53,14 @@ class BambooDialog extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: Space.m),
               Flexible(child: SingleChildScrollView(child: content)),
               if (actions.isNotEmpty) ...[
-                const SizedBox(height: 16),
+                const SizedBox(height: Space.l),
                 Wrap(
                   alignment: WrapAlignment.center,
-                  spacing: 12,
-                  runSpacing: 8,
+                  spacing: Space.m,
+                  runSpacing: Space.s,
                   children: actions,
                 ),
               ],

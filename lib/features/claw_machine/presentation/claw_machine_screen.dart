@@ -1,10 +1,13 @@
-import 'package:baobao/app/theme/app_colors.dart';
+import 'package:baobao/app/theme/app_palette.dart';
+import 'package:baobao/app/theme/tokens.dart';
 import 'package:baobao/core/database/app_database.dart';
 import 'package:baobao/core/providers.dart';
 import 'package:baobao/core/settings/app_settings.dart';
-import 'package:baobao/core/widgets/bamboo_button.dart';
+import 'package:baobao/core/widgets/app_button.dart';
+import 'package:baobao/core/widgets/app_icon.dart';
 import 'package:baobao/core/widgets/bamboo_dialog.dart';
 import 'package:baobao/core/widgets/bamboo_frame.dart';
+import 'package:baobao/core/widgets/panel.dart';
 import 'package:baobao/core/widgets/screen_scaffold.dart';
 import 'package:baobao/core/widgets/star_amount.dart';
 import 'package:baobao/features/claw_machine/application/claw_controller.dart';
@@ -107,9 +110,7 @@ class _ClawMachineScreenState extends ConsumerState<ClawMachineScreen>
           _StatRow(l10n.clawStatsBest, StarAmount(stats.bestWin)),
         ],
       ),
-      actions: [
-        BambooButton(label: l10n.actionClose, onPressed: () => Navigator.of(context).pop()),
-      ],
+      actions: [AppButton(label: l10n.actionClose, onPressed: () => Navigator.of(context).pop())],
     );
   }
 
@@ -134,63 +135,73 @@ class _ClawMachineScreenState extends ConsumerState<ClawMachineScreen>
         children: [
           IconButton(
             onPressed: _showStats,
-            icon: const Icon(Icons.bar_chart_rounded),
-            color: AppColors.ink,
+            icon: const AppIcon(Glyph.chart),
             tooltip: l10n.clawStatsTitle,
+            constraints: const BoxConstraints.tightFor(width: Sizes.touch, height: Sizes.touch),
           ),
           if (balance != null)
-            BambooFrame(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            Panel(
+              radius: 20,
+              padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.xs + 2),
               child: StarAmount(balance),
             ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.l, Space.l),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Semantics(
-              liveRegion: true,
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.green, width: 2),
-                ),
-                child: Text(_message(l10n), textAlign: TextAlign.center, maxLines: 4),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        tries == null ? '' : l10n.clawTries(tries.tries),
-                        style: theme.textTheme.titleMedium,
-                      ),
-                      if (tries?.nextRefillAt != null)
-                        Text(
-                          l10n.clawNextTry(_countdown(tries!.nextRefillAt!.difference(now))),
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                    ],
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.2),
+              child: Semantics(
+                liveRegion: true,
+                child: Panel(
+                  tone: PanelTone.selected,
+                  padding: const EdgeInsets.all(Space.m),
+                  // With very large text the line is trimmed (screen readers still
+                  // hear all of it) so the machine keeps room to be seen.
+                  child: Text(
+                    _message(l10n),
+                    textAlign: TextAlign.center,
+                    maxLines: MediaQuery.textScalerOf(context).scale(1) > 1.3 ? 2 : 4,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                BambooButton(
+              ),
+            ),
+            const SizedBox(height: Space.s),
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: Space.m,
+              runSpacing: Space.s,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      tries == null ? '' : l10n.clawTries(tries.tries),
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    if (tries?.nextRefillAt != null)
+                      Text(
+                        l10n.clawNextTry(_countdown(tries!.nextRefillAt!.difference(now))),
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                  ],
+                ),
+                AppButton(
                   label: l10n.clawBuyTry(ClawTries.tryPrice),
-                  tone: BambooButtonTone.tan,
+                  kind: ButtonKind.secondary,
                   onPressed: tries == null || tries.purchasesLeft(now) <= 0
                       ? null
                       : _controller.buyTry,
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: Space.s),
             Expanded(
               child: Center(
                 child: AspectRatio(
@@ -213,7 +224,7 @@ class _ClawMachineScreenState extends ConsumerState<ClawMachineScreen>
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: Space.m),
             _ControlButton(
               label: _controlLabel(l10n, tapMode),
               enabled: !busy,
@@ -276,12 +287,13 @@ class _ControlButton extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 68),
             child: BambooFrame(
-              fill: active ? AppColors.gold : AppColors.green,
+              fill: active ? context.palette.gold : context.palette.fillPrimary,
               child: Center(
                 heightFactor: 1,
                 child: Text(
                   label,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleLarge
+                      ?.copyWith(color: context.palette.onFillPrimary),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -305,7 +317,6 @@ class _ResultBanner extends StatelessWidget {
     return Semantics(
       liveRegion: true,
       child: BambooFrame(
-        fill: AppColors.white,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,

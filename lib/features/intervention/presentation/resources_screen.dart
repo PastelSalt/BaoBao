@@ -1,13 +1,15 @@
 import 'dart:ui';
 
-import 'package:baobao/app/theme/app_colors.dart';
+import 'package:baobao/app/theme/app_palette.dart';
+import 'package:baobao/app/theme/tokens.dart';
 import 'package:baobao/core/content/content_models.dart';
 import 'package:baobao/core/links/link_opener.dart';
 import 'package:baobao/core/providers.dart';
 import 'package:baobao/core/settings/app_settings.dart';
-import 'package:baobao/core/widgets/bamboo_button.dart';
+import 'package:baobao/core/widgets/app_button.dart';
+import 'package:baobao/core/widgets/app_icon.dart';
 import 'package:baobao/core/widgets/bamboo_dialog.dart';
-import 'package:baobao/core/widgets/bamboo_frame.dart';
+import 'package:baobao/core/widgets/panel.dart';
 import 'package:baobao/core/widgets/screen_scaffold.dart';
 import 'package:baobao/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -38,41 +40,38 @@ class ResourcesScreen extends ConsumerWidget {
     final help = directory.helpFor(country);
     final language = Localizations.localeOf(context).languageCode;
 
+    final p = context.palette;
     return ScreenScaffold(
       title: l10n.resourcesTitle,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.l, Space.xl),
         children: [
           Text(l10n.resourcesIntro, style: theme.textTheme.bodyLarge),
-          const SizedBox(height: 16),
-          BambooFrame(
-            fill: AppColors.white,
+          const SizedBox(height: Space.l),
+          Panel(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
                   children: [
-                    const ExcludeSemantics(
-                      child: Icon(Icons.emergency_rounded, color: AppColors.alert),
-                    ),
-                    const SizedBox(width: 8),
+                    AppIcon(Glyph.alert, color: p.alert),
+                    const SizedBox(width: Space.s),
                     Expanded(
                       child: Text(l10n.resourcesEmergencyTitle, style: theme.textTheme.titleMedium),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: Space.s),
                 Text(
                   help.emergencyNumber == null
                       ? l10n.resourcesEmergencyUnknown
                       : l10n.resourcesEmergencyKnown(help.emergencyNumber!),
                 ),
                 if (help.emergencyNumber != null) ...[
-                  const SizedBox(height: 12),
-                  BambooButton(
+                  const SizedBox(height: Space.m),
+                  AppButton(
                     label: l10n.resourcesCall(help.emergencyNumber!),
-                    icon: Icons.call_rounded,
-                    tone: BambooButtonTone.tan,
+                    icon: Glyph.call,
                     expand: true,
                     onPressed: () => _open(
                       context,
@@ -84,41 +83,52 @@ class ResourcesScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(child: Text(l10n.resourcesRegion, style: theme.textTheme.titleMedium)),
-              DropdownButton<String>(
+          const SizedBox(height: Space.xl),
+          Semantics(
+            header: true,
+            child: Text(l10n.resourcesRegion, style: theme.textTheme.titleMedium),
+          ),
+          const SizedBox(height: Space.s),
+          InputDecorator(
+            decoration: const InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: Space.l, vertical: Space.xs),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                isExpanded: true,
                 value: known ? country : otherCountry,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: Corners.medium,
+                dropdownColor: p.panel,
                 items: [
                   for (final code in directory.countries.keys)
                     DropdownMenuItem(value: code, child: Text(_countryName(l10n, code))),
                   DropdownMenuItem(value: otherCountry, child: Text(l10n.resourcesRegionOther)),
                 ],
                 onChanged: (code) {
-                  if (code != null) ref.read(settingsProvider.notifier).setHelpCountry(code);
+                  if (code != null) {
+                    ref.read(settingsProvider.notifier).setHelpCountry(code).ignore();
+                  }
                 },
               ),
-            ],
+            ),
           ),
           if (!known) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: Space.s),
             Text(l10n.resourcesRegionOtherNote, style: theme.textTheme.bodyMedium),
           ],
-          const SizedBox(height: 8),
+          const SizedBox(height: Space.l),
           for (final line in help.lines) ...[
             _HelplineCard(
               line: line,
               language: language,
               onAction: (action) => _open(context, ref, action),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: Space.m),
           ],
-          const SizedBox(height: 4),
+          const SizedBox(height: Space.xs),
           Text(
             l10n.resourcesDisclaimer,
-            style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.inkSoft),
+            style: theme.textTheme.bodyMedium?.copyWith(color: p.inkSoft),
             textAlign: TextAlign.center,
           ),
         ],
@@ -152,9 +162,7 @@ class ResourcesScreen extends ConsumerWidget {
           ),
         ],
       ),
-      actions: [
-        BambooButton(label: l10n.actionClose, onPressed: () => Navigator.of(context).pop()),
-      ],
+      actions: [AppButton(label: l10n.actionClose, onPressed: () => Navigator.of(context).pop())],
     );
   }
 }
@@ -170,7 +178,7 @@ class _HelplineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    return BambooFrame(
+    return Panel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -178,33 +186,30 @@ class _HelplineCard extends StatelessWidget {
             header: true,
             child: Text(line.nameFor(language), style: theme.textTheme.titleMedium),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: Space.xs),
           Text(line.descriptionFor(language)),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final action in line.actions)
-                BambooButton(
-                  label: switch (action.type) {
-                    HelplineActionType.call => l10n.resourcesCall(action.value),
-                    HelplineActionType.sms =>
-                      action.body == null
-                          ? l10n.resourcesText(action.value)
-                          : l10n.resourcesTextWith(action.body!, action.value),
-                    HelplineActionType.web => l10n.resourcesOpenWebsite,
-                  },
-                  icon: switch (action.type) {
-                    HelplineActionType.call => Icons.call_rounded,
-                    HelplineActionType.sms => Icons.sms_rounded,
-                    HelplineActionType.web => Icons.open_in_new_rounded,
-                  },
-                  tone: BambooButtonTone.lightGreen,
-                  onPressed: () => onAction(action),
-                ),
-            ],
-          ),
+          const SizedBox(height: Space.m),
+          for (final (i, action) in line.actions.indexed) ...[
+            if (i > 0) const SizedBox(height: Space.s),
+            AppButton(
+              label: switch (action.type) {
+                HelplineActionType.call => l10n.resourcesCall(action.value),
+                HelplineActionType.sms =>
+                  action.body == null
+                      ? l10n.resourcesText(action.value)
+                      : l10n.resourcesTextWith(action.body!, action.value),
+                HelplineActionType.web => l10n.resourcesOpenWebsite,
+              },
+              icon: switch (action.type) {
+                HelplineActionType.call => Glyph.call,
+                HelplineActionType.sms => Glyph.text,
+                HelplineActionType.web => Glyph.web,
+              },
+              kind: ButtonKind.secondary,
+              expand: true,
+              onPressed: () => onAction(action),
+            ),
+          ],
         ],
       ),
     );

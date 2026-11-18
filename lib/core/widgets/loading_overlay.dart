@@ -1,11 +1,10 @@
-import 'package:baobao/app/theme/app_colors.dart';
+import 'package:baobao/app/theme/app_palette.dart';
+import 'package:baobao/app/theme/tokens.dart';
 import 'package:baobao/core/widgets/bamboo_frame.dart';
 import 'package:flutter/material.dart';
 
-/// Covers [child] with a loading card while [loading] is true.
-///
-/// Show it only while real work is running. The prototype's fixed fake
-/// loading delays are gone on purpose.
+/// Covers [child] with a loading card while [loading] is true. Show it only
+/// while real work is running; there are no fake delays.
 class LoadingOverlay extends StatelessWidget {
   const LoadingOverlay({
     super.key,
@@ -29,13 +28,13 @@ class LoadingOverlay extends StatelessWidget {
           Positioned.fill(
             child: AbsorbPointer(
               child: ColoredBox(
-                color: AppColors.ink.withValues(alpha: 0.35),
+                color: context.palette.scrim,
                 child: Center(
                   child: Semantics(
                     liveRegion: true,
                     label: label,
                     child: BambooFrame(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(Space.xl),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -45,12 +44,12 @@ class LoadingOverlay extends StatelessWidget {
                             height: 96,
                             excludeFromSemantics: true,
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: Space.l),
                           const SizedBox.square(
                             dimension: 28,
                             child: CircularProgressIndicator(strokeWidth: 3),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: Space.m),
                           ExcludeSemantics(
                             child: Text(label, style: Theme.of(context).textTheme.titleMedium),
                           ),

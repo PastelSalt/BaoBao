@@ -935,7 +935,7 @@ abstract class AppLocalizations {
   /// No description provided for @clawRare.
   ///
   /// In en, this message translates to:
-  /// **'★ Rare ★'**
+  /// **'Rare prize!'**
   String get clawRare;
 
   /// No description provided for @clawCombo.
@@ -979,6 +979,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Best win'**
   String get clawStatsBest;
+
+  /// No description provided for @navCheer.
+  ///
+  /// In en, this message translates to:
+  /// **'Cheer up'**
+  String get navCheer;
+
+  /// No description provided for @cheerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What would help?'**
+  String get cheerTitle;
+
+  /// No description provided for @cheerJoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell me a joke'**
+  String get cheerJoke;
+
+  /// No description provided for @cheerAffirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Say something kind'**
+  String get cheerAffirmation;
+
+  /// No description provided for @cheerSelfCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Give me a self-care idea'**
+  String get cheerSelfCare;
+
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsThemeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Match my phone'**
+  String get settingsThemeSystem;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsThemeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get settingsThemeLabel;
+
+  /// No description provided for @itemStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get itemStop;
+
+  /// No description provided for @itemPreviewShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen'**
+  String get itemPreviewShort;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

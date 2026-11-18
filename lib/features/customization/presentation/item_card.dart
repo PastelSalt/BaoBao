@@ -1,14 +1,19 @@
-import 'package:baobao/app/theme/app_colors.dart';
-import 'package:baobao/core/widgets/bamboo_button.dart';
-import 'package:baobao/core/widgets/bamboo_frame.dart';
+import 'package:baobao/app/theme/app_palette.dart';
+import 'package:baobao/app/theme/tokens.dart';
+import 'package:baobao/core/widgets/app_background.dart';
+import 'package:baobao/core/widgets/app_button.dart';
+import 'package:baobao/core/widgets/app_icon.dart';
 import 'package:baobao/core/widgets/character_view.dart';
+import 'package:baobao/core/widgets/panel.dart';
 import 'package:baobao/core/widgets/star_amount.dart';
 import 'package:baobao/features/economy/domain/catalog.dart';
 import 'package:baobao/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// One catalogue item: a preview, its name, and what can be done with it.
+/// One catalogue item: a preview, its name and state, and what can be done
+/// with it. The actions sit below the text at full width, so a long name or
+/// large text never squeezes them.
 class ItemCard extends StatelessWidget {
   const ItemCard({
     super.key,
@@ -41,66 +46,108 @@ class ItemCard extends StatelessWidget {
     final theme = Theme.of(context);
     final name = item.nameFor(Localizations.localeOf(context).languageCode);
 
-    return BambooFrame(
-      fill: selected ? AppColors.paleGreen : AppColors.offWhite,
-      padding: const EdgeInsets.all(10),
-      child: Row(
+    final actions = <Widget>[
+      if (onPreview != null)
+        AppButton(
+          label: previewing ? l10n.itemStop : l10n.itemPreviewShort,
+          icon: previewing ? Glyph.stop : Glyph.play,
+          kind: ButtonKind.secondary,
+          expand: true,
+          semanticLabel: previewing ? l10n.itemStopPreview(name) : l10n.itemPreview(name),
+          onPressed: onPreview,
+        ),
+      if (owned && !selected) AppButton(label: l10n.itemUse, expand: true, onPressed: onUse),
+      if (!owned && onBuy != null) AppButton(label: l10n.itemBuy, expand: true, onPressed: onBuy),
+    ];
+
+    return Panel(
+      tone: selected ? PanelTone.selected : PanelTone.normal,
+      padding: const EdgeInsets.all(Space.m),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: SizedBox.square(dimension: 72, child: _preview()),
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: Corners.small,
+                child: SizedBox.square(dimension: 80, child: _preview(context)),
+              ),
+              const SizedBox(width: Space.m),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(name, style: theme.textTheme.titleMedium),
+                    const SizedBox(height: Space.xs),
+                    if (selected)
+                      _Status(glyph: Glyph.check, text: l10n.itemInUse)
+                    else if (owned)
+                      Text(l10n.itemOwned, style: theme.textTheme.bodyMedium)
+                    else
+                      StarAmount(item.price, style: theme.textTheme.bodyLarge),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: theme.textTheme.titleMedium),
-                const SizedBox(height: 2),
-                if (selected)
-                  Text(l10n.itemInUse, style: theme.textTheme.bodyMedium)
-                else if (owned)
-                  Text(l10n.itemOwned, style: theme.textTheme.bodyMedium)
-                else
-                  StarAmount(item.price, style: theme.textTheme.bodyLarge),
-              ],
-            ),
-          ),
-          if (onPreview != null)
-            IconButton(
-              onPressed: onPreview,
-              icon: Icon(previewing ? Icons.stop_circle_rounded : Icons.play_circle_rounded),
-              iconSize: 32,
-              color: AppColors.deepGreen,
-              tooltip: previewing ? l10n.itemStopPreview(name) : l10n.itemPreview(name),
-            ),
-          if (owned && !selected)
-            BambooButton(label: l10n.itemUse, tone: BambooButtonTone.lightGreen, onPressed: onUse)
-          else if (!owned && onBuy != null)
-            BambooButton(label: l10n.itemBuy, onPressed: onBuy),
+          if (actions.isNotEmpty) ...[
+            const SizedBox(height: Space.m),
+            for (final (i, action) in actions.indexed) ...[
+              if (i > 0) const SizedBox(height: Space.s),
+              action,
+            ],
+          ],
         ],
       ),
     );
   }
 
-  Widget _preview() => switch (item.slot) {
-    ItemSlot.outfit => ColoredBox(
-      color: AppColors.cream,
-      child: Image.asset(
-        CharacterView.assetFor(item.asset, CharacterPose.hello),
-        fit: BoxFit.contain,
-        excludeFromSemantics: true,
+  Widget _preview(BuildContext context) {
+    final p = context.palette;
+    return switch (item.slot) {
+      ItemSlot.outfit => ColoredBox(
+        color: p.panelSelected,
+        child: Image.asset(
+          CharacterView.assetFor(item.asset, CharacterPose.hello),
+          fit: BoxFit.contain,
+          excludeFromSemantics: true,
+        ),
       ),
-    ),
-    ItemSlot.background => ColoredBox(
-      color: AppColors.offWhite,
-      child: ExcludeSemantics(child: SvgPicture.asset(item.asset, fit: BoxFit.cover)),
-    ),
-    ItemSlot.music => const ColoredBox(
-      color: AppColors.lightGreen,
-      child: Icon(Icons.music_note_rounded, size: 36, color: AppColors.ink),
-    ),
-  };
+      ItemSlot.background => ExcludeSemantics(
+        child: SvgPicture.asset(backgroundAssetFor(item.asset, dark: p.isDark), fit: BoxFit.cover),
+      ),
+      ItemSlot.music => ColoredBox(
+        color: p.panelSelected,
+        child: Center(child: AppIcon(Glyph.music, size: 36, color: p.primary)),
+      ),
+    };
+  }
+}
+
+class _Status extends StatelessWidget {
+  const _Status({required this.glyph, required this.text});
+
+  final Glyph glyph;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AppIcon(glyph, size: 18, color: p.primary),
+        const SizedBox(width: Space.xs),
+        Flexible(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyMedium
+                ?.copyWith(color: p.primary, fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 String slotLabel(AppLocalizations l10n, ItemSlot slot) => switch (slot) {

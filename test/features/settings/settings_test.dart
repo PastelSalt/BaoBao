@@ -52,7 +52,8 @@ void main() {
     harness.voice.log.clear();
     await tester.pageBack();
     await settle(tester);
-    await tapLabel(tester, 'Joke');
+    await tapLabel(tester, 'Cheer up');
+    await tapLabel(tester, 'Tell me a joke');
     expect(harness.voice.log.where((entry) => entry.startsWith('play')), isEmpty);
     await harness.dispose(tester);
   });

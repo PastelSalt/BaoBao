@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,6 +17,7 @@ class AppSettings {
     this.tutorialSeen = false,
     this.helpCountry,
     this.clawTapMode = false,
+    this.themeMode = ThemeMode.system,
   });
 
   /// Raise this when the disclaimer or privacy summary changes in a way that
@@ -41,6 +43,9 @@ class AppSettings {
   /// press-and-hold. For anyone who finds holding difficult.
   final bool clawTapMode;
 
+  /// Light, dark, or follow the device.
+  final ThemeMode themeMode;
+
   bool get hasConsented => consentVersion >= currentConsentVersion;
 
   /// Onboarding is complete once consent is given and a profile is active.
@@ -58,6 +63,7 @@ class AppSettings {
     bool? tutorialSeen,
     String? Function()? helpCountry,
     bool? clawTapMode,
+    ThemeMode? themeMode,
   }) {
     return AppSettings(
       musicVolume: musicVolume ?? this.musicVolume,
@@ -71,6 +77,7 @@ class AppSettings {
       tutorialSeen: tutorialSeen ?? this.tutorialSeen,
       helpCountry: helpCountry == null ? this.helpCountry : helpCountry(),
       clawTapMode: clawTapMode ?? this.clawTapMode,
+      themeMode: themeMode ?? this.themeMode,
     );
   }
 }
@@ -94,6 +101,7 @@ class SettingsController extends Notifier<AppSettings> {
   static const _tutorialSeen = 'onboarding.tutorialSeen';
   static const _helpCountry = 'help.country';
   static const _clawTapMode = 'a11y.clawTapMode';
+  static const _themeMode = 'appearance.theme';
 
   SharedPreferences get _prefs => ref.read(sharedPreferencesProvider);
 
@@ -115,6 +123,10 @@ class SettingsController extends Notifier<AppSettings> {
       tutorialSeen: prefs.getBool(_tutorialSeen) ?? defaults.tutorialSeen,
       helpCountry: prefs.getString(_helpCountry),
       clawTapMode: prefs.getBool(_clawTapMode) ?? defaults.clawTapMode,
+      themeMode: ThemeMode.values.firstWhere(
+        (mode) => mode.name == prefs.getString(_themeMode),
+        orElse: () => ThemeMode.system,
+      ),
     );
   }
 
@@ -175,6 +187,11 @@ class SettingsController extends Notifier<AppSettings> {
     } else {
       await _prefs.setString(_helpCountry, code);
     }
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    state = state.copyWith(themeMode: mode);
+    await _prefs.setString(_themeMode, mode.name);
   }
 
   Future<void> setClawTapMode(bool value) async {

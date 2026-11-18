@@ -1,4 +1,6 @@
-import 'package:baobao/app/theme/app_colors.dart';
+import 'package:baobao/app/theme/app_palette.dart';
+import 'package:baobao/app/theme/tokens.dart';
+import 'package:baobao/core/widgets/panel.dart';
 import 'package:baobao/features/mood/domain/mood.dart';
 import 'package:baobao/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +21,7 @@ String moodAsset(Mood mood) => 'assets/images/moods/${mood.name}.webp';
 Future<Mood?> showMoodSheet(BuildContext context) {
   return showModalBottomSheet<Mood>(
     context: context,
-    backgroundColor: AppColors.offWhite,
-    showDragHandle: true,
     isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-    ),
     builder: (context) => const _MoodSheet(),
   );
 }
@@ -32,39 +29,58 @@ Future<Mood?> showMoodSheet(BuildContext context) {
 class _MoodSheet extends StatelessWidget {
   const _MoodSheet();
 
-  // Shown from brightest to heaviest, so the order itself carries no judgement
-  // beyond a natural scale.
+  // From brightest to heaviest, a natural scale that carries no judgement.
   static const _order = [Mood.happy, Mood.okay, Mood.tired, Mood.sad, Mood.anxious];
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final scale = MediaQuery.textScalerOf(context).scale(1);
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.l),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Semantics(
               header: true,
-              child: Text(l10n.moodSheetTitle, style: theme.textTheme.headlineSmall),
+              child: Text(
+                l10n.moodSheetTitle,
+                style: theme.textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
             ),
-            const SizedBox(height: 4),
-            Text(l10n.moodSheetHint, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                for (final mood in _order)
-                  _MoodTile(
-                    mood: mood,
-                    label: moodLabel(l10n, mood),
-                    onTap: () => Navigator.of(context).pop(mood),
-                  ),
-              ],
+            const SizedBox(height: Space.xs),
+            Text(
+              l10n.moodSheetHint,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: Space.l),
+            LayoutBuilder(
+              builder: (context, box) {
+                // Two or three to a row, so every name fits on one line.
+                final columns = scale > 1.3 || box.maxWidth < 330 ? 2 : 3;
+                const gap = Space.m;
+                final width = (box.maxWidth - gap * (columns - 1)) / columns;
+                return Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: gap,
+                  runSpacing: gap,
+                  children: [
+                    for (final mood in _order)
+                      SizedBox(
+                        width: width - 0.5,
+                        child: _MoodTile(
+                          mood: mood,
+                          label: moodLabel(l10n, mood),
+                          onTap: () => Navigator.of(context).pop(mood),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
           ],
         ),
@@ -86,31 +102,22 @@ class _MoodTile extends StatelessWidget {
       button: true,
       label: label,
       excludeSemantics: true,
-      child: Material(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            width: 104,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.green, width: 2),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(moodAsset(mood), width: 72, height: 72),
-                const SizedBox(height: 6),
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelLarge,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: Corners.medium,
+        child: Panel(
+          padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: Space.m),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(moodAsset(mood), width: 64, height: 64),
+              const SizedBox(height: Space.s),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(color: context.palette.ink),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),

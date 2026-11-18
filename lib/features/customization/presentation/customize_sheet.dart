@@ -1,7 +1,9 @@
 import 'package:baobao/app/router.dart';
-import 'package:baobao/app/theme/app_colors.dart';
+import 'package:baobao/app/theme/app_palette.dart';
+import 'package:baobao/app/theme/tokens.dart';
 import 'package:baobao/core/providers.dart';
-import 'package:baobao/core/widgets/bamboo_button.dart';
+import 'package:baobao/core/widgets/app_button.dart';
+import 'package:baobao/core/widgets/app_icon.dart';
 import 'package:baobao/features/customization/presentation/item_card.dart';
 import 'package:baobao/features/economy/domain/catalog.dart';
 import 'package:baobao/l10n/app_localizations.dart';
@@ -14,18 +16,13 @@ import 'package:go_router/go_router.dart';
 Future<void> showCustomizeSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: AppColors.offWhite,
-    showDragHandle: true,
     isScrollControlled: true,
-    // Leave the top of home visible so the change can be seen.
-    barrierColor: Colors.black26,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-    ),
+    // Leaves the top of home visible so the change can be seen.
+    barrierColor: context.palette.scrim,
     builder: (context) => DraggableScrollableSheet(
       expand: false,
-      initialChildSize: 0.55,
-      maxChildSize: 0.9,
+      initialChildSize: 0.6,
+      maxChildSize: 0.92,
       builder: (context, scroll) => _CustomizeSheet(scroll),
     ),
   );
@@ -47,7 +44,7 @@ class _CustomizeSheet extends ConsumerWidget {
 
     return ListView(
       controller: scroll,
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.xl),
       children: [
         Semantics(
           header: true,
@@ -58,37 +55,37 @@ class _CustomizeSheet extends ConsumerWidget {
           ),
         ),
         for (final slot in ItemSlot.values) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: Space.l),
           Semantics(
             header: true,
-            child: Text(slotLabel(l10n, slot), style: theme.textTheme.titleMedium),
+            child: Text(slotLabel(l10n, slot), style: theme.textTheme.titleLarge),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: Space.s),
           for (final item in catalog.inSlot(slot))
             if (owned.contains(item.id))
               Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: Space.s),
                 child: ItemCard(
                   item: item,
                   owned: true,
                   selected: selections[slot]?.id == item.id,
                   onUse: () {
                     if (profileId != null) {
-                      ref.read(economyRepositoryProvider).select(profileId, item);
+                      ref.read(economyRepositoryProvider).select(profileId, item).ignore();
                     }
                   },
                 ),
               ),
         ],
-        const SizedBox(height: 12),
-        BambooButton(
+        const SizedBox(height: Space.m),
+        AppButton(
           label: l10n.customizeGetMore,
-          icon: Icons.storefront_rounded,
-          tone: BambooButtonTone.tan,
+          icon: Glyph.shop,
+          kind: ButtonKind.secondary,
           expand: true,
           onPressed: () {
             Navigator.of(context).pop();
-            context.push(Routes.shop);
+            context.push(Routes.shop).ignore();
           },
         ),
       ],

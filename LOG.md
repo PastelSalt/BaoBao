@@ -243,3 +243,79 @@ Semantics labels and roles, keyboard focus ring on buttons, layouts that scroll 
 | Added the plan to the documentation table and linked it from the previous plan. | `README.md`, `PLAN-A-00-111126.md` | Done. |
 
 Validation: documentation only; no code changed and no tests were run. Limitation: the findings come from rendered test images and code, not from a device; the plan's first phase exists to close that gap. A throwaway test used to render the backgrounds was deleted afterwards.
+
+## 2026-11-18 — Visual and experience refinement (PLAN-A-01, phases R0–R6)
+
+Branch: `claude/fervent-cori-4u1jxv`.
+
+### 1. R0 — see the app properly
+
+| Paths | Change |
+|-------|--------|
+| `test/layout/layout_matrix_test.dart`, `test/layout/scenarios.dart`, `test/support/layout_checks.dart` | Layout matrix: 15 screen states × 12 conditions (four sizes, three text scales, light and dark) = 180 cases. Fails on overflow, a word broken in the middle, text off the side of the screen, or the speech bubble or character cut off. It failed on the known faults before any fix. |
+| `tool/review_sheets.py` | Tiles pictures saved by `REVIEW=1 flutter test test/layout` into one sheet per screen. |
+| `integration_test/journey_test.dart`, `test_driver/integration_test.dart`, `.github/workflows/ci.yml` | A device journey that saves screenshots, and CI jobs for it on Android API 24, 33, 36, plus review-sheet upload. **Never run**: no emulator is available here. |
+
+### 2. R1 — design system
+
+| Paths | Change |
+|-------|--------|
+| `lib/app/theme/tokens.dart`, `app_palette.dart`, `app_theme.dart` | Spacing, radii, sizes; light and dark palettes by role; light and dark themes; six-size type scale. |
+| `lib/core/widgets/` | New: `AppButton` (primary, secondary, quiet), `Panel`, `AppIcon`/`Glyph`, `BaoStage`, `Entrance`. Changed: `BambooFrame` (lighter, palette), `SpeechBubble` (scrolls, fades), `TypewriterText` (follows scroll), `ScreenScaffold`, `AppBackground` (night variants). Removed: `BambooButton`. |
+| `tool/make_ui_icons.py`, `assets/images/icons/` | 29 interface icons in one style. |
+| `test/app/theme_test.dart`, `test/app/palette_usage_test.dart` | WCAG AA contrast for both palettes; a test that fails if any screen or widget hard-codes a colour. |
+| `lib/core/settings/app_settings.dart`, `settings_screen.dart` | New Appearance setting (match phone, light, dark). |
+
+### 3. R2 — layout
+
+Home rebuilt as top bar, stage, and dock; "Cheer up" sheet replaces three buttons; Style moved to the top bar; shop and style cards, settings, help, tutorial, onboarding, unlock, and claw screens re-laid-out. Phones locked to portrait, tablets centred at 560 px.
+
+### 4. R3 — art
+
+| Paths | Change |
+|-------|--------|
+| `tool/make_backgrounds.py`, `assets/images/backgrounds/` | Three complete scenes, each day and night (six SVGs). |
+| `tool/make_icons.py`, `android/app/src/main/res/`, `ios/Runner/Assets.xcassets/` | Adaptive launcher icon with background, foreground, and monochrome layers; legacy icons; iOS icons; splash images; theme-aware splash colours. |
+| `lib/features/claw_machine/presentation/claw_machine_painter.dart`, `prize_painter.dart`, `domain/claw_game.dart` | Claw machine redrawn: lit marquee, jointed claw, cable swing, working joystick and button, win burst. Six themed prizes (apple, carrot, grape, strawberry, bamboo, golden star). Model gained `PrizeKind`, `visualDepth`, `celebration`. |
+| `tool/make_emoji_font.py`, `assets/fonts/BaoBaoEmoji.ttf` | 55 KB emoji font subset from Noto Color Emoji; `--check` fails if the text uses a character no font can draw. Three such characters were replaced in the content. |
+| `lib/features/home/` | Anxious and okay show their face as a badge beside BaoBao. |
+
+### 5. R4 and R5 — motion and platform
+
+`lib/app/theme/page_transitions.dart` (one fade-and-rise transition), `lib/core/widgets/entrance.dart` (staggered arrival on home), `CharacterView` pose pop, eased claw drop and lift, `lib/app/system_chrome.dart` (edge-to-edge, bar icon colours, portrait lock on phones), `AndroidManifest.xml` (`enableOnBackInvokedCallback`). All motion stops under reduced motion.
+
+### 6. Problems the new checks found and that were fixed
+
+| Problem | How it was found |
+|---------|------------------|
+| `assets/images/icons/` was not declared in `pubspec.yaml`, so every icon would have been blank on a phone. | A review picture showed no icons. |
+| List tiles inside panels would have thrown debug errors on a phone. | Matrix run. `Panel` is now a `Material`. |
+| The Android 12 splash style still pointed at an image the icon script had deleted, so the release build failed. | Release build. |
+| The "Claw machine" title broke as "machin-e" at large text; the claw message clipped. | Matrix run. |
+| Writing to the database behind a mounted screen from a test deadlocks (three scenarios hung). | Matrix run; scenarios now use `prepare` or drive the screen. |
+
+### 7. Documentation
+
+`PLAN-A-01-111826.md` (status, results per problem, deviations), `README.md`, `CODEMAP.md`, `PROJECT-SPECS.md`.
+
+### 8. Validation
+
+| Check | Result |
+|-------|--------|
+| `flutter test` | **Passed.** 426 tests, including the 180-case layout matrix. |
+| `flutter analyze` | **Passed.** No issues. |
+| `dart format --set-exit-if-changed lib test tool` | **Passed.** |
+| `dart run tool/validate_content.dart` | **Passed.** Eight release blockers remain, all unverified helplines. |
+| `dart run tool/check_coverage.dart coverage/lcov.info 90 /domain/` | **Passed.** 96.1%. |
+| `python3 tool/make_emoji_font.py --check` | **Passed.** |
+| `flutter build apk --release --flavor prod --split-per-abi` | **Passed** after fixing the splash styles (about 50 MB per architecture, signed with the debug key). |
+| Emulator screenshot job, iOS build, any run on a device | **Not run.** |
+
+### 9. Known limitations
+
+- Everything visual is judged from rendered test pictures. Real devices may differ in fonts, GPU rendering, and animation smoothness.
+- The adaptive icon was previewed at three mask shapes, not in a real launcher; the splash was not seen on a device.
+- Golden images were regenerated on Linux.
+- Sizes in a few places (and the claw machine's drawing) are still plain numbers rather than tokens.
+- The shop is one column of cards on every size; tablets get a centred column, not two.
+- The review sheets are in `build/review/` (git-ignored); CI uploads them as an artifact.

@@ -1,25 +1,28 @@
-import 'package:baobao/app/theme/app_colors.dart';
+import 'package:baobao/app/theme/app_palette.dart';
 import 'package:flutter/widgets.dart';
 
-/// The signature BaoBao surface: a bamboo-coloured rim with small knots on
-/// each side, around a flat panel of [fill].
+/// BaoBao's signature surface: a bamboo-coloured rim with small knots, around
+/// a flat panel. Used sparingly, for the main action on a screen and for
+/// dialogs. Everything else uses `Panel`.
 class BambooFrame extends StatelessWidget {
   const BambooFrame({
     super.key,
     required this.child,
-    this.fill = AppColors.offWhite,
+    this.fill,
     this.radius = 20,
-    this.padding = const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+    this.padding = const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
   });
 
-  /// Thickness of the bamboo rim on the top, left and right.
-  static const rim = 8.0;
+  /// Thickness of the rim on the top, left and right.
+  static const rim = 5.0;
 
-  /// The rim is slightly deeper at the bottom, which reads as a soft shadow.
-  static const rimBottom = 10.0;
+  /// A little deeper at the bottom, which reads as a soft shadow.
+  static const rimBottom = 7.0;
 
   final Widget child;
-  final Color fill;
+
+  /// The panel colour. Defaults to the palette's panel colour.
+  final Color? fill;
   final double radius;
 
   /// Space between the inner panel's edge and [child].
@@ -27,8 +30,17 @@ class BambooFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return CustomPaint(
-      painter: BambooFramePainter(fill: fill, radius: radius),
+      painter: BambooFramePainter(
+        fill: fill ?? p.panel,
+        radius: radius,
+        rim: p.rim,
+        light: p.rimLight,
+        shade: p.rimShade,
+        knot: p.knot,
+        line: p.border,
+      ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(rim, rim, rim, rimBottom).add(padding),
         child: child,
@@ -38,26 +50,33 @@ class BambooFrame extends StatelessWidget {
 }
 
 class BambooFramePainter extends CustomPainter {
-  const BambooFramePainter({required this.fill, required this.radius});
+  const BambooFramePainter({
+    required this.fill,
+    required this.radius,
+    required this.rim,
+    required this.light,
+    required this.shade,
+    required this.knot,
+    required this.line,
+  });
 
   final Color fill;
   final double radius;
+  final Color rim;
+  final Color light;
+  final Color shade;
+  final Color knot;
+  final Color line;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final outer = Offset.zero & size;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(outer, Radius.circular(radius)),
-      Paint()..color = AppColors.bambooEdge,
-    );
+    final outer = RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(radius));
+    canvas.drawRRect(outer, Paint()..color = rim);
 
-    final cane = Rect.fromLTRB(2, 2, size.width - 2, size.height - 4);
+    final cane = Rect.fromLTRB(1.5, 1.5, size.width - 1.5, size.height - 3);
     canvas.drawRRect(
-      RRect.fromRectAndRadius(cane, Radius.circular(radius - 2)),
-      Paint()
-        ..shader = const LinearGradient(
-          colors: [AppColors.bambooShade, AppColors.bambooLight, AppColors.bambooShade],
-        ).createShader(cane),
+      RRect.fromRectAndRadius(cane, Radius.circular(radius - 1.5)),
+      Paint()..shader = LinearGradient(colors: [shade, light, shade]).createShader(cane),
     );
 
     final panel = RRect.fromRectAndRadius(
@@ -73,26 +92,33 @@ class BambooFramePainter extends CustomPainter {
     canvas.drawRRect(
       panel,
       Paint()
-        ..color = AppColors.bambooLine
+        ..color = line
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1,
     );
 
     // Knots: short darker marks at the middle of each side of the rim.
-    final knot = Paint()..color = AppColors.bambooKnot;
-    const r = Radius.circular(2);
+    final paint = Paint()..color = knot;
+    const r = Radius.circular(1.5);
     final cx = size.width / 2, cy = size.height / 2;
-    final long = (size.shortestSide * 0.3).clamp(12.0, 40.0);
+    final long = (size.shortestSide * 0.28).clamp(10.0, 32.0);
     for (final rect in [
-      Rect.fromCenter(center: Offset(cx, 4), width: long, height: 4),
-      Rect.fromCenter(center: Offset(cx, size.height - 6), width: long, height: 4),
-      Rect.fromCenter(center: Offset(4, cy), width: 4, height: long * 0.75),
-      Rect.fromCenter(center: Offset(size.width - 4, cy), width: 4, height: long * 0.75),
+      Rect.fromCenter(center: Offset(cx, 2.8), width: long, height: 3),
+      Rect.fromCenter(center: Offset(cx, size.height - 4), width: long, height: 3),
+      Rect.fromCenter(center: Offset(2.8, cy), width: 3, height: long * 0.7),
+      Rect.fromCenter(center: Offset(size.width - 2.8, cy), width: 3, height: long * 0.7),
     ]) {
-      canvas.drawRRect(RRect.fromRectAndRadius(rect, r), knot);
+      canvas.drawRRect(RRect.fromRectAndRadius(rect, r), paint);
     }
   }
 
   @override
-  bool shouldRepaint(BambooFramePainter old) => old.fill != fill || old.radius != radius;
+  bool shouldRepaint(BambooFramePainter old) =>
+      old.fill != fill ||
+      old.radius != radius ||
+      old.rim != rim ||
+      old.light != light ||
+      old.shade != shade ||
+      old.knot != knot ||
+      old.line != line;
 }

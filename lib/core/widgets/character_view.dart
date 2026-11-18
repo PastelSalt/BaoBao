@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:baobao/core/widgets/motion.dart';
 import 'package:baobao/features/mood/domain/mood.dart';
 import 'package:flutter/widgets.dart';
@@ -43,15 +45,29 @@ class CharacterView extends ConsumerStatefulWidget {
   ConsumerState<CharacterView> createState() => _CharacterViewState();
 }
 
-class _CharacterViewState extends ConsumerState<CharacterView> with SingleTickerProviderStateMixin {
+class _CharacterViewState extends ConsumerState<CharacterView> with TickerProviderStateMixin {
   late final AnimationController _bob = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 2400),
   );
 
+  // A quick squash-and-stretch whenever the pose changes, so BaoBao seems to
+  // react to what was just said.
+  late final AnimationController _pop = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 360),
+  );
+
+  @override
+  void didUpdateWidget(CharacterView old) {
+    super.didUpdateWidget(old);
+    if (old.pose != widget.pose && !reduceMotion(context, ref)) _pop.forward(from: 0);
+  }
+
   @override
   void dispose() {
     _bob.dispose();
+    _pop.dispose();
     super.dispose();
   }
 
@@ -76,12 +92,20 @@ class _CharacterViewState extends ConsumerState<CharacterView> with SingleTicker
     );
 
     return AnimatedBuilder(
-      animation: _bob,
+      animation: Listenable.merge([_bob, _pop]),
       child: image,
-      builder: (context, child) => Transform.translate(
-        offset: Offset(0, still ? 0 : -6 * Curves.easeInOut.transform(_bob.value)),
-        child: child,
-      ),
+      builder: (context, child) {
+        final pop = math.sin(_pop.value * math.pi);
+        return Transform.translate(
+          offset: Offset(0, still ? 0 : -6 * Curves.easeInOut.transform(_bob.value)),
+          child: Transform.scale(
+            scaleX: 1 - 0.035 * pop,
+            scaleY: 1 + 0.06 * pop,
+            alignment: Alignment.bottomCenter,
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

@@ -2,7 +2,7 @@
 
 What BaoBao is for, what it does, what has been done, and what is left. For the code index see `CODEMAP.md`; for the plan and its status see `PLAN-A-00-111126.md`.
 
-Last updated: 2026-11-11.
+Last updated: 2026-11-18.
 
 ## 1. Product
 
@@ -35,6 +35,15 @@ BaoBao is a comfort and self-care app. It is **not** therapy, diagnosis, or a cr
 - Optional app lock using the device's fingerprint, face, or PIN. It re-locks after 60 seconds away. Turning it on or off needs the device to confirm.
 - "Delete my data" removes a profile and everything belonging to it. Deleting the last profile returns to the welcome screen.
 - A new profile starts with 3000 stars, the default music, outfit, and background, and five claw-machine tries.
+
+### 2.1a Look and feel
+
+- **Home** has three fixed zones: a top bar (name, latest mood, stars, a Style button, Settings), the stage (BaoBao and what BaoBao says), and a dock at the bottom. The dock has one main button, "How are you feeling?", and three shortcuts: Cheer up (a joke, a kind word, or a self-care idea), Shop, and Claw (with the number of tries left).
+- BaoBao's speech bubble never grows past about half the stage; longer lines scroll inside it and fade at the edge. The character shrinks before it disappears.
+- **Light, dark, or match the phone**, chosen in Settings. Each background has a night version.
+- Anxious and okay moods, which have no pose of their own, show their face as a badge beside BaoBao during the conversation.
+- Phones stay in portrait; tablets rotate and use a centred column up to 560 px wide.
+- Screens fade and rise into place; BaoBao squashes and stretches when the pose changes. All of this stops under reduced motion.
 
 ### 2.2 Onboarding
 
@@ -108,7 +117,7 @@ Buying asks for confirmation, then equips the item. Music can be previewed befor
 
 ### 2.9 Settings
 
-Get help; music, effects, and voice volume; voice on/off; reduce motion; tap-instead-of-hold; profile name, switching, and adding; app lock; delete my data; replay the tour; open-source licences.
+Get help; music, effects, and voice volume; voice on/off; appearance (match my phone, light, dark); reduce motion; tap-instead-of-hold; profile name, switching, and adding; app lock; delete my data; replay the tour; open-source licences.
 
 ## 3. History
 
@@ -118,6 +127,7 @@ Get help; music, effects, and voice volume; voice on/off; reduce motion; tap-ins
 | Cleanup | 2026-11-11 | 71 redundant reports, crash dumps, IDE state, dead code, and unused assets removed; documentation baseline written. |
 | Intervention fix | 2026-11-11 | Found that the prototype never recorded mood check-ins, so the intervention could not trigger. Fixed and tested in Kotlin. |
 | Flutter rebuild | 2026-11-11 | App rebuilt in Flutter for Android and iOS (plan phases 0–5), with most of phase 6. Kotlin app removed. Music replaced with original generated tracks. Claw machine redrawn in code. |
+| Visual refinement | 2026-11-18 | `PLAN-A-01-111826.md`: layout faults fixed and proven by a layout matrix; new design system with a dark theme; redrawn backgrounds, icons, claw machine, prizes, launcher icon and splash; bundled emoji font; motion. |
 
 The Kotlin source remains in git history up to commit `855d69f`.
 
@@ -126,7 +136,7 @@ The Kotlin source remains in git history up to commit `855d69f`.
 | Area | State |
 |------|-------|
 | All features in section 2 | Implemented and covered by automated tests |
-| Tests | 223 passing; `domain/` line coverage 95.9% |
+| Tests | 426 passing, including a 180-case layout matrix; `domain/` line coverage in the high 90s |
 | Android | Debug and release builds succeed. Not yet run on a device |
 | iOS | Project configured. Never built |
 | CI | Workflow written. Has not run on GitHub yet |
@@ -147,9 +157,11 @@ The Kotlin source remains in git history up to commit `855d69f`.
 | Hard-coded dialogue, prices, helplines | Content in validated JSON |
 | Hard-coded interface text | ARB localisation files |
 | Logic in Activities and singletons | Layered features with pure-Dart rules |
-| No tests | 223 tests, goldens, coverage gate |
+| No tests | 426 tests, goldens, layout matrix, coverage gate |
 | White text on pale green buttons | Dark ink text; contrast tested to WCAG AA |
 | Android only | Flutter project for Android and iOS |
+| Cut-off speech bubble, squeezed labels, broken words at large text | Layout matrix test fails on any of these |
+| Blank backgrounds, mismatched icons, no dark mode, plain launcher icon | Redrawn backgrounds (day and night), one icon set, dark theme, adaptive icon |
 
 ## 5. What is left
 
@@ -165,16 +177,17 @@ The Kotlin source remains in git history up to commit `855d69f`.
 
 ### Engineering still open
 
-8. Crash reporting (opt-in, with all personal data stripped). Not added: it needs an account and key to be chosen.
-9. Screen-reader pass with TalkBack and VoiceOver. Semantics are in place and tested in code, but not by ear.
-10. Performance measurement on a mid-range device.
-11. Exclude the database from iCloud backup on iOS.
-12. iOS `dev` and `prod` schemes (Android has both flavours).
-13. Device-level integration tests. Current flow tests run the whole app in the test environment, not on a device.
-14. Helplines for more countries, and a second language.
+8. **See the new look on real devices.** Everything visual was verified by rendered test pictures only. The emulator screenshot job in CI has never run. Check: the adaptive and themed launcher icon, the splash on Android 12 and below, edge-to-edge bars, the claw machine's motion, and animation smoothness.
+9. Crash reporting (opt-in, with all personal data stripped). Not added: it needs an account and key to be chosen.
+10. Screen-reader pass with TalkBack and VoiceOver. Semantics are in place and tested in code, but not by ear.
+11. Performance measurement on a mid-range device.
+12. Exclude the database from iCloud backup on iOS.
+13. iOS `dev` and `prod` schemes (Android has both flavours).
+14. Device-level integration tests. Current flow tests run the whole app in the test environment, not on a device.
+15. Helplines for more countries, and a second language.
 
 ### Nice to have
 
-15. Character art for anxious and okay moods (they reuse the sad and hello poses).
-16. Richer animated backgrounds.
-17. Mood history view, optional check-in reminder, a breathing exercise, more items.
+16. Full-body character poses for anxious and okay (they show a face badge today): needs the artist.
+17. Animated backgrounds (drifting leaves, falling petals)
+18. Mood history view, optional check-in reminder, a breathing exercise, more items.

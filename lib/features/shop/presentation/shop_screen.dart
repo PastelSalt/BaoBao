@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:baobao/app/theme/app_colors.dart';
+import 'package:baobao/app/theme/tokens.dart';
 import 'package:baobao/core/content/content_models.dart';
 import 'package:baobao/core/providers.dart';
-import 'package:baobao/core/widgets/bamboo_button.dart';
+import 'package:baobao/core/widgets/app_button.dart';
 import 'package:baobao/core/widgets/bamboo_dialog.dart';
-import 'package:baobao/core/widgets/bamboo_frame.dart';
+import 'package:baobao/core/widgets/panel.dart';
 import 'package:baobao/core/widgets/screen_scaffold.dart';
 import 'package:baobao/core/widgets/star_amount.dart';
 import 'package:baobao/features/customization/presentation/item_card.dart';
@@ -63,12 +63,12 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
       title: l10n.shopConfirmTitle(name),
       content: Center(child: StarAmount(item.price, style: Theme.of(context).textTheme.titleLarge)),
       actions: [
-        BambooButton(
+        AppButton(
           label: l10n.actionCancel,
-          tone: BambooButtonTone.cream,
+          kind: ButtonKind.quiet,
           onPressed: () => Navigator.of(context).pop(false),
         ),
-        BambooButton(label: l10n.itemBuy, onPressed: () => Navigator.of(context).pop(true)),
+        AppButton(label: l10n.itemBuy, onPressed: () => Navigator.of(context).pop(true)),
       ],
     );
     if (confirmed != true || !mounted) return;
@@ -109,20 +109,17 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
       title: l10n.shopTitle,
       trailing: balance == null
           ? null
-          : BambooFrame(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+          : Panel(
+              radius: 20,
+              padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.xs + 2),
               child: StarAmount(balance),
             ),
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.xs, Space.l, Space.xl),
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.green, width: 2),
-            ),
+          Panel(
+            tone: PanelTone.selected,
+            padding: const EdgeInsets.all(Space.m),
             child: Row(
               children: [
                 Image.asset(
@@ -131,21 +128,21 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                   height: 44,
                   excludeFromSemantics: true,
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: Space.m),
                 Expanded(child: Text(_line.text)),
               ],
             ),
           ),
           for (final slot in ItemSlot.values) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: Space.l),
             Semantics(
               header: true,
               child: Text(slotLabel(l10n, slot), style: theme.textTheme.titleLarge),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: Space.s),
             for (final item in catalog.inSlot(slot))
               Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: Space.s),
                 child: ItemCard(
                   item: item,
                   owned: owned.contains(item.id),
@@ -153,7 +150,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                   onBuy: () => _buy(item),
                   onUse: () {
                     if (profileId != null) {
-                      ref.read(economyRepositoryProvider).select(profileId, item);
+                      ref.read(economyRepositoryProvider).select(profileId, item).ignore();
                     }
                   },
                   onPreview: slot == ItemSlot.music ? () => _togglePreview(item) : null,

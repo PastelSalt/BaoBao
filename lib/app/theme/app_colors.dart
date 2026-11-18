@@ -2,8 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/painting.dart';
 
-/// BaoBao's palette: soft bamboo greens and warm creams, with a dark ink for
-/// text so everything stays readable.
+/// BaoBao's brand swatches, for illustrations and the drawn claw machine.
+/// Interface colours live in `AppPalette`, which has a dark version.
 abstract final class AppColors {
   // Surfaces
   static const offWhite = Color(0xFFF6F6DB);

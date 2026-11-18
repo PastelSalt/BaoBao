@@ -22,6 +22,7 @@ class HomeState {
     this.pose = CharacterPose.hello,
     this.session,
     this.lineId = 0,
+    this.mood,
   });
 
   /// The words in the speech bubble.
@@ -33,6 +34,9 @@ class HomeState {
 
   /// Changes every time BaoBao says something, even the same words again.
   final int lineId;
+
+  /// The mood just checked in with, while its conversation lasts.
+  final Mood? mood;
 
   bool get inConversation => session != null;
   List<ConversationOption> get options => session?.current.options ?? const [];
@@ -76,7 +80,7 @@ class HomeController extends Notifier<HomeState> {
 
     final treeId = ConversationSession.treeIdFor(mood, intervene: outcome.intervene);
     final session = ConversationSession.start(content.trees[treeId]!);
-    _show(session, CharacterPose.forMood(mood));
+    _show(session, CharacterPose.forMood(mood), mood: mood);
   }
 
   /// Follows the reply the person chose.
@@ -91,7 +95,7 @@ class HomeController extends Notifier<HomeState> {
 
     switch (session.choose(option)) {
       case ContinueStep(session: final next):
-        _show(next, option.moodEffect > 0 ? CharacterPose.happy : state.pose);
+        _show(next, option.moodEffect > 0 ? CharacterPose.happy : state.pose, mood: state.mood);
         return ChoiceOutcome.continued;
       case ResourcesStep():
         // Stay on this line so the conversation is still there on return.
@@ -118,7 +122,7 @@ class HomeController extends Notifier<HomeState> {
       QuickAction.affirmation => scripts.affirmations,
       QuickAction.selfCare => scripts.selfCare,
     };
-    _say(pool.pick(_random), CharacterPose.happy, session: state.session);
+    _say(pool.pick(_random), CharacterPose.happy, session: state.session, mood: state.mood);
   }
 
   /// Picks a line for a quick action without changing what is on screen, for
@@ -142,14 +146,26 @@ class HomeController extends Notifier<HomeState> {
     _say(goodbye, CharacterPose.hello);
   }
 
-  void _show(ConversationSession session, CharacterPose pose) {
+  void _show(ConversationSession session, CharacterPose pose, {Mood? mood}) {
     final node = session.current;
-    state = HomeState(line: node.line, pose: pose, session: session, lineId: state.lineId + 1);
+    state = HomeState(
+      line: node.line,
+      pose: pose,
+      session: session,
+      lineId: state.lineId + 1,
+      mood: mood,
+    );
     _speak(node.voice);
   }
 
-  void _say(VoicedLine line, CharacterPose pose, {ConversationSession? session}) {
-    state = HomeState(line: line.text, pose: pose, session: session, lineId: state.lineId + 1);
+  void _say(VoicedLine line, CharacterPose pose, {ConversationSession? session, Mood? mood}) {
+    state = HomeState(
+      line: line.text,
+      pose: pose,
+      session: session,
+      lineId: state.lineId + 1,
+      mood: mood,
+    );
     _speak(line.voice);
   }
 

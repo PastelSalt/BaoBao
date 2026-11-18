@@ -63,6 +63,18 @@ flutter analyze
 dart run tool/validate_content.dart
 ```
 
+The layout matrix runs with everything else. To also save a picture of every screen at every size and text scale, and tile them for a quick look:
+
+```bash
+REVIEW=1 flutter test test/layout
+```
+
+```bash
+python3 tool/review_sheets.py
+```
+
+The sheets are written to `build/review/sheets/`.
+
 `flutter test --update-goldens` regenerates the reference screenshots under `test/**/goldens/`. They were generated on Linux; on another operating system small rendering differences are expected.
 
 ## Generated code
@@ -75,6 +87,10 @@ Commit the output of these whenever their inputs change. CI fails if they are ou
 | `flutter gen-l10n` | `lib/l10n/app_localizations*.dart` | After editing `lib/l10n/app_en.arb` |
 | `dart run drift_dev make-migrations` | `drift_schemas/` and migration tests | After raising `schemaVersion` |
 | `python3 tool/make_audio.py` | `assets/audio/music/`, `assets/audio/sfx/` | After changing the music generator |
+| `python3 tool/make_backgrounds.py` | `assets/images/backgrounds/*.svg` (day and night) | After changing the background scenes |
+| `python3 tool/make_ui_icons.py` | `assets/images/icons/*.svg` | After changing the interface icons |
+| `python3 tool/make_icons.py` | Launcher icons and splash images (Android and iOS) | After changing the panda cut-out |
+| `python3 tool/make_emoji_font.py` | `assets/fonts/BaoBaoEmoji.ttf` | After adding an emoji to the text (`--check` fails if one is missing) |
 
 ## Build a release
 
@@ -108,11 +124,12 @@ docs/           Release guide and privacy policy draft
 
 ## Known limitations
 
-- **Never run on a device.** All verification is automated tests plus successful Android builds. Audio playback, the biometric prompt, dialling, the splash screen, and real-world performance are untested.
+- **Never run on a device.** All verification is automated tests, rendered screenshots, and successful Android builds. Audio playback, the biometric prompt, dialling, the splash screen, the launcher icon, animation smoothness, and real-world performance are untested. A CI job that takes screenshots on Android emulators (API 24, 33, 36) is written but has not run.
 - **iOS has never been built.** The project and configuration exist; nobody has compiled it.
 - **Helplines are unverified.** Every entry in `assets/content/helplines.json` must be checked by a person. The release content check fails until they are.
 - **Only United States helplines** are included, plus international directories for everyone else.
 - **Music is computer-generated** by `tool/make_audio.py` and has not been listened to by a person.
-- **No anxious or okay character art.** Those moods reuse the sad and hello poses.
+- **No full-body anxious or okay character art.** Those moods reuse the sad and hello poses and show their face as a badge.
 - **No crash reporting**, and CI has not run yet on GitHub.
 - **Not reviewed** by a clinician or a lawyer.
+- **The look is judged from test pictures**, in light and dark, at four screen sizes and three text sizes. Real fonts and GPUs can differ.

@@ -91,18 +91,21 @@ void main() {
     await harness.dispose(tester);
   });
 
-  testWidgets('quick actions give a voiced joke, kind word or self-care idea', (tester) async {
+  testWidgets('cheer-up gives a voiced joke, kind word or self-care idea', (tester) async {
     final harness = await start(tester);
     final scripts = harness.content.scripts;
 
-    await tapLabel(tester, 'Joke');
+    await tapLabel(tester, 'Cheer up');
+    await tapLabel(tester, 'Tell me a joke');
     expect(scripts.jokes.lines.map((l) => l.text), contains(home(harness).line));
     expect(harness.voice.log.last, matches(RegExp(r'voice/en/g_\d\d\.m4a$')));
 
-    await tapLabel(tester, 'Kind word');
+    await tapLabel(tester, 'Cheer up');
+    await tapLabel(tester, 'Say something kind');
     expect(scripts.affirmations.lines.map((l) => l.text), contains(home(harness).line));
 
-    await tapLabel(tester, 'Self-care');
+    await tapLabel(tester, 'Cheer up');
+    await tapLabel(tester, 'Give me a self-care idea');
     expect(scripts.selfCare.lines.map((l) => l.text), contains(home(harness).line));
     await harness.dispose(tester);
   });
@@ -163,5 +166,37 @@ void main() {
     await tapLabel(tester, 'Sad');
     expect(tester.takeException(), isNull);
     await harness.dispose(tester);
+  });
+
+  group('mood badge', () {
+    int faces(WidgetTester tester, String mood) => tester
+        .widgetList<Image>(find.byType(Image))
+        .map((image) => image.image)
+        .whereType<AssetImage>()
+        .where((image) => image.assetName == 'assets/images/moods/$mood.webp')
+        .length;
+
+    // The top bar always shows the latest mood. A badge beside BaoBao is a second one.
+    testWidgets('anxious, which has no pose of its own, shows its face beside BaoBao', (
+      tester,
+    ) async {
+      final harness = await start(tester);
+      await tapLabel(tester, 'How are you feeling?');
+      await tapLabel(tester, 'Anxious');
+      expect(faces(tester, 'anxious'), 2, reason: 'top bar and badge');
+
+      await tapLabel(tester, 'End chat for now');
+      expect(faces(tester, 'anxious'), 1, reason: 'the badge goes with the conversation');
+      await harness.dispose(tester);
+    });
+
+    testWidgets('sad has its own pose, so no badge is added', (tester) async {
+      final harness = await start(tester);
+      await tapLabel(tester, 'How are you feeling?');
+      await tapLabel(tester, 'Sad');
+      expect(home(harness).mood, Mood.sad);
+      expect(faces(tester, 'sad'), 1, reason: 'the top bar only');
+      await harness.dispose(tester);
+    });
   });
 }

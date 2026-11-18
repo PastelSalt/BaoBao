@@ -1,5 +1,5 @@
 import 'package:baobao/core/audio/audio_director.dart';
-import 'package:baobao/core/widgets/bamboo_button.dart';
+import 'package:baobao/core/widgets/app_button.dart';
 import 'package:baobao/core/widgets/bamboo_dialog.dart';
 import 'package:baobao/core/widgets/bamboo_frame.dart';
 import 'package:baobao/core/widgets/character_view.dart';
@@ -17,11 +17,11 @@ void main() {
     await loadAppFonts();
   });
 
-  group('BambooButton', () {
+  group('AppButton', () {
     testWidgets('a tap runs the action and plays the click', (tester) async {
       final harness = await Harness.create();
       var taps = 0;
-      await tester.pumpWidget(harness.wrap(BambooButton(label: 'Go', onPressed: () => taps++)));
+      await tester.pumpWidget(harness.wrap(AppButton(label: 'Go', onPressed: () => taps++)));
 
       await tester.tap(find.text('Go'));
       await tester.pump();
@@ -33,7 +33,7 @@ void main() {
     testWidgets('when disabled it does nothing and says so to screen readers', (tester) async {
       final harness = await Harness.create();
       final handle = tester.ensureSemantics();
-      await tester.pumpWidget(harness.wrap(const BambooButton(label: 'Go', onPressed: null)));
+      await tester.pumpWidget(harness.wrap(const AppButton(label: 'Go', onPressed: null)));
 
       await tester.tap(find.text('Go'));
       expect(harness.sfx.log, isEmpty);
@@ -48,9 +48,9 @@ void main() {
     testWidgets('is an accessible button at least 48 high', (tester) async {
       final harness = await Harness.create();
       final handle = tester.ensureSemantics();
-      await tester.pumpWidget(harness.wrap(BambooButton(label: 'Go', onPressed: () {})));
+      await tester.pumpWidget(harness.wrap(AppButton(label: 'Go', onPressed: () {})));
 
-      expect(tester.getSize(find.byType(BambooButton)).height, greaterThanOrEqualTo(48));
+      expect(tester.getSize(find.byType(AppButton)).height, greaterThanOrEqualTo(48));
       expect(
         tester.getSemantics(find.bySemanticsLabel('Go')),
         matchesSemantics(
@@ -72,7 +72,7 @@ void main() {
         harness.wrap(
           SizedBox(
             width: 220,
-            child: BambooButton(
+            child: AppButton(
               label: 'A really rather long label that cannot fit on one line',
               expand: true,
               onPressed: () {},
@@ -121,7 +121,7 @@ void main() {
         LoadingOverlay(
           loading: loading,
           label: 'Working',
-          child: BambooButton(label: 'Go', onPressed: () => taps++),
+          child: AppButton(label: 'Go', onPressed: () => taps++),
         ),
       );
 
@@ -147,18 +147,18 @@ void main() {
           children: [
             const SpeechBubble(child: Text('Good morning! I am so glad you are here.')),
             const SizedBox(height: 12),
-            for (final tone in BambooButtonTone.values) ...[
-              BambooButton(label: 'Button ${tone.name}', tone: tone, onPressed: () {}),
+            for (final kind in ButtonKind.values) ...[
+              AppButton(label: 'Button ${kind.name}', kind: kind, onPressed: () {}),
               const SizedBox(height: 8),
             ],
-            const BambooButton(label: 'Disabled', onPressed: null),
+            const AppButton(label: 'Disabled', onPressed: null),
             const SizedBox(height: 12),
             const BambooFrame(child: Text('3000 ✷')),
             const SizedBox(height: 12),
             BambooDialog(
               title: 'A dialog',
               content: const Text('Dialogs use a larger bamboo frame.'),
-              actions: [BambooButton(label: 'OK', onPressed: () {})],
+              actions: [AppButton(label: 'OK', onPressed: () {})],
             ),
           ],
         ),

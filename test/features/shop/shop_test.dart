@@ -105,11 +105,11 @@ void main() {
   testWidgets('music can be previewed and the shop track returns afterwards', (tester) async {
     final harness = await open(tester);
 
-    await tester.tap(find.byTooltip('Preview Paper Lanterns'));
+    await tester.tap(onCard('Paper Lanterns', 'Listen'));
     await tester.pump();
     expect(harness.music.log.last, 'play assets/audio/music/paper_lanterns.m4a loop');
 
-    await tester.tap(find.byTooltip('Stop preview of Paper Lanterns'));
+    await tester.tap(onCard('Paper Lanterns', 'Stop'));
     await tester.pump();
     expect(harness.music.log.last, 'play $shopMusicAsset loop');
     await harness.dispose(tester);
@@ -124,7 +124,8 @@ void main() {
     });
     await pumpApp(tester, harness, size: const Size(420, 2600));
 
-    await tapLabel(tester, 'Style');
+    await tester.tap(find.byTooltip('Style'));
+    await settle(tester);
     expect(find.text('Bamboo Plum'), findsOneWidget);
     expect(find.text('Bamboo Clouds'), findsNothing, reason: 'only owned items are listed');
 

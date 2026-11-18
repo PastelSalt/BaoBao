@@ -1,15 +1,16 @@
 import 'dart:async';
 
+import 'package:baobao/app/theme/app_palette.dart';
+import 'package:baobao/app/theme/tokens.dart';
 import 'package:baobao/core/content/content_models.dart';
 import 'package:baobao/core/providers.dart';
 import 'package:baobao/core/security/app_lock.dart';
 import 'package:baobao/core/settings/app_settings.dart';
-import 'package:baobao/core/widgets/bamboo_button.dart';
-import 'package:baobao/core/widgets/bamboo_frame.dart';
-import 'package:baobao/core/widgets/character_view.dart';
+import 'package:baobao/core/widgets/app_button.dart';
+import 'package:baobao/core/widgets/app_icon.dart';
+import 'package:baobao/core/widgets/bao_stage.dart';
 import 'package:baobao/core/widgets/loading_overlay.dart';
-import 'package:baobao/core/widgets/speech_bubble.dart';
-import 'package:baobao/core/widgets/typewriter_text.dart';
+import 'package:baobao/core/widgets/panel.dart';
 import 'package:baobao/features/economy/domain/catalog.dart';
 import 'package:baobao/features/profiles/data/profile_repository.dart';
 import 'package:baobao/l10n/app_localizations.dart';
@@ -149,10 +150,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       Row(
                         children: [
                           if (index > 0)
-                            TextButton.icon(
+                            AppButton(
+                              label: l10n.actionBack,
+                              icon: Glyph.back,
+                              kind: ButtonKind.quiet,
                               onPressed: _back,
-                              icon: const Icon(Icons.arrow_back_rounded),
-                              label: Text(l10n.actionBack),
                             ),
                           const Spacer(),
                           Text(
@@ -176,7 +178,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           child: Text(
                             l10n.onboardingFailed,
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Theme.of(context).colorScheme.error),
+                            style: TextStyle(color: context.palette.alert),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -195,32 +197,32 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   List<Widget> _actions(AppLocalizations l10n, {required bool isLast}) {
     return switch (_step) {
-      _Step.welcome => [BambooButton(label: l10n.actionStart, expand: true, onPressed: _next)],
+      _Step.welcome => [AppButton(label: l10n.actionStart, expand: true, onPressed: _next)],
       _Step.promise => [
-        BambooButton(
+        AppButton(
           label: l10n.actionContinue,
           expand: true,
           onPressed: _understands && _oldEnough ? _next : null,
         ),
       ],
       _Step.name => [
-        BambooButton(
+        AppButton(
           label: isLast ? l10n.actionStart : l10n.actionContinue,
           expand: true,
           onPressed: _next,
         ),
       ],
       _Step.lock => [
-        BambooButton(
+        AppButton(
           label: l10n.onboardingLockEnable,
-          icon: Icons.lock_rounded,
+          icon: Glyph.lock,
           expand: true,
           onPressed: _enableLock,
         ),
-        const SizedBox(height: 8),
-        BambooButton(
+        const SizedBox(height: Space.s),
+        AppButton(
           label: l10n.actionSkip,
-          tone: BambooButtonTone.cream,
+          kind: ButtonKind.quiet,
           expand: true,
           onPressed: () => _finish(enableLock: false),
         ),
@@ -240,10 +242,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             textAlign: TextAlign.center,
           ),
         ),
-        const SizedBox(height: 16),
-        SpeechBubble(child: TypewriterText(_welcome.text)),
+        const SizedBox(height: Space.m),
         Expanded(
-          child: CharacterView(outfitAsset: outfit.asset, semanticLabel: l10n.characterLabel),
+          child: BaoStage(
+            text: _welcome.text,
+            outfitAsset: outfit.asset,
+            characterLabel: l10n.characterLabel,
+          ),
         ),
       ],
     );
@@ -263,20 +268,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 16),
-          BambooFrame(
+          const SizedBox(height: Space.l),
+          Panel(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Point(icon: Icons.favorite_rounded, text: l10n.onboardingPromiseCompanion),
-                const SizedBox(height: 12),
-                _Point(icon: Icons.support_rounded, text: l10n.onboardingPromiseEmergency),
-                const SizedBox(height: 12),
-                _Point(icon: Icons.lock_rounded, text: l10n.onboardingPromisePrivacy),
+                _Point(glyph: Glyph.heart, text: l10n.onboardingPromiseCompanion),
+                const SizedBox(height: Space.m),
+                _Point(glyph: Glyph.help, text: l10n.onboardingPromiseEmergency),
+                const SizedBox(height: Space.m),
+                _Point(glyph: Glyph.lock, text: l10n.onboardingPromisePrivacy),
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: Space.s),
           CheckboxListTile(
             value: _understands,
             onChanged: (value) => setState(() => _understands = value ?? false),
@@ -352,7 +357,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Text(
                 l10n.onboardingLockFailed,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: theme.colorScheme.error),
+                style: TextStyle(color: context.palette.alert),
               ),
             ),
           ],
@@ -363,9 +368,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 }
 
 class _Point extends StatelessWidget {
-  const _Point({required this.icon, required this.text});
+  const _Point({required this.glyph, required this.text});
 
-  final IconData icon;
+  final Glyph glyph;
   final String text;
 
   @override
@@ -373,8 +378,11 @@ class _Point extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ExcludeSemantics(child: Icon(icon, color: Theme.of(context).colorScheme.primary)),
-        const SizedBox(width: 12),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: AppIcon(glyph, color: context.palette.primary),
+        ),
+        const SizedBox(width: Space.m),
         Expanded(child: Text(text)),
       ],
     );

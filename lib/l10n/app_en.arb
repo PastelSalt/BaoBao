@@ -301,7 +301,7 @@
     }
   },
   "clawMissed": "So close!",
-  "clawRare": "★ Rare ★",
+  "clawRare": "Rare prize!",
   "clawCombo": "{streak} in a row! ×{multiplier}",
   "@clawCombo": {
     "placeholders": {
@@ -325,5 +325,17 @@
   "clawStatsPlays": "Plays",
   "clawStatsWins": "Wins",
   "clawStatsEarnings": "Stars won",
-  "clawStatsBest": "Best win"
+  "clawStatsBest": "Best win",
+  "navCheer": "Cheer up",
+  "cheerTitle": "What would help?",
+  "cheerJoke": "Tell me a joke",
+  "cheerAffirmation": "Say something kind",
+  "cheerSelfCare": "Give me a self-care idea",
+  "settingsAppearance": "Appearance",
+  "settingsThemeSystem": "Match my phone",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+  "settingsThemeLabel": "Theme",
+  "itemStop": "Stop",
+  "itemPreviewShort": "Listen"
 }

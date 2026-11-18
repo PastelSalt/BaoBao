@@ -49,8 +49,30 @@ jobs:
       - name: Content validation
         run: dart run tool/validate_content.dart
 
-      - name: Tests
+      - name: Every character in the text can be drawn, and the emoji font is current
+        run: |
+          sudo apt-get update && sudo apt-get install -y fonts-noto-color-emoji
+          pip install fonttools
+          python3 tool/make_emoji_font.py --check
+
+      - name: Interface icons are up to date
+        run: |
+          python3 tool/make_ui_icons.py
+          git diff --exit-code -- assets/images/icons
+
+      - name: Tests (includes the layout matrix)
         run: flutter test --coverage
+
+      - name: Review sheets for a person to look at
+        run: |
+          pip install pillow
+          REVIEW=1 flutter test test/layout
+          python3 tool/review_sheets.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: review-sheets
+          path: build/review/sheets/
 
       - name: Domain coverage is at least 90%
         run: dart run tool/check_coverage.dart coverage/lcov.info 90 /domain/
@@ -75,3 +97,51 @@ jobs:
 
       - name: Build iOS
         run: flutter build ios --debug --no-codesign -t lib/main_dev.dart
+
+  device-screenshots:
+    name: Screenshots on an Android emulator
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [24, 33, 36]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Walk the app and take screenshots
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          profile: pixel_5
+          script: >
+            flutter drive
+            --driver=test_driver/integration_test.dart
+            --target=integration_test/journey_test.dart
+            --flavor dev
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-api-${{ matrix.api-level }}
+          path: build/device_screenshots/

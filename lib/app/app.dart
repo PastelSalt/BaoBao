@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:baobao/app/router.dart';
+import 'package:baobao/app/system_chrome.dart';
 import 'package:baobao/app/theme/app_theme.dart';
 import 'package:baobao/core/audio/audio_director.dart';
 import 'package:baobao/core/providers.dart';
@@ -81,7 +82,10 @@ class _BaoBaoAppState extends ConsumerState<BaoBaoApp> {
       onGenerateTitle: (context) => AppLocalizations.of(context).appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ref.watch(settingsProvider.select((s) => s.themeMode)),
       routerConfig: _router,
+      builder: (context, child) => SystemChromePolicy(child: child ?? const SizedBox.shrink()),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
     );

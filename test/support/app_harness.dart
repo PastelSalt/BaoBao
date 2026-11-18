@@ -88,11 +88,13 @@ class Harness {
   }
 
   /// Wraps [child] with providers, theme and localisation.
-  Widget wrap(Widget child) => UncontrolledProviderScope(
+  Widget wrap(Widget child, {ThemeMode themeMode = ThemeMode.light}) => UncontrolledProviderScope(
     container: container,
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: themeMode,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(body: Center(child: child)),
@@ -130,6 +132,12 @@ Future<void> loadAppFonts() async {
   }
   await loader.load();
 
+  final emoji = FontLoader(AppTheme.emojiFamily)
+    ..addFont(
+      Future.value(ByteData.sublistView(File('assets/fonts/BaoBaoEmoji.ttf').readAsBytesSync())),
+    );
+  await emoji.load();
+
   // Icons, from the Flutter SDK running the tests, so golden images show
   // them instead of empty boxes.
   final root = Platform.environment['FLUTTER_ROOT'];
@@ -163,10 +171,16 @@ Future<void> pumpApp(
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
-    UncontrolledProviderScope(container: harness.container, child: const BaoBaoApp()),
+    UncontrolledProviderScope(
+      container: harness.container,
+      child: RepaintBoundary(key: appBoundaryKey, child: const BaoBaoApp()),
+    ),
   );
   await settle(tester);
 }
+
+/// Wraps the whole app, so a test can take a picture of it.
+final appBoundaryKey = GlobalKey();
 
 /// Taps the widget showing [label] and lets the result settle.
 Future<void> tapLabel(WidgetTester tester, String label, {int rounds = 3}) async {
